@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 class Model {
 	public:
 		//Init constructor declaration
