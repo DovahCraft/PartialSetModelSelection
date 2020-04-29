@@ -10,11 +10,15 @@ int main(void)
 {
    //Unit tests here
     cout << "Hello world!\n";
-    insert(3.5, 3, 5);
+    
+    Model model3segs = Model(3, 5);
     minimize(5.44);
     solver(5.34);
-    Model model3segs = Model(3, 5);  
-    ModelSelectionMap firstMap = ModelSelectionMap();
+      
+    ModelSelectionMap testMap = ModelSelectionMap();
+    //Call minimizer
+    //Call insert
+    insert(3.5, model3segs, testMap);
 }
 
 
