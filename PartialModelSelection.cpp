@@ -8,12 +8,13 @@ Algorithm/Use: Temporarily used for testing of the functions below.
 */
 int main(void)
 {
+   //Unit tests here
     cout << "Hello world!\n";
     insert(3.5, 3, 5);
     minimize(5.44);
     solver(5.34);
-    Model model3segs = new Model(3, 5);  
-    ModelSelectionMap<double, Model> firstMap = new ModelSelectionMap();
+    Model model3segs = Model(3, 5);  
+    ModelSelectionMap firstMap = ModelSelectionMap();
 }
 
 
@@ -28,7 +29,7 @@ Exceptions: correctly and appropriately (without program failure)
     responds to and reports failure to insert the model.
 Note: none
 */
-void insert(double penalty, int model_size, int loss)
+void insert(double penalty, int model_size, int loss, ModelSelectionMap firstMap)
    {
     cout << "Calling insertsdfasdfdsvf! \n";
    }
