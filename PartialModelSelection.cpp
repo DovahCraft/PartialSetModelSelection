@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <map>
-#include "PartialModelSelectionVS.h"
+#include "PartialModelSelection.h"
 /*
 Function name: Main
 Algorithm/Use: Temporarily used for testing of the functions below.
