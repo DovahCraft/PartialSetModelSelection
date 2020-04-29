@@ -1,7 +1,13 @@
 #pragma once
 #include <iostream>
+using namespace std;
 class Model {
 	public:
+		//Number of segments (k-value)
+		int model_size;
+		//Loss associated with the given model 
+		double loss;
+		
 		//Init constructor declaration
 		Model(int model_size, double loss) 
 			{
@@ -24,22 +30,22 @@ class Model {
 		void getModelLoss(double model_loss) {
 			this->loss = model_size;
 		}
-
-	private:
-		//Number of segments (k-value)
-		int model_size;
-		//Loss associated with the given model 
-		double loss;
-
 };
 	
 class ModelSelectionMap {
 	public:
 		std::map<double, Model> breakpoints;
+		ModelCapMessages maxModels;
 
     ModelSelectionMap() 
 	   {
-		cout << "Making map";
+		maxModels = NO_MODEL_CAP;
+	   }
+
+
+	ModelSelectionMap(ModelCapMessages cap)
+	   {   
+		maxModels = cap;
 	   }
 };
 
@@ -49,6 +55,13 @@ class MinimizeResult {
 		int model_size;
 		bool certain;
 };
+
+
+typedef enum 
+	 	{
+		 NO_MODEL_CAP,
+		 STD_MODEL_CAP=3
+		}ModelCapMessages;
 
 //Function definitions
 void insert(double penalty, int model, int loss);

@@ -12,7 +12,8 @@ int main(void)
     insert(3.5, 3, 5);
     minimize(5.44);
     solver(5.34);
-    //ModelSelectionMap<double, Model> firstMap = ModelSelectionMap();
+    Model model3segs = new Model(3, 5);  
+    ModelSelectionMap<double, Model> firstMap = new ModelSelectionMap();
 }
 
 
@@ -29,7 +30,7 @@ Note: none
 */
 void insert(double penalty, int model_size, int loss)
    {
-    cout << "Calling insert! \n";
+    cout << "Calling insertsdfasdfdsvf! \n";
    }
 
 /*
