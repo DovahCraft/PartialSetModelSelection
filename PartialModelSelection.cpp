@@ -29,8 +29,9 @@ Exceptions: correctly and appropriately (without program failure)
     responds to and reports failure to insert the model.
 Note: none
 */
-void insert(double penalty, int model_size, int loss, ModelSelectionMap firstMap)
+void insert(double penalty, Model currentModel, ModelSelectionMap currentMap)
    {
+    currentMap.insert(penalty,currentModel);
     cout << "Calling insertsdfasdfdsvf! \n";
    }
 

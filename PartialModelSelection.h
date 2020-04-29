@@ -1,6 +1,17 @@
-#pragma once
+//#pragma once
 #include <iostream>
+#include <map>
+
 using namespace std;
+
+typedef enum 
+	 	{
+		 NO_MODEL_CAP,
+		 STD_MODEL_CAP=3
+		}ModelCapMessages;
+
+typedef pair<double, Model> breakPoint;
+
 class Model {
 	public:
 		//Number of segments (k-value)
@@ -47,6 +58,11 @@ class ModelSelectionMap {
 	   {   
 		maxModels = cap;
 	   }
+
+	void insert(double penalty, Model currentModel)
+	   {
+		cout<<"Calling insert on breakpoint map\n";    
+	   }
 };
 
 //Class to embody Model,Boolean pairs for model selection.
@@ -57,13 +73,9 @@ class MinimizeResult {
 };
 
 
-typedef enum 
-	 	{
-		 NO_MODEL_CAP,
-		 STD_MODEL_CAP=3
-		}ModelCapMessages;
+
 
 //Function definitions
-void insert(double penalty, int model, int loss);
+void insert(double penalty, Model currentModel, ModelSelectionMap currentMap);
 tuple<int, bool> minimize(double penalty);
 tuple<int, int> solver(double penalty);
