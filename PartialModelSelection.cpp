@@ -2,20 +2,9 @@
 #include <map>
 
 #include "PartialModelSelection.hpp"
+#include "PartialModelSelectionMain.cpp"
 
-int main (void){
-    //Unit tests here
-    std::cout << "Hello world!\n";
-    
-    Model model3segs = Model(3, 5);
-    minimize(5.44);
-    solver(5.34);
-      
-    ModelSelectionMap testMap = ModelSelectionMap();
-    //Call minimizer
-    //Call insert
-    testMap.insert(3.5, model3segs);
-}
+
 //Default contructor for model selection map
 ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){}
 
@@ -85,3 +74,4 @@ std::pair<int, int> solver(double penalty)
     //Temporary stub return
     return tempPair;
 }
+
