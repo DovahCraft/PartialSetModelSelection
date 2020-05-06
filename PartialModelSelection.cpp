@@ -1,15 +1,11 @@
 #include <iostream>
-using namespace std;
 #include <map>
-#include "PartialModelSelection.h"
-/*
-Function name: Main
-Algorithm/Use: Temporarily used for testing of the functions below.
-*/
-int main(void)
-{
-   //Unit tests here
-    cout << "Hello world!\n";
+
+#include "PartialModelSelection.hpp"
+
+int main (void){
+    //Unit tests here
+    std::cout << "Hello world!\n";
     
     Model model3segs = Model(3, 5);
     minimize(5.44);
@@ -18,7 +14,17 @@ int main(void)
     ModelSelectionMap testMap = ModelSelectionMap();
     //Call minimizer
     //Call insert
-    insert(3.5, model3segs, testMap);
+    testMap.insert(3.5, model3segs);
+}
+//Default contructor for model selection map
+ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){}
+
+//Initialization constructor for a ModelSelectionMap with a cap.
+ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap){}
+
+void ModelSelectionMap::insert(double penalty, Model currentModel){
+    std::cout << "Calling insert on current test map.\n";
+    
 }
 
 
@@ -36,7 +42,7 @@ Note: none
 void insert(double penalty, Model currentModel, ModelSelectionMap currentMap)
    {
     currentMap.insert(penalty,currentModel);
-    cout << "Calling insertsdfasdfdsvf! \n";
+    std::cout << "Calling insertsdfasdfdsvf! \n";
    }
 
 /*
@@ -53,13 +59,13 @@ Exceptions: correctly and appropriately (without program failure)
     responds to and reports incorrectly formatted op code data,
 Note: none
 */
-tuple<int, bool> minimize(double penalty)
-   {
-    cout << "Testing minimize\n";
-    tuple<int, bool> tempTuple = make_tuple(4, true);
+std::pair<int, bool> minimize(double penalty)
+{
+    std::cout << "Testing minimize\n";
+    auto tempPair = std::make_pair<int, bool>(4, true);
     //Temporary stub return
-    return tempTuple;
-   }
+    return tempPair;
+}
 
 /*
 Function name: Solver
@@ -72,10 +78,10 @@ Exceptions: correctly and appropriately (without program failure)
     responds to and reports incorrectly formatted op code data,
 Note: none
 */
-tuple<int, int> solver(double penalty)
-   {
-    tuple<int, bool> tempTuple = make_tuple(4, true);
-    cout << "Testing solver!\n";
+std::pair<int, int> solver(double penalty)
+{
+    auto tempPair = std::make_pair<int, bool>(4, true); 
+    std::cout << "Testing solver!\n";
     //Temporary stub return
-    return tempTuple;
-   }
+    return tempPair;
+}
