@@ -1,8 +1,7 @@
 #include <iostream>
 #include <map>
-
 #include "PartialModelSelection.hpp"
-#include "PartialModelSelectionMain.cpp"
+
 
 
 //Default contructor for model selection map
