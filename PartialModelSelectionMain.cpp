@@ -3,28 +3,32 @@
 #include <gtest/gtest.h>
 #include "PartialModelSelection.hpp"
 
-TEST(Model, modelTest)
+//Tests to ensure correct model formation and associated logic.
+TEST(ModelTests, modelTest)
    {
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.model_size, 3);
-
    }
 
    
-TEST(Model, modelLossTestPos)
+TEST(ModelTests, modelLossTestPos)
    {
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.loss, 5);
 
    }
 
-
-/*TEST(Model, modelLossTestNeg)
+//Testing breakpoint inserts.
+TEST(Breakpoints, testBreakFormation)
    {
-    Model model3segs = Model(3, 5);
-    ASSERT_EQ(model3segs.loss, 2);
+    Model testModel = Model(2, 3);
+    double expectedPen = 4.0;
+    Breakpoint testBP = Breakpoint(4.0, testModel);
+    ASSERT_EQ(testBP.first, expectedPen);
+   }
 
-   }*/
+
+
 //Driver function for google test
 int main (int argc, char* argv[]){
     //Unit tests here

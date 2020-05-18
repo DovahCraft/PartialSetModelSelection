@@ -14,7 +14,13 @@ struct Model {
     double loss = 0.0;
 };
 
-using breakPoint = std::pair<double, Model>;
+
+//struct BreakPoint
+
+
+
+
+using Breakpoint = std::pair<double, Model>;
 
 
 
@@ -23,6 +29,8 @@ public:
     ModelSelectionMap(ModelCapMessages cap);
 
     void insert(double penalty, Model currentModel);
+
+    void insert(Model currentModel);
 
     ModelSelectionMap();
     

@@ -3,13 +3,24 @@
 #include "PartialModelSelection.hpp"
 
 
-
+/*MODEL SELECTION MAP METHODS*/
 //Default contructor for model selection map
 ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){}
 
 //Initialization constructor for a ModelSelectionMap with a cap.
 ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap){}
 
+/*
+Function name: insert
+Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
+Precondition: The model is formatted correctly and the
+   penalty is a valid double.
+Postcondition: Inserts the model into the data structure.
+   No return type, maybe return success code eventually.
+Exceptions: correctly and appropriately (without program failure)
+    responds to and reports failure to insert the model.
+Note: none
+*/ 
 void ModelSelectionMap::insert(double penalty, Model currentModel){
     std::cout << "Calling insert on current test map.\n";
     
@@ -18,20 +29,24 @@ void ModelSelectionMap::insert(double penalty, Model currentModel){
 
 /*
 Function name: insert
-Algorithm: Inserts a new model into our partial set (map) data structure
+Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling 
 Precondition: The model is formatted correctly and the
-   penalty is a valid float?
+   penalty is a valid double.
 Postcondition: Inserts the model into the data structure.
    No return type, maybe return success code eventually.
 Exceptions: correctly and appropriately (without program failure)
     responds to and reports failure to insert the model.
 Note: none
-*/
-void insert(double penalty, Model currentModel, ModelSelectionMap currentMap)
-   {
-    currentMap.insert(penalty,currentModel);
-    std::cout << "Calling insertsdfasdfdsvf! \n";
-   }
+*/ 
+void ModelSelectionMap::insert(Model currentModel)
+{
+
+}
+
+
+
+
+
 
 /*
 Function name: Minimize
@@ -49,7 +64,6 @@ Note: none
 */
 std::pair<int, bool> minimize(double penalty)
 {
-    std::cout << "Testing minimize\n";
     auto tempPair = std::make_pair<int, bool>(4, true);
     //Temporary stub return
     return tempPair;
