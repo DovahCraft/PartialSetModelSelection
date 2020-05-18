@@ -3,8 +3,9 @@
 #include "PartialModelSelection.hpp"
 
 
-/*MODEL SELECTION MAP METHODS*/
-//Default contructor for model selection map
+/*MODEL SELECTION MAP IMPLEMENTATIONS*/
+
+//Default contructor for model selection map, sets max models to std of 3.
 ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){}
 
 //Initialization constructor for a ModelSelectionMap with a cap.
@@ -22,14 +23,20 @@ Exceptions: correctly and appropriately (without program failure)
 Note: none
 */ 
 void ModelSelectionMap::insert(double penalty, Model currentModel){
-    std::cout << "Calling insert on current test map.\n";
+    //Insert into our breakpoint map in the ModelSelectionMap
+    Breakpoint newBreakPoint = Breakpoint(penalty, currentModel);
+    breakpoints.insert(newBreakPoint);
     
+    modelCount++;
+    
+
 }
 
 
 /*
 Function name: insert
-Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling 
+Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling
+   binary segmentation and other constrained style solvers. 
 Precondition: The model is formatted correctly and the
    penalty is a valid double.
 Postcondition: Inserts the model into the data structure.
@@ -40,7 +47,10 @@ Note: none
 */ 
 void ModelSelectionMap::insert(Model currentModel)
 {
+     //Runs solver for penalty to insert
+     std::cout<< "Adding model without penalty \n";
 
+     //Insert pair with created breakpoint from solver. 
 }
 
 

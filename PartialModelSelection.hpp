@@ -14,12 +14,17 @@ struct Model {
     double loss = 0.0;
 };
 
+//Class to embody Model,Boolean pairs for model selection.
+struct MinimizeResult {
+    int model_size = 0;
+    bool certain = false;
+    std::pair<double,double> range;
+    MinimizeResult *prev;
+    MinimizeResult *next;
+};
 
-//struct BreakPoint
 
-
-
-
+//struct BreakPoint may be better here for more readability
 using Breakpoint = std::pair<double, Model>;
 
 
@@ -33,18 +38,19 @@ public:
     void insert(Model currentModel);
 
     ModelSelectionMap();
+
+    //Linked list for path of optimal models.
+
     
 
 
-private:
+public:
     ModelCapMessages maxModels = ModelCapMessages::NO_MODEL_CAP;
     std::map<double, Model> breakpoints;
+    int modelCount = 0;
 };
-//Class to embody Model,Boolean pairs for model selection.
-struct MinimizeResult {
-    int model_size = 0;
-    bool certain = false;
-};
+
+
 
 
 
