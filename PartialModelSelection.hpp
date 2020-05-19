@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <map>
+#define NULL 0
 
 enum class ModelCapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
 
@@ -14,6 +15,8 @@ struct Model {
     double loss = 0.0;
 };
 
+
+
 //Class to embody Model,Boolean pairs for model selection.
 struct MinimizeResult {
     int model_size = 0;
@@ -23,6 +26,10 @@ struct MinimizeResult {
     MinimizeResult *next;
 };
 
+//Wrapper class to contain a list of MinimizeResults
+struct MinimizeResultList {
+    MinimizeResult *head;
+};
 
 //struct BreakPoint may be better here for more readability
 using Breakpoint = std::pair<double, Model>;
@@ -37,11 +44,17 @@ public:
 
     void insert(Model currentModel);
 
+    MinimizeResult minimize(double penalty);
+
+    void addResult(MinimizeResult *toAdd);
+
+    double getNewPenalty();
+
+
     ModelSelectionMap();
 
-    //Linked list for path of optimal models.
-
-    
+    //Linked list for path model selection ranges.
+    MinimizeResultList *headResult; 
 
 
 public:

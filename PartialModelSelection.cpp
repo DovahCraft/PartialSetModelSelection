@@ -6,7 +6,11 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
-ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){}
+ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){
+   //Init head of minimizeResult LL
+   headResult = NULL;
+
+}
 
 //Initialization constructor for a ModelSelectionMap with a cap.
 ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap){}
@@ -26,7 +30,6 @@ void ModelSelectionMap::insert(double penalty, Model currentModel){
     //Insert into our breakpoint map in the ModelSelectionMap
     Breakpoint newBreakPoint = Breakpoint(penalty, currentModel);
     breakpoints.insert(newBreakPoint);
-    
     modelCount++;
     
 
@@ -54,30 +57,62 @@ void ModelSelectionMap::insert(Model currentModel)
 }
 
 
-
-
-
-
 /*
-Function name: Minimize
-Algorithm: Acquires a penalty value lambda and returns a tuple consisting of:
+Function name: getNewPenalty
+Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
    (the k value corresponding to the selected model, a boolean showing its accuracy)
    Boolean values consist of: F for unsure, and T for a sure pairing.
 Precondition: for correct operation, the passed penalty is a valid
    float value.
 Postcondition: in correct operation, computes what model is optimal
    for the passed penalty, and gives a boolean signifying its accuracy.
-   Both these values are passed back as a tuple.
+   Both these values are passed back as a struct.
 Exceptions: correctly and appropriately (without program failure)
     responds to and reports incorrectly formatted op code data,
 Note: none
 */
-std::pair<int, bool> minimize(double penalty)
+double ModelSelectionMap::getNewPenalty()
+   {
+
+    MinimizeResult *currentResult = headResult;  
+    //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
+    while(currentResult) {
+       //Traverse and check for useful penalty ranges to query. 
+
+    }
+   }
+
+
+
+/*
+Function name: Minimize
+Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
+   (the k value corresponding to the selected model, a boolean showing its accuracy)
+   Boolean values consist of: F for unsure, and T for a sure pairing.
+Precondition: for correct operation, the passed penalty is a valid
+   float value.
+Postcondition: in correct operation, computes what model is optimal
+   for the passed penalty, and gives a boolean signifying its accuracy.
+   Both these values are passed back as a struct.
+Exceptions: correctly and appropriately (without program failure)
+    responds to and reports incorrectly formatted op code data,
+Note: none
+*/
+MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
-    auto tempPair = std::make_pair<int, bool>(4, true);
+    MinimizeResult queryResult;
+    
     //Temporary stub return
-    return tempPair;
+    return queryResult;
 }
+
+
+//Add minimize result function for LL?
+void ModelSelectionMap::addResult(MinimizeResult *toAdd)
+{
+   
+}
+
 
 /*
 Function name: Solver
