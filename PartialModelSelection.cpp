@@ -3,18 +3,17 @@
 #include "PartialModelSelection.hpp"
 #include <stdbool.h>
 
-
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
-ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){
+ModelSelectionMap::ModelSelectionMap() : maxModels(ModelCapMessages::STD_MODEL_CAP)
+{
    //Init head of minimizeResult LL
    //resultList->head = NULL;
-
 }
 
 //Initialization constructor for a ModelSelectionMap with a cap.
-ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap){}
+ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap) {}
 
 /*
 Function name: insert
@@ -26,20 +25,18 @@ Postcondition: Inserts the model into the data structure.
 Exceptions: correctly and appropriately (without program failure)
     responds to and reports failure to insert the model.
 Note: none
-*/ 
-void ModelSelectionMap::insert(double penalty, Model currentModel){
-    //Insert into our breakpoint map in the ModelSelectionMap
-    Breakpoint newBreakPoint = Breakpoint(penalty, currentModel);
-    breakpoints.insert(newBreakPoint);
-    modelCount++;
+*/
+void ModelSelectionMap::insert(double penalty, Model currentModel)
+{
+   //Insert into our TestedPair map in the ModelSelectionMap
+   TestedPair newTestedPair = TestedPair(penalty, currentModel);
+   TestedPairs.insert(newTestedPair);
+   modelCount++;
 
-    //Insert a minimized result based on what we know.
+   //Insert a minimized result based on what we know.
 
-    //Update the resultList to reflect the current path. 
-    
-
+   //Update the resultList to reflect the current path.
 }
-
 
 /*
 Function name: insert
@@ -52,15 +49,14 @@ Postcondition: Inserts the model into the data structure.
 Exceptions: correctly and appropriately (without program failure)
     responds to and reports failure to insert the model.
 Note: none
-*/ 
+*/
 void ModelSelectionMap::insert(Model currentModel)
 {
-     //Runs solver for penalty to insert
-     std::cout<< "Adding model without penalty \n";
+   //Runs solver for penalty to insert
+   std::cout << "Adding model without penalty \n";
 
-     //Insert pair with created breakpoint from solver. 
+   //Insert pair with created TestedPair from solver.
 }
-
 
 /*
 Function name: getNewPenalty
@@ -77,18 +73,16 @@ Exceptions: correctly and appropriately (without program failure)
 Note: none
 */
 double ModelSelectionMap::getNewPenalty()
-   {
+{
 
-    MinimizeResult *currentResult; // = resultList->head;  
-    //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
-    //while(currentResult != NULL) {
-       //Traverse and check for useful penalty ranges to query. 
+   MinimizeResult *currentResult; // = resultList->head;
+   //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
+   //while(currentResult != NULL) {
+   //Traverse and check for useful penalty ranges to query.
 
-    //}
-    return 0;
-   }
-
-
+   //}
+   return 0;
+}
 
 /*
 Function name: Minimize
@@ -108,18 +102,16 @@ MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
    MinimizeResult queryResult;
    //if(!resultList)
-    
-    //Temporary stub return
-    return queryResult;
-}
 
+   //Temporary stub return
+   return queryResult;
+}
 
 //Add minimize result function for LL?
 void ModelSelectionMap::addResult(MinimizeResult *toAdd)
 {
-  std::cout << "Adding MinimizeResult to list\n";
+   std::cout << "Adding MinimizeResult to list\n";
 }
-
 
 /*
 Function name: Solver
@@ -134,9 +126,8 @@ Note: none
 */
 std::pair<int, int> solver(double penalty)
 {
-    auto tempPair = std::make_pair<int, bool>(4, true); 
-    std::cout << "Testing solver!\n";
-    //Temporary stub return
-    return tempPair;
+   auto tempPair = std::make_pair<int, bool>(4, true);
+   std::cout << "Testing solver!\n";
+   //Temporary stub return
+   return tempPair;
 }
-

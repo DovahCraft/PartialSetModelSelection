@@ -18,15 +18,15 @@ TEST(ModelTests, modelLossTestPos)
 
    }
 
- TEST(Breakpoints, testBreakFormation)
+ TEST(TestedPairs, testBreakFormation)
    {
     Model testModel = Model(2, 3);
     double expectedPen = 4.0;
-    Breakpoint testBP = Breakpoint(4.0, testModel);
+    TestedPair testBP = TestedPair(4.0, testModel);
     ASSERT_EQ(testBP.first, expectedPen);
    }
 
-//Test breakpoint insertion based on panel 1 (left with two models.)
+//Test TestedPair insertion based on panel 1 (left with two models.)
 TEST(InsertTests, testInsertLeft)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
@@ -38,7 +38,7 @@ TEST(InsertTests, testInsertLeft)
    }
 
 
-//Test breakpoint insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
+//Test TestedPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
 TEST(InsertTests, testInsertMiddle)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
@@ -55,7 +55,7 @@ TEST(InsertTests, testInsertMiddle)
 
 
 
-//Test breakpoint insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
+//Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(InsertTests, testInsertRight)
    {
     ModelSelectionMap testMap = ModelSelectionMap();

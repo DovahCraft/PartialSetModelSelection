@@ -32,8 +32,8 @@ struct MinimizeResultList {
     MinimizeResult *head;
 };
 
-//struct BreakPoint may be better here for more readability
-using Breakpoint = std::pair<double, Model>;
+//struct TestedPair may be better here for more readability
+using TestedPair = std::pair<double, Model>;
 
 
 
@@ -60,7 +60,7 @@ public:
 
 public:
     ModelCapMessages maxModels = ModelCapMessages::NO_MODEL_CAP;
-    std::map<double, Model> breakpoints;
+    std::map<double, Model> TestedPairs;
     int modelCount = 0;
 };
 
