@@ -79,7 +79,7 @@ Note: none
 double ModelSelectionMap::getNewPenalty()
    {
 
-    MinimizeResult *currentResult = resultList->head;  
+    MinimizeResult *currentResult; // = resultList->head;  
     //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
     //while(currentResult != NULL) {
        //Traverse and check for useful penalty ranges to query. 
