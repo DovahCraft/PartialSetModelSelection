@@ -9,7 +9,7 @@
 //Default contructor for model selection map, sets max models to std of 3.
 ModelSelectionMap::ModelSelectionMap(): maxModels(ModelCapMessages::STD_MODEL_CAP){
    //Init head of minimizeResult LL
-   resultList->head = NULL;
+   //resultList->head = NULL;
 
 }
 
@@ -29,7 +29,7 @@ Note: none
 */ 
 void ModelSelectionMap::insert(double penalty, Model currentModel){
     //Insert into our breakpoint map in the ModelSelectionMap
-    TestedPair newBreakPoint = TestedPair(penalty, currentModel);
+    Breakpoint newBreakPoint = Breakpoint(penalty, currentModel);
     breakpoints.insert(newBreakPoint);
     modelCount++;
 
@@ -81,10 +81,11 @@ double ModelSelectionMap::getNewPenalty()
 
     MinimizeResult *currentResult = resultList->head;  
     //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
-    while(currentResult != NULL) {
+    //while(currentResult != NULL) {
        //Traverse and check for useful penalty ranges to query. 
 
-    }
+    //}
+    return 0;
    }
 
 
@@ -105,8 +106,8 @@ Note: none
 */
 MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
-    MinimizeResult queryResult;
-   if(!resultList)
+   MinimizeResult queryResult;
+   //if(!resultList)
     
     //Temporary stub return
     return queryResult;
@@ -116,7 +117,7 @@ MinimizeResult ModelSelectionMap::minimize(double penalty)
 //Add minimize result function for LL?
 void ModelSelectionMap::addResult(MinimizeResult *toAdd)
 {
-
+  std::cout << "Adding MinimizeResult to list\n";
 }
 
 

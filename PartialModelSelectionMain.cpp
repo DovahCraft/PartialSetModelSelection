@@ -18,8 +18,7 @@ TEST(ModelTests, modelLossTestPos)
 
    }
 
-//Testing breakpoint inserts.
-TEST(Breakpoints, testBreakFormation)
+ TEST(Breakpoints, testBreakFormation)
    {
     Model testModel = Model(2, 3);
     double expectedPen = 4.0;
@@ -28,7 +27,7 @@ TEST(Breakpoints, testBreakFormation)
    }
 
 //Test breakpoint insertion based on panel 1 (left with two models.)
-TEST(Breakpoints, testInsertLeft)
+TEST(InsertTests, testInsertLeft)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
@@ -40,7 +39,7 @@ TEST(Breakpoints, testInsertLeft)
 
 
 //Test breakpoint insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(Breakpoints, testInsertMiddle)
+TEST(InsertTests, testInsertMiddle)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
@@ -49,7 +48,7 @@ TEST(Breakpoints, testInsertMiddle)
     testMap.insert(4.0, model1Seg);
     testMap.insert(3.0, model2Seg); //?????? Never selected so how should I test this? Maybe insert 3 segments after and test the update?
     //Test for path here? Form link list?
-    testMap.insert(3.0, model3Seg); //Add model with 3 segments that is found to be more optimal
+    testMap.insert(1.0, model3Seg); //Add model with 3 segments that is found to be more optimal
     //Should I remove the 2 segment model from the data structure now?
     ASSERT_EQ(testMap.modelCount, 3);
    }
@@ -57,7 +56,7 @@ TEST(Breakpoints, testInsertMiddle)
 
 
 //Test breakpoint insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(Breakpoints, testInsertRight)
+TEST(InsertTests, testInsertRight)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
@@ -68,6 +67,7 @@ TEST(Breakpoints, testInsertRight)
     testMap.insert(1.0, model3Seg);
     ASSERT_EQ(testMap.modelCount, 3);
    }
+   
 
 
 

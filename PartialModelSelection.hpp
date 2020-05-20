@@ -32,7 +32,7 @@ struct MinimizeResultList {
 };
 
 //struct BreakPoint may be better here for more readability
-using TestedPair = std::pair<double, Model>;
+using Breakpoint = std::pair<double, Model>;
 
 
 
