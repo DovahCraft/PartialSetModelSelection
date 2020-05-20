@@ -34,7 +34,7 @@ TEST(InsertTests, testInsertLeft)
     Model model2Seg = Model(2, 4.0);
     testMap.insert(4.0, model1Seg);
     testMap.insert(0.0, model2Seg);
-    ASSERT_EQ(testMap.modelCount, 2);
+    ASSERT_EQ(testMap.getModelCount(), 2);
    }
 
 

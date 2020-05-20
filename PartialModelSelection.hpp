@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <map>
-
+#include <vector>
 
 
 enum class ModelCapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
@@ -17,20 +17,16 @@ struct Model {
 };
 
 
-
-//Class to embody Model,Boolean pairs for model selection.
+//Class to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
     int model_size = 0;
     bool certain = false;
     std::pair<double,double> range;
-    MinimizeResult *prev;
-    MinimizeResult *next;
 };
 
-//Wrapper class to contain a list of MinimizeResults
-struct MinimizeResultList {
-    MinimizeResult *head;
-};
+
+
+
 
 //struct TestedPair may be better here for more readability
 using TestedPair = std::pair<double, Model>;
@@ -39,26 +35,28 @@ using TestedPair = std::pair<double, Model>;
 
 class ModelSelectionMap {
 public:
+    //Method headers
+    ModelSelectionMap();
+
     ModelSelectionMap(ModelCapMessages cap);
 
     void insert(double penalty, Model currentModel);
 
     void insert(Model currentModel);
 
-    MinimizeResult minimize(double penalty);
-
     void addResult(MinimizeResult *toAdd);
 
     double getNewPenalty();
 
+    int getModelCount();
+    
+    std::pair<int, int> solver(double penalty);
 
-    ModelSelectionMap();
+    MinimizeResult minimize(double penalty);
+    
+    //Wrapper struct to contain a list of MinimizeResults
+    std::vector<MinimizeResult> minResultVec; 
 
-    //Linked list for path model selection ranges.
-    MinimizeResultList *resultList; 
-
-
-public:
     ModelCapMessages maxModels = ModelCapMessages::NO_MODEL_CAP;
     std::map<double, Model> TestedPairs;
     int modelCount = 0;
@@ -68,8 +66,3 @@ public:
 
 
 
-
-//Function definitions
-void insert(double penalty, Model currentModel, ModelSelectionMap currentMap);
-std::pair<int, bool> minimize(double penalty);
-std::pair<int, int> solver(double penalty);

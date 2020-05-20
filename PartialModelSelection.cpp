@@ -2,15 +2,14 @@
 #include <map>
 #include "PartialModelSelection.hpp"
 #include <stdbool.h>
+#include <vector>
+
 
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
 ModelSelectionMap::ModelSelectionMap() : maxModels(ModelCapMessages::STD_MODEL_CAP)
-{
-   //Init head of minimizeResult LL
-   //resultList->head = NULL;
-}
+{}
 
 //Initialization constructor for a ModelSelectionMap with a cap.
 ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap) {}
@@ -68,8 +67,7 @@ Precondition: for correct operation, the passed penalty is a valid
 Postcondition: in correct operation, computes what model is optimal
    for the passed penalty, and gives a boolean signifying its accuracy.
    Both these values are passed back as a struct.
-Exceptions: correctly and appropriately (without program failure)
-    responds to and reports incorrectly formatted op code data,
+Exceptions: none?
 Note: none
 */
 double ModelSelectionMap::getNewPenalty()
@@ -94,8 +92,7 @@ Precondition: for correct operation, the passed penalty is a valid
 Postcondition: in correct operation, computes what model is optimal
    for the passed penalty, and gives a boolean signifying its accuracy.
    Both these values are passed back as a struct.
-Exceptions: correctly and appropriately (without program failure)
-    responds to and reports incorrectly formatted op code data,
+Exceptions: none?
 Note: none
 */
 MinimizeResult ModelSelectionMap::minimize(double penalty)
@@ -120,14 +117,23 @@ Algorithm:
 Precondition: for correct operation, the passed penalty is a valid
    float value.
 Postcondition:
-Exceptions: correctly and appropriately (without program failure)
-    responds to and reports incorrectly formatted op code data,
+Exceptions: none yet. 
 Note: none
 */
-std::pair<int, int> solver(double penalty)
+std::pair<int, int> ModelSelectionMap::solver(double penalty)
 {
    auto tempPair = std::make_pair<int, bool>(4, true);
    std::cout << "Testing solver!\n";
    //Temporary stub return
    return tempPair;
+}
+
+
+
+
+//Basic getters/setters
+int ModelSelectionMap::getModelCount()
+{
+ return modelCount;
+
 }
