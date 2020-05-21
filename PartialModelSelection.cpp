@@ -11,7 +11,7 @@
 ModelSelectionMap::ModelSelectionMap() : maxModels(ModelCapMessages::STD_MODEL_CAP)
 {}
 
-//Initialization constructor for a ModelSelectionMap with a cap.
+//Initialization constructor for a ModelSelectionMap with passed cap value.
 ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap) {}
 
 /*
@@ -29,11 +29,14 @@ void ModelSelectionMap::insert(double penalty, Model currentModel)
 {
    //Insert into our TestedPair map in the ModelSelectionMap
    TestedPair newTestedPair = TestedPair(penalty, currentModel);
+   //Insert into the MinimizeResult Vector to update ranges to test next.
+
+   //MinimizeResult newResult = MinimizeResult(penalty, currentModel);
    TestedPairs.insert(newTestedPair);
    modelCount++;
 
    //Insert a minimized result based on what we know.
-
+   
    //Update the resultList to reflect the current path.
 }
 
@@ -128,8 +131,28 @@ std::pair<int, int> ModelSelectionMap::solver(double penalty)
    return tempPair;
 }
 
+MinimizeResult::MinimizeResult()
+{}
 
 
+
+//MinimizeResult Methods
+MinimizeResult::MinimizeResult(std::pair<double, double> inputRange, int model_size)
+   {
+    
+    penaltyRange = inputRange;
+    //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
+    if(inputRange.first == inputRange.second)
+       {
+        certain = true;
+
+       }
+   }
+
+
+
+//Tie a model size and pairing to a penalty range.
+    if(inputRange.first)
 
 //Basic getters/setters
 int ModelSelectionMap::getModelCount()
@@ -137,3 +160,4 @@ int ModelSelectionMap::getModelCount()
  return modelCount;
 
 }
+

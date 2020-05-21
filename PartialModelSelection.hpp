@@ -19,9 +19,12 @@ struct Model {
 
 //Class to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
+    MinimizeResult();
+    MinimizeResult(std::pair<double,double> inputRange, int model_size );
+    bool checkRange(std::pair<double,double> inputRange);
     int model_size = 0;
     bool certain = false;
-    std::pair<double,double> range;
+    std::pair<double,double> penaltyRange;
 };
 
 
@@ -53,6 +56,7 @@ public:
     std::pair<int, int> solver(double penalty);
 
     MinimizeResult minimize(double penalty);
+
     
     //Wrapper struct to contain a list of MinimizeResults
     std::vector<MinimizeResult> minResultVec; 
