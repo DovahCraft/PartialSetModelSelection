@@ -21,7 +21,7 @@ struct Model {
 struct MinimizeResult {
     MinimizeResult();
     MinimizeResult(std::pair<double,double> inputRange, int model_size );
-    bool checkRange(std::pair<double,double> inputRange);
+    bool isValidRange(std::pair<double,double> inputRange);
     int model_size = 0;
     bool certain = false;
     std::pair<double,double> penaltyRange;
@@ -47,7 +47,7 @@ public:
 
     void insert(Model currentModel);
 
-    void addResult(MinimizeResult *toAdd);
+    void addResult(MinimizeResult toAdd);
 
     double getNewPenalty();
 

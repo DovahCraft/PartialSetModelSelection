@@ -2,6 +2,7 @@
 #include <map>
 #include "PartialModelSelection.hpp"
 #include <stdbool.h>
+#include <stdexcept>
 #include <vector>
 
 
@@ -100,17 +101,18 @@ Note: none
 */
 MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
+   //Temporary stub result to return and compile.
    MinimizeResult queryResult;
-   //if(!resultList)
+   
 
    //Temporary stub return
    return queryResult;
 }
 
 //Add minimize result function for LL?
-void ModelSelectionMap::addResult(MinimizeResult *toAdd)
+void ModelSelectionMap::addResult(MinimizeResult toAdd)
 {
-   std::cout << "Adding MinimizeResult to list\n";
+ std::cout << "Adding result to vector\n";
 }
 
 /*
@@ -131,28 +133,41 @@ std::pair<int, int> ModelSelectionMap::solver(double penalty)
    return tempPair;
 }
 
+
+//MinimizeResult Methods
 MinimizeResult::MinimizeResult()
 {}
 
-
-
-//MinimizeResult Methods
 MinimizeResult::MinimizeResult(std::pair<double, double> inputRange, int model_size)
    {
-    
-    penaltyRange = inputRange;
-    //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
-    if(inputRange.first == inputRange.second)
-       {
-        certain = true;
+       if(!isValidRange(inputRange))
+          {
+           throw "Invalid range inputted to MinimizeResult creation.";
+          }
 
-       }
+       else
+          {
+           //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
+           if(inputRange.first == inputRange.second)
+              {
+               certain = true;
+              }
+
+          }
+       
+      
    }
 
 
-
-//Tie a model size and pairing to a penalty range.
-    if(inputRange.first)
+bool MinimizeResult::isValidRange(std::pair<double,double> inputRange)
+   {
+    //Tie a model size and pairing to a penalty range.
+    if(inputRange.first < 0 || inputRange.first > inputRange.second)
+       {
+        return false;   
+       }
+    return true;
+   }
 
 //Basic getters/setters
 int ModelSelectionMap::getModelCount()
