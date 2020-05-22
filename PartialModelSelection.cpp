@@ -31,8 +31,9 @@ void ModelSelectionMap::insert(double penalty, Model currentModel)
    //Insert into our TestedPair map in the ModelSelectionMap
    TestedPair newTestedPair = TestedPair(penalty, currentModel);
    //Insert into the MinimizeResult Vector to update ranges to test next.
-
-   //MinimizeResult newResult = MinimizeResult(penalty, currentModel);
+   std::pair <double,double> inputRange; 
+   inputRange = std::make_pair(penalty, penalty);
+   MinimizeResult newResult = MinimizeResult(inputRange, currentModel.model_size);
    TestedPairs.insert(newTestedPair);
    modelCount++;
 
