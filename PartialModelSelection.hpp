@@ -22,9 +22,10 @@ struct MinimizeResult {
     MinimizeResult();
     MinimizeResult(std::pair<double,double> inputRange, int model_size );
     bool isValidRange(std::pair<double,double> inputRange);
-    int model_size = 0;
+    int model_size = 0; //Not using currently, fulfilled by the modelPair
     bool certain = false;
-    std::pair<double,double> penaltyRange;
+    //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
+    std::pair<double, double> optimalModels;
 };
 
 

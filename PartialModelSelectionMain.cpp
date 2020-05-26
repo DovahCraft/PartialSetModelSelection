@@ -2,6 +2,27 @@
 #include <map>
 #include <gtest/gtest.h>
 #include "PartialModelSelection.hpp"
+#include <math.h>
+
+
+//Testing method to test minimize method (minimizeResults).   
+void testMinimize(MinimizeResult testResult, double lowModelSize, double highModelSize){
+   //Check if the expected range of values is correct.
+   EXPECT_EQ(lowModelSize, testResult.modelPair.first);
+   EXPECT_EQ(highModelSize, testResult.modelPair.second);
+
+
+   std::cout<<"Running test for Minimize\n";      
+}
+
+//Testing method to test getNextPen
+void testGetPen(ModelSelectionMap testMap, double expectedQuery ){
+   //Run getNextPen Asserts.
+      std::cout<<"Running test for getNextPen\n";
+
+
+}
+
 
 //Tests to ensure correct model formation and associated logic.
 TEST(ModelTests, modelTest)
@@ -33,7 +54,7 @@ TEST(InsertTests, testInsertLeft)
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
 
-    testGetPen(testMap); //Iterator, getNewPenalty iterator?
+    testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query. 
     testMap.insert(4.0, model1Seg); 
     testMinimize(testMap.minimize(5.0), 1, 1);
     //Mimize Query here
@@ -57,7 +78,7 @@ TEST(InsertTests, testInsertMiddle)
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
     testMap.insert(4.0, model1Seg);
-    testMinimize(testMap.minimize(4.0), 1);
+    testMinimize(testMap.minimize(4.0), 1, 1);
     
     testMap.insert(model2Seg); //?????? Never selected so how should I test this? Maybe insert 3 segments after and test the update?
     //Test for path here? Form link list?
@@ -83,17 +104,7 @@ TEST(InsertTests, testInsertRight)
     ASSERT_EQ(testMap.modelCount, 3);
    }
 
-//Testing method to test minimize method (minimizeResults).   
-void testMinimize(MinimizeResult testResult, double startPen, double endPen){
-   //Run minimize Assert(s).      
-}
 
-//Testing method to test getNextPen
-void testGetPen(ModelSelectionMap testMap ){
-   //Run getNextPen Asserts.
-
-
-}
 
 
 //Driver function for google test

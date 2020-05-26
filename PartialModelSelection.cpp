@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdexcept>
 #include <vector>
+#include <math.h>
 
 
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
@@ -31,10 +32,9 @@ void ModelSelectionMap::insert(double penalty, Model currentModel)
    //Insert into our TestedPair map in the ModelSelectionMap
    TestedPair newTestedPair = TestedPair(penalty, currentModel);
    //Insert into the MinimizeResult Vector to update ranges to test next.
-   std::pair <double,double> inputRange; 
-   inputRange = std::make_pair(penalty, penalty);
-   MinimizeResult newResult = MinimizeResult(inputRange, currentModel.model_size);
-   TestedPairs.insert(newTestedPair);
+   //std::pair <double,double> modelRange; 
+   //modelRange = std::make_pair(penalty, penalty);
+   //TestedPairs.insert(newTestedPair);
    modelCount++;
 
    //Insert a minimized result based on what we know.
@@ -75,11 +75,12 @@ Postcondition: in correct operation, computes what model is optimal
 Exceptions: none?
 Note: none
 */
-double ModelSelectionMap::getNewPenalty()
+double ModelSelectionMap::getNewPenaltyList()
 {
 
-   MinimizeResult *currentResult; // = resultList->head;
+   MinimizeResult *currentResult;
    //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
+   //Use loop (for?) and an iterator of the map. Start at the head. 
    //while(currentResult != NULL) {
    //Traverse and check for useful penalty ranges to query.
 
@@ -103,7 +104,7 @@ Note: none
 MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
    //Temporary stub result to return and compile.
-   MinimizeResult queryResult;
+   MinimizeResult queryResult = MinimizeResult();
    
 
    //Temporary stub return
@@ -115,6 +116,50 @@ void ModelSelectionMap::addResult(MinimizeResult toAdd)
 {
  std::cout << "Adding result to vector\n";
 }
+
+
+
+//MinimizeResult Methods
+MinimizeResult::MinimizeResult(){
+ //Initialize a default result, which has 1 selected, but unsure.
+ optimalModels.first = 1;
+ optimalModels.second = INFINITY;
+ certain = false;
+
+}
+
+MinimizeResult::MinimizeResult(std::pair<double, double> modelRange, int model_size)
+   {
+       if(!isValidRange(modelRange))
+          {
+           throw "Invalid range inputted to MinimizeResult creation.";
+          }
+
+       else
+          {
+           //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
+           if(modelRange.first == modelRange.second)
+              {
+               certain = true;
+              }
+            modelRange.first
+
+          }
+       
+      
+   }
+
+
+bool MinimizeResult::isValidRange(std::pair<double,double> modelRange)
+   {
+    //Tie a model size and pairing to a penalty range.
+    if(modelRange.first < 0 || modelRange.first > modelRange.second)
+       {
+        return false;   
+       }
+    return true;
+   }
+
 
 /*
 Function name: Solver
@@ -135,40 +180,6 @@ std::pair<int, int> ModelSelectionMap::solver(double penalty)
 }
 
 
-//MinimizeResult Methods
-MinimizeResult::MinimizeResult()
-{}
-
-MinimizeResult::MinimizeResult(std::pair<double, double> inputRange, int model_size)
-   {
-       if(!isValidRange(inputRange))
-          {
-           throw "Invalid range inputted to MinimizeResult creation.";
-          }
-
-       else
-          {
-           //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
-           if(inputRange.first == inputRange.second)
-              {
-               certain = true;
-              }
-
-          }
-       
-      
-   }
-
-
-bool MinimizeResult::isValidRange(std::pair<double,double> inputRange)
-   {
-    //Tie a model size and pairing to a penalty range.
-    if(inputRange.first < 0 || inputRange.first > inputRange.second)
-       {
-        return false;   
-       }
-    return true;
-   }
 
 //Basic getters/setters
 int ModelSelectionMap::getModelCount()
