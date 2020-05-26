@@ -49,7 +49,7 @@ public:
 
     void addResult(MinimizeResult toAdd);
 
-    double getNewPenalty();
+    double getNewPenaltyList();
 
     int getModelCount();
     

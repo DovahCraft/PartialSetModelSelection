@@ -32,9 +32,20 @@ TEST(InsertTests, testInsertLeft)
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
-    testMap.insert(4.0, model1Seg);
+
+    testGetPen(testMap); //Iterator, getNewPenalty iterator?
+    testMap.insert(4.0, model1Seg); 
+    testMinimize(testMap.minimize(5.0), 1, 1);
+    //Mimize Query here
+    testMinimize(testMap.minimize(4.0), 1, 1);
+    testMinimize(testMap.minimize(3.0), 1, INFINITY);
     testMap.insert(0.0, model2Seg);
-    ASSERT_EQ(testMap.getModelCount(), 2);
+    testMinimize(testMap.minimize(5.0), 1, 1);
+    testMinimize(testMap.minimize(4.0), 1, 1);
+    //testMinimize(testMap.minimize(3.0), 2, true);
+    testMinimize(testMap.minimize(2.0), 2, 2); 
+    testMinimize(testMap.minimize(1.0), 2, 2);
+
    }
 
 
@@ -46,9 +57,13 @@ TEST(InsertTests, testInsertMiddle)
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
     testMap.insert(4.0, model1Seg);
-    testMap.insert(3.0, model2Seg); //?????? Never selected so how should I test this? Maybe insert 3 segments after and test the update?
+    testMinimize(testMap.minimize(4.0), 1);
+    
+    testMap.insert(model2Seg); //?????? Never selected so how should I test this? Maybe insert 3 segments after and test the update?
     //Test for path here? Form link list?
     testMap.insert(1.0, model3Seg); //Add model with 3 segments that is found to be more optimal
+    testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
+    testMap.insert(4.0, model1Seg);
     //Should I remove the 2 segment model from the data structure now?
     ASSERT_EQ(testMap.modelCount, 3);
    }
@@ -67,8 +82,18 @@ TEST(InsertTests, testInsertRight)
     testMap.insert(1.0, model3Seg);
     ASSERT_EQ(testMap.modelCount, 3);
    }
-   
 
+//Testing method to test minimize method (minimizeResults).   
+void testMinimize(MinimizeResult testResult, double startPen, double endPen){
+   //Run minimize Assert(s).      
+}
+
+//Testing method to test getNextPen
+void testGetPen(ModelSelectionMap testMap ){
+   //Run getNextPen Asserts.
+
+
+}
 
 
 //Driver function for google test
@@ -77,3 +102,5 @@ int main (int argc, char* argv[]){
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
+
