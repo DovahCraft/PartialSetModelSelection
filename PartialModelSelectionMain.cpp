@@ -84,13 +84,11 @@ TEST(InsertTests, testInsertMiddle)
     testMap.insert(4.0, model1Seg);
     testMinimize(testMap.minimize(4.0), 1, 1);
     
-    testMap.insert(model2Seg); //?????? Never selected so how should I test this? Maybe insert 3 segments after and test the update?
-    //Test for path here? Form link list?
+    testMap.insert(model2Seg);
+    testMinimize(testMap.minimize(0.0), 1, 2); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
     testMap.insert(1.0, model3Seg); //Add model with 3 segments that is found to be more optimal
-    testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
-    testMap.insert(4.0, model1Seg);
-    //Should I remove the 2 segment model from the data structure now?
-    ASSERT_EQ(testMap.modelCount, 3);
+    testMinimize(testMap.minimize(2.0), 1, 3);
+    //testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
    }
 
 
@@ -106,7 +104,6 @@ TEST(InsertTests, testInsertRight)
     testMap.insert(2.5, model2Seg);
     testMap.insert(1.0, model3Seg);
     testGetPen(testMap, 0.0);
-    ASSERT_EQ(testMap.modelCount, 3);
    }
 
 

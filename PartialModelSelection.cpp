@@ -79,7 +79,7 @@ double ModelSelectionMap::getNewPenaltyList()
   //If the map of tested pairs is empty, query penalty 0 first.  
   if(testedPairs.empty())
      {
-       return EMPTY_MAP_QUERY;
+       return EMPTY_MAP_QUERY; //?
      }
 
   //TestedPair smallestPair = testedPairs.begin()->first;
@@ -110,7 +110,16 @@ MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
    //Temporary stub result to return and compile.
    MinimizeResult queryResult = MinimizeResult();
+   std::map<double, Model>::iterator indexNode; 
+   indexNode = testedPairs.find(penalty);
+
+   //If we find the penalty in the map, then we have a certain query result
+   if(indexNode != testedPairs.end())
+      {
+       queryResult = MinimizeResult(std::make_pair(penalty,penalty),indexNode->second.model_size);  
+      } 
    
+    
 
    //Temporary stub return
    return queryResult;
