@@ -4,9 +4,10 @@
 #include <vector>
 
 
-enum class ModelCapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
+enum class ModelMapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
 
-
+const double EMPTY_MAP_QUERY = 0;
+const double EMPTY_MAP_ERR = -99999;
 
 struct Model {
     Model(int model_size, double loss) : model_size(model_size), loss(loss) {}
@@ -42,7 +43,7 @@ public:
     //Method headers
     ModelSelectionMap();
 
-    ModelSelectionMap(ModelCapMessages cap);
+    ModelSelectionMap(ModelMapMessages cap);
 
     void insert(double penalty, Model currentModel);
 
@@ -62,8 +63,8 @@ public:
     //Wrapper struct to contain a list of MinimizeResults
     std::vector<MinimizeResult> minResultVec; 
 
-    ModelCapMessages maxModels = ModelCapMessages::NO_MODEL_CAP;
-    std::map<double, Model> TestedPairs;
+    ModelMapMessages maxModels = ModelMapMessages::NO_MODEL_CAP;
+    std::map<double, Model> testedPairs;
     int modelCount = 0;
 };
 

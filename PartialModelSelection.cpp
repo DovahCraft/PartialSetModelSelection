@@ -10,11 +10,11 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
-ModelSelectionMap::ModelSelectionMap() : maxModels(ModelCapMessages::STD_MODEL_CAP)
+ModelSelectionMap::ModelSelectionMap() : maxModels(ModelMapMessages::STD_MODEL_CAP)
 {}
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
-ModelSelectionMap::ModelSelectionMap(ModelCapMessages cap) : maxModels(cap) {}
+ModelSelectionMap::ModelSelectionMap(ModelMapMessages cap) : maxModels(cap) {}
 
 /*
 Function name: insert
@@ -32,9 +32,9 @@ void ModelSelectionMap::insert(double penalty, Model currentModel)
    //Insert into our TestedPair map in the ModelSelectionMap
    TestedPair newTestedPair = TestedPair(penalty, currentModel);
    //Insert into the MinimizeResult Vector to update ranges to test next.
-   //std::pair <double,double> modelRange; 
-   //modelRange = std::make_pair(penalty, penalty);
-   //TestedPairs.insert(newTestedPair);
+   //std::pair <double,double> optimalModels; 
+   //optimalModels = std::make_pair(penalty, penalty);
+   testedPairs.insert(newTestedPair);
    modelCount++;
 
    //Insert a minimized result based on what we know.
@@ -57,16 +57,14 @@ Note: none
 void ModelSelectionMap::insert(Model currentModel)
 {
    //Runs solver for penalty to insert
-   std::cout << "Adding model without penalty \n";
+   //std::cout << "Adding model without penalty \n";
 
    //Insert pair with created TestedPair from solver.
 }
 
 /*
 Function name: getNewPenalty
-Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
-   (the k value corresponding to the selected model, a boolean showing its accuracy)
-   Boolean values consist of: F for unsure, and T for a sure pairing.
+Algorithm: 
 Precondition: for correct operation, the passed penalty is a valid
    float value.
 Postcondition: in correct operation, computes what model is optimal
@@ -78,14 +76,21 @@ Note: none
 double ModelSelectionMap::getNewPenaltyList()
 {
 
-   MinimizeResult *currentResult;
-   //Search through the minimizeResult list, seeing where we have "certain" values to query next with solver.
-   //Use loop (for?) and an iterator of the map. Start at the head. 
-   //while(currentResult != NULL) {
-   //Traverse and check for useful penalty ranges to query.
+  //If the map of tested pairs is empty, query penalty 0 first.  
+  if(testedPairs.empty())
+     {
+       return EMPTY_MAP_QUERY;
+     }
 
-   //}
-   return 0;
+  //TestedPair smallestPair = testedPairs.begin()->first;
+  
+  for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
+      std::cout << it->first << " => " << it->second.model_size << '\n';   
+      
+  return 0;
+     
+    
+  
 }
 
 /*
@@ -128,9 +133,10 @@ MinimizeResult::MinimizeResult(){
 
 }
 
-MinimizeResult::MinimizeResult(std::pair<double, double> modelRange, int model_size)
+MinimizeResult::MinimizeResult(std::pair<double, double> inputModels, int model_size)
    {
-       if(!isValidRange(modelRange))
+       //Check for a valid range of models. 
+       if(!isValidRange(inputModels))
           {
            throw "Invalid range inputted to MinimizeResult creation.";
           }
@@ -138,11 +144,12 @@ MinimizeResult::MinimizeResult(std::pair<double, double> modelRange, int model_s
        else
           {
            //Check if our penaltyRange is a solved point (Where the beginning and end are identical.)
-           if(modelRange.first == modelRange.second)
+           if(optimalModels.first == optimalModels.second)
               {
                certain = true;
               }
-            modelRange.first
+            optimalModels.first = inputModels.first;
+            optimalModels.second = inputModels.second;
 
           }
        
@@ -150,10 +157,10 @@ MinimizeResult::MinimizeResult(std::pair<double, double> modelRange, int model_s
    }
 
 
-bool MinimizeResult::isValidRange(std::pair<double,double> modelRange)
+bool MinimizeResult::isValidRange(std::pair<double,double> optimalModels)
    {
     //Tie a model size and pairing to a penalty range.
-    if(modelRange.first < 0 || modelRange.first > modelRange.second)
+    if(optimalModels.first < 0 || optimalModels.first < optimalModels.second)
        {
         return false;   
        }

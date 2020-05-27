@@ -3,24 +3,26 @@
 #include <gtest/gtest.h>
 #include "PartialModelSelection.hpp"
 #include <math.h>
+#define GTEST_MINCOUT std::cerr << "[ MINIMIZE ] [INFO] "
+#define GTEST_GETPENCOUT std::cerr << "[ GETPEN ] [INFO] "
+
 
 
 //Testing method to test minimize method (minimizeResults).   
 void testMinimize(MinimizeResult testResult, double lowModelSize, double highModelSize){
+   //Log the test being run.
+   GTEST_MINCOUT << "Running test for minimize\n\n";
    //Check if the expected range of values is correct.
-   EXPECT_EQ(lowModelSize, testResult.modelPair.first);
-   EXPECT_EQ(highModelSize, testResult.modelPair.second);
-
-
-   std::cout<<"Running test for Minimize\n";      
+   EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
+   EXPECT_EQ(highModelSize, testResult.optimalModels.second) << "\nMinimize second parameter is different from expected.\n";      
 }
 
 //Testing method to test getNextPen
-void testGetPen(ModelSelectionMap testMap, double expectedQuery ){
-   //Run getNextPen Asserts.
-      std::cout<<"Running test for getNextPen\n";
+void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
+    GTEST_GETPENCOUT << "Running test for getNextPenalty\n\n";
 
-
+    EXPECT_EQ(testMap.getNewPenaltyList(), expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
+    
 }
 
 
@@ -56,6 +58,8 @@ TEST(InsertTests, testInsertLeft)
 
     testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query. 
     testMap.insert(4.0, model1Seg); 
+    //Test getNextPenalty
+    testGetPen(testMap, 0.0);
     testMinimize(testMap.minimize(5.0), 1, 1);
     //Mimize Query here
     testMinimize(testMap.minimize(4.0), 1, 1);
@@ -101,6 +105,7 @@ TEST(InsertTests, testInsertRight)
     testMap.insert(4.0, model1Seg);
     testMap.insert(2.5, model2Seg);
     testMap.insert(1.0, model3Seg);
+    testGetPen(testMap, 0.0);
     ASSERT_EQ(testMap.modelCount, 3);
    }
 
