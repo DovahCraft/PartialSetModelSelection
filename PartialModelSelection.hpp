@@ -8,6 +8,7 @@ enum class ModelMapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
 
 const double EMPTY_MAP_QUERY = 0;
 const double EMPTY_MAP_ERR = -99999;
+const double DEFAULT_PENALTY = -9999;
 
 struct Model {
     Model(int model_size, double loss) : model_size(model_size), loss(loss) {}
@@ -26,6 +27,7 @@ struct MinimizeResult {
     int model_size = 0; //Not using currently, fulfilled by the modelPair
     bool certain = false;
     //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
+    //TODO: Should be an int pair, make sure this change doesnt break things. MinimizeResult test should reflect this change. Might leave it as is..
     std::pair<double, double> optimalModels;
 };
 

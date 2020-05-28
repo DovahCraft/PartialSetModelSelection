@@ -31,14 +31,14 @@ void ModelSelectionMap::insert(double penalty, Model currentModel)
 {
    //Insert into our TestedPair map in the ModelSelectionMap
    TestedPair newTestedPair = TestedPair(penalty, currentModel);
+   testedPairs.insert(newTestedPair);
+   modelCount++;
    //Insert into the MinimizeResult Vector to update ranges to test next.
    //std::pair <double,double> optimalModels; 
    //optimalModels = std::make_pair(penalty, penalty);
-   testedPairs.insert(newTestedPair);
-   modelCount++;
-
-   //Insert a minimized result based on what we know.
    
+
+      
    //Update the resultList to reflect the current path.
 }
 
@@ -108,15 +108,24 @@ Note: none
 */
 MinimizeResult ModelSelectionMap::minimize(double penalty)
 {
-   //Temporary stub result to return and compile.
+   //Default result if we do not find a matching penalty.
    MinimizeResult queryResult = MinimizeResult();
    std::map<double, Model>::iterator indexNode; 
    indexNode = testedPairs.find(penalty);
 
+   //If we have no inserted model/penalty pairs, return the default result from 0 to inf.
+   if(testedPairs.empty()){
+    std::cout << "Map is empty, returning default min result\n";
+    return queryResult;
+   }
+
    //If we find the penalty in the map, then we have a certain query result
    if(indexNode != testedPairs.end())
       {
-       queryResult = MinimizeResult(std::make_pair(penalty,penalty),indexNode->second.model_size);  
+       //ISSUE: Using the penalty value here instead of model sizes. 
+       queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size),indexNode->second.model_size);  
+       return queryResult;
+
       } 
    
     
@@ -134,9 +143,11 @@ void ModelSelectionMap::addResult(MinimizeResult toAdd)
 
 
 //MinimizeResult Methods
+
+//MinimizeResult default constructor to be used when no models have been inserted. 
 MinimizeResult::MinimizeResult(){
  //Initialize a default result, which has 1 selected, but unsure.
- optimalModels.first = 1;
+ optimalModels.first = -1;
  optimalModels.second = INFINITY;
  certain = false;
 
