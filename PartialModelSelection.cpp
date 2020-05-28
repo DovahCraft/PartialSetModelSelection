@@ -106,8 +106,7 @@ Postcondition: in correct operation, computes what model is optimal
 Exceptions: none?
 Note: none
 */
-MinimizeResult ModelSelectionMap::minimize(double penalty)
-{
+MinimizeResult ModelSelectionMap::minimize(double penalty){
    //Default result if we do not find a matching penalty.
    MinimizeResult queryResult = MinimizeResult();
    std::map<double, Model>::iterator indexNode; 
@@ -120,13 +119,12 @@ MinimizeResult ModelSelectionMap::minimize(double penalty)
    }
 
    //If we find the penalty in the map, then we have a certain query result
-   if(indexNode != testedPairs.end())
-      {
+   if(indexNode != testedPairs.end()){
        //ISSUE: Using the penalty value here instead of model sizes. 
        queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size),indexNode->second.model_size);  
        return queryResult;
 
-      } 
+   } 
    
     
 
@@ -134,14 +132,16 @@ MinimizeResult ModelSelectionMap::minimize(double penalty)
    return queryResult;
 }
 
-//Add minimize result function for LL?
-void ModelSelectionMap::addResult(MinimizeResult toAdd)
-{
- std::cout << "Adding result to vector\n";
+
+
+//Method to display the currently stored pairs in the map. 
+void ModelSelectionMap::displayMap() {
+   
+  for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
+      std::cout << it->first << " => " << it->second.model_size << '\n';
+
 }
-
-
-
+  
 //MinimizeResult Methods
 
 //MinimizeResult default constructor to be used when no models have been inserted. 

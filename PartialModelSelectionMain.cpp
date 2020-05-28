@@ -124,13 +124,17 @@ TEST(InsertTests, testInsertRightPanel)
 TEST(InsertTests, insertSameModelSize)
    {
     ModelSelectionMap testMap = ModelSelectionMap();
-    Model model1Seg = Model(1, 7.0);
-    Model model2Seg = Model(2, 4.0); 
-    Model model3Seg = Model(3, 2.0);
-    testMap.insert(4.0, model1Seg);
-    testMap.insert(2.5, model2Seg);
-    testMap.insert(1.0, model3Seg);
-    testGetPen(testMap, 0.0);
+    Model model5Seg = Model(5, 1.0);
+    testMap.insert(1.0, model5Seg);
+    testMinimize(testMap.minimize(1.0), 5, 5);
+    testMap.insert(2.0, model5Seg);
+    testMinimize(testMap.minimize(2.0), 5, 5);
+    testMap.insert(3.0, model5Seg);
+    testMinimize(testMap.minimize(3.0), 5, 5);
+    
+    //This test passes under the current insert implementation, but the memory result is not constant. 
+    testMap.displayMap(); 
+
    }
 
 

@@ -51,11 +51,11 @@ public:
 
     void insert(Model currentModel);
 
-    void addResult(MinimizeResult toAdd);
-
     double getNewPenaltyList();
 
     int getModelCount();
+
+    void displayMap();
     
     std::pair<int, int> solver(double penalty);
 
