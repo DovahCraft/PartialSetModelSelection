@@ -78,9 +78,8 @@ double ModelSelectionMap::getNewPenaltyList()
 
 MinimizeResult ModelSelectionMap::minimize(double penalty){
    //Default result if we do not find a matching penalty.
-   MinimizeResult queryResult = MinimizeResult();
-   std::map<double, Model>::iterator indexNode; 
-   indexNode = testedPairs.find(penalty);
+   MinimizeResult queryResult = MinimizeResult(); 
+   auto indexNode = testedPairs.find(penalty);
 
    //If we have no inserted model/penalty pairs, return the default result from 0 to inf.
    if(testedPairs.empty()){
@@ -111,8 +110,10 @@ void ModelSelectionMap::displayMap() {
       std::cout << it->first << " => " << it->second.model_size << '\n';
 
 }
-  
-//MinimizeResult Methods
+
+
+
+//MinimizeResult Method Implementations
 
 //MinimizeResult default constructor to be used when no models have been inserted. 
 MinimizeResult::MinimizeResult(){
@@ -128,7 +129,7 @@ MinimizeResult::MinimizeResult(std::pair<double, double> inputModels, int model_
        //Check for a valid range of models. 
        if(!isValidRange(inputModels))
           {
-           throw "Invalid range inputted to MinimizeResult creation.";
+           throw std::out_of_range("Invalid range inputted to MinimizeResult creation.");
           }
 
        else
