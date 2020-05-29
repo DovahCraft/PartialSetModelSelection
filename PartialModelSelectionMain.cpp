@@ -1,8 +1,13 @@
+//System Includes and Libraries
 #include <iostream>
 #include <map>
 #include <gtest/gtest.h>
-#include "PartialModelSelection.hpp"
 #include <math.h>
+
+//Local Includes
+#include "PartialModelSelection.hpp"
+
+//Macros to display test info in gtest format. 
 #define GTEST_MINCOUT std::cerr << "[ MINIMIZE ] [INFO] "
 #define GTEST_GETPENCOUT std::cerr << "[ GETPEN ] [INFO] "
 

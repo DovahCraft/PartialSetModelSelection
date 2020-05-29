@@ -47,9 +47,34 @@ public:
 
     ModelSelectionMap(ModelMapMessages cap);
 
+
+    /*
+     Function name(s): insert
+     Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
+     Precondition: The model is formatted correctly and the
+        penalty is a valid double.
+     Postcondition: Inserts the model into the data structure.
+        No return type, maybe return success code eventually.
+     Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+     Note: none
+    */
     void insert(double penalty, Model currentModel);
 
+    /*
+    Function name: insert (overloaded)
+    Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling
+    binary segmentation and other constrained style solvers. 
+    Precondition: The model is formatted correctly and the
+    penalty is a valid double.
+    Postcondition: Inserts the model into the data structure.
+    No return type, maybe return success code eventually.
+    Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+    Note: none
+    */
     void insert(Model currentModel);
+
 
     double getNewPenaltyList();
 
@@ -57,8 +82,32 @@ public:
 
     void displayMap();
     
+    /*
+    Function name: Solver
+    Algorithm:
+
+    Precondition: for correct operation, the passed penalty is a valid
+    float value.
+    Postcondition:
+    Exceptions: none yet. 
+    Note: none
+    */
     std::pair<int, int> solver(double penalty);
 
+
+    /*
+    Function name: Minimize
+    Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
+    (the k value corresponding to the selected model, a boolean showing its accuracy)
+    Boolean values consist of: F for unsure, and T for a sure pairing.
+    Precondition: for correct operation, the passed penalty is a valid
+    float value.
+    Postcondition: in correct operation, computes what model is optimal
+    for the passed penalty, and gives a boolean signifying its accuracy.
+    Both these values are passed back as a struct.
+    Exceptions: none?
+    Note: none
+    */
     MinimizeResult minimize(double penalty);
 
     
