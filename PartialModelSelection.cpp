@@ -89,15 +89,18 @@ MinimizeResult ModelSelectionMap::minimize(double penalty){
 
    //If we find the penalty in the map, then we have a certain query result
    if(indexNode != testedPairs.end()){
-       //ISSUE: Using the penalty value here instead of model sizes. 
-       queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size),indexNode->second.model_size);  
        return queryResult;
 
-   } 
-   
-    
+   }
 
-   //Temporary stub return
+   else {
+      //Otherwise, we need to find a penalty result that is closest to the queried penalty
+      indexNode = testedPairs.lower_bound(penalty);
+   }
+
+   
+   queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size),indexNode->second.model_size);
+   
    return queryResult;
 }
 
