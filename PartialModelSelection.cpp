@@ -90,7 +90,6 @@ MinimizeResult ModelSelectionMap::minimize(double penalty){
    //If we find the penalty in the map, then we have a certain query result
    if(indexNode != testedPairs.end()){
        return queryResult;
-
    }
 
    else {
@@ -132,7 +131,7 @@ MinimizeResult::MinimizeResult(std::pair<double, double> inputModels, int model_
        //Check for a valid range of models. 
        if(!isValidRange(inputModels))
           {
-           throw std::out_of_range("Invalid range inputted to MinimizeResult creation.");
+           throw std::out_of_range("Invalid range inputted to MinimizeResult creation."); 
           }
 
        else

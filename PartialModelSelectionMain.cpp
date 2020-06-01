@@ -14,9 +14,10 @@
 
 
 //Testing method to test minimize method (minimizeResults).   
-void testMinimize(MinimizeResult testResult, double lowModelSize, double highModelSize){
+void testMinimize(MinimizeResult testResult, double lowModelSize, double highModelSize, double penaltyQuery){
    //Log the test being run.
-   GTEST_MINCOUT << "Running test for minimize with: " << "low: " << lowModelSize << " hi: " << highModelSize << "\n\n";
+   GTEST_MINCOUT << "Running test for minimize with: " << "low: " << lowModelSize << 
+                     " hi: " << highModelSize << " penalty: " << penaltyQuery << "\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(highModelSize, testResult.optimalModels.second) << "\nMinimize second parameter is different from expected.\n";      
@@ -66,22 +67,22 @@ TEST(ModelTests, modelLossTestPos){
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
 
-    testMinimize(testMap.minimize(5.0), -1, INFINITY);
+    testMinimize(testMap.minimize(5.0), -1, INFINITY, 5.0);
    
     testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query. 
     testMap.insert(4.0, model1Seg); 
     //Test getNextPenalty
     testGetPen(testMap, 0.0);
-    testMinimize(testMap.minimize(5.0), 1, 1);
+    testMinimize(testMap.minimize(5.0), 1, 1, 5.0);
     //Mimize Query here
-    testMinimize(testMap.minimize(4.0), 1, 1);
-    testMinimize(testMap.minimize(3.0), 1, INFINITY);
+    testMinimize(testMap.minimize(4.0), 1, 1, 4.0);
+    testMinimize(testMap.minimize(3.0), 1, INFINITY, 3.0);
     testMap.insert(0.0, model2Seg);
-    testMinimize(testMap.minimize(5.0), 1, 1);
-    testMinimize(testMap.minimize(4.0), 1, 1);
+    testMinimize(testMap.minimize(5.0), 1, 1, 5.0);
+    testMinimize(testMap.minimize(4.0), 1, 1, 4.0);
     //testMinimize(testMap.minimize(3.0), 2, true);
-    testMinimize(testMap.minimize(2.0), 2, 2); 
-    testMinimize(testMap.minimize(1.0), 2, 2);
+    testMinimize(testMap.minimize(2.0), 2, 2, 2.0); 
+    testMinimize(testMap.minimize(1.0), 2, 2, 1.0);
 
    }
 
@@ -93,12 +94,12 @@ TEST(InsertTests, testInsertMiddlePanel){
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
     testMap.insert(4.0, model1Seg);
-    testMinimize(testMap.minimize(4.0), 1, 1);
+    testMinimize(testMap.minimize(4.0), 1, 1, 4.0);
     
     testMap.insert(model2Seg);
-    testMinimize(testMap.minimize(0.0), 1, 2); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
+    testMinimize(testMap.minimize(0.0), 1, 2, 0.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
     testMap.insert(1.0, model3Seg); //Add model with 3 segments that is found to be more optimal
-    testMinimize(testMap.minimize(2.0), 1, 3);
+    testMinimize(testMap.minimize(2.0), 1, 3, 2.0);
     //testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
    }
 
@@ -123,11 +124,11 @@ TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, model5Seg);
-    testMinimize(testMap.minimize(1.0), 5, 5);
+    testMinimize(testMap.minimize(1.0), 5, 5, 1.0);
     testMap.insert(2.0, model5Seg);
-    testMinimize(testMap.minimize(2.0), 5, 5);
+    testMinimize(testMap.minimize(2.0), 5, 5, 2.0);
     testMap.insert(3.0, model5Seg);
-    testMinimize(testMap.minimize(3.0), 5, 5);
+    testMinimize(testMap.minimize(3.0), 5, 5, 3.0);
     
     //This test passes under the current insert implementation, but the memory result is not constant. 
     testMap.displayMap(); 
