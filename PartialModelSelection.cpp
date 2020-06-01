@@ -69,7 +69,7 @@ double ModelSelectionMap::getNewPenaltyList()
   for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
       std::cout << it->first << " => " << it->second.model_size << '\n';   
       
-  return 0;
+   return 0;
      
     
   
@@ -90,8 +90,16 @@ MinimizeResult ModelSelectionMap::minimize(double penalty){
     //Otherwise, we need to find a penalty result that is closest to the queried penalty
     std::cout << "Couldn't find tested pair, used lower_bound\n";
     indexNode = testedPairs.lower_bound(penalty);
-    queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size));
+
+    if(indexNode->first == penalty)
+      queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size));
    
+   //Otherwise, make a range query that is unsure. 
+    else{
+
+
+    }
+    
     return queryResult;
 }
 
@@ -133,6 +141,10 @@ MinimizeResult::MinimizeResult(std::pair<double, double> inputModels)
               {
                certain = true;
               }
+            else{
+               certain = false;  
+
+            }
             optimalModels.first = inputModels.first;
             optimalModels.second = inputModels.second;
 
