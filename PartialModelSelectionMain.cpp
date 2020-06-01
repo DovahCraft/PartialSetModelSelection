@@ -32,15 +32,13 @@ void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
 
 
 //Tests to ensure correct model formation and associated logic.
-TEST(ModelTests, modelTest)
-   {
+TEST(ModelTests, modelTest){
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.model_size, 3);
    }
 
    
-TEST(ModelTests, modelLossTestPos)
-   {
+TEST(ModelTests, modelLossTestPos){
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.loss, 5);
 
@@ -60,17 +58,15 @@ TEST(ModelTests, modelLossTestPos)
     MinimizeResult emptyResult = testMap.minimize(4.0);
     ASSERT_EQ(emptyResult.optimalModels.first, expectedStart);
     ASSERT_EQ(emptyResult.optimalModels.second, expectedEnd);
-
    }
 
-//Test TestedPair insertion based on panel 1 (left with two models.)
-TEST(InsertTests, testInsertLeftPanel)
-   {
+ //Test TestedPair insertion based on panel 1 (left with two models.)
+ TEST(InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
 
-    testMinimize(testMap.minimize(5.0), 1, 1);
+    testMinimize(testMap.minimize(5.0), -1, INFINITY);
    
     testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query. 
     testMap.insert(4.0, model1Seg); 
@@ -79,7 +75,6 @@ TEST(InsertTests, testInsertLeftPanel)
     testMinimize(testMap.minimize(5.0), 1, 1);
     //Mimize Query here
     testMinimize(testMap.minimize(4.0), 1, 1);
-    std::cout << "This test passes now as it is the certain query.\n";
     testMinimize(testMap.minimize(3.0), 1, INFINITY);
     testMap.insert(0.0, model2Seg);
     testMinimize(testMap.minimize(5.0), 1, 1);
@@ -92,8 +87,7 @@ TEST(InsertTests, testInsertLeftPanel)
 
 
 //Test TestedPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(InsertTests, testInsertMiddlePanel)
-   {
+TEST(InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -111,8 +105,7 @@ TEST(InsertTests, testInsertMiddlePanel)
 
 
 //Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(InsertTests, testInsertRightPanel)
-   {
+TEST(InsertTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -126,8 +119,7 @@ TEST(InsertTests, testInsertRightPanel)
 
 
 //Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(InsertTests, insertSameModelSize)
-   {
+TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, model5Seg);
@@ -149,6 +141,9 @@ TEST(InsertTests, insertSameModelSize)
 int main (int argc, char* argv[]){
     //Init unit tests here
     ::testing::InitGoogleTest(&argc, argv);
+    std::cout << "\n##################################################\n" <<  
+    "Test suite for partialsetmodelselection.\n Subtests will collapse if successfully ran.\n" 
+    << "##################################################\n\n";
     return RUN_ALL_TESTS();
 }
 

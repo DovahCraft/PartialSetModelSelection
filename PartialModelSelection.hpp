@@ -13,6 +13,9 @@ struct Model {
     int model_size = 0;
     //Loss associated with the given model 
     double loss = 0.0;
+
+    //Range of penalties for which this model is optimal.
+    std::pair<double,double> optimalPenaltyRange;
 };
 
 
@@ -25,6 +28,7 @@ struct MinimizeResult {
     bool certain = false;
     //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
     std::pair<double, double> optimalModels;
+    
 };
 //struct TestedPair may be better here for more readability
 using TestedPair = std::pair<double, Model>;
