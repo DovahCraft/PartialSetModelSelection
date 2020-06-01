@@ -87,20 +87,12 @@ MinimizeResult ModelSelectionMap::minimize(double penalty){
     return queryResult;
    }
 
-   //If we find the penalty in the map, then we have a certain query result
-   if(indexNode != testedPairs.end()){
-       return queryResult;
-   }
-
-   else {
-      //Otherwise, we need to find a penalty result that is closest to the queried penalty
-      indexNode = testedPairs.lower_bound(penalty);
-   }
-
+    //Otherwise, we need to find a penalty result that is closest to the queried penalty
+    std::cout << "Couldn't find tested pair, used lower_bound\n";
+    indexNode = testedPairs.lower_bound(penalty);
+    queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size));
    
-   queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size),indexNode->second.model_size);
-   
-   return queryResult;
+    return queryResult;
 }
 
 
@@ -126,7 +118,7 @@ MinimizeResult::MinimizeResult(){
 
 }
 
-MinimizeResult::MinimizeResult(std::pair<double, double> inputModels, int model_size)
+MinimizeResult::MinimizeResult(std::pair<double, double> inputModels)
    {
        //Check for a valid range of models. 
        if(!isValidRange(inputModels))

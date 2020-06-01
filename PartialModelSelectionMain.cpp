@@ -17,7 +17,7 @@
 void testMinimize(MinimizeResult testResult, double lowModelSize, double highModelSize, double penaltyQuery){
    //Log the test being run.
    GTEST_MINCOUT << "Running test for minimize with: " << "low: " << lowModelSize << 
-                     " hi: " << highModelSize << " penalty: " << penaltyQuery << "\n\n";
+                     "; hi: " << highModelSize << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(highModelSize, testResult.optimalModels.second) << "\nMinimize second parameter is different from expected.\n";      
