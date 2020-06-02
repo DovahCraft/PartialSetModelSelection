@@ -110,7 +110,7 @@ public:
     Exceptions: none?
     Note: none
     */
-    MinimizeResult minimize(double penalty);
+    MinimizeResult minimize(double penaltyQuery);
 
     
     //Wrapper struct to contain a list of MinimizeResults
