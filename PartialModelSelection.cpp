@@ -13,11 +13,11 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
-ModelSelectionMap::ModelSelectionMap() : maxModels(ModelMapMessages::STD_MODEL_CAP)
+ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP)
 {}
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
-ModelSelectionMap::ModelSelectionMap(ModelMapMessages cap) : maxModels(cap) {}
+ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
 
 
 void ModelSelectionMap::insert(double penaltyQuery, Model currentModel)
@@ -44,6 +44,36 @@ void ModelSelectionMap::insert(Model currentModel)
    //Insert pair with created TestedPair from solver.
 }
 
+
+
+MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
+   //Default result if we do not find a matching penaltyQuery.
+   MinimizeResult queryResult = MinimizeResult(); 
+   auto indexTestedPair = testedPairs.find(penaltyQuery);
+
+   //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
+   if(testedPairs.empty()){
+    std::cout << "Map is empty, returning default min result\n";
+    return queryResult;
+   }
+
+    //If we have models inserted, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
+    indexTestedPair = testedPairs.lower_bound(penaltyQuery);
+
+    if(indexTestedPair->first == penaltyQuery)
+      queryResult = MinimizeResult(std::make_pair(indexTestedPair->second.model_size,indexTestedPair->second.model_size));
+   
+   //Otherwise, make a range query that is unsure. 
+    else{
+       queryResult = MinimizeResult();
+
+    }
+    
+    return queryResult;
+}
+
+
+
 /*
 Function name: getNewpenaltyQuery
 Algorithm: 
@@ -68,42 +98,11 @@ double ModelSelectionMap::getNewPenaltyList()
   
   for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
       std::cout << it->first << " => " << it->second.model_size << '\n';   
-      
    return 0;
      
     
   
 }
-
-
-MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
-   //Default result if we do not find a matching penaltyQuery.
-   MinimizeResult queryResult = MinimizeResult(); 
-   auto indexNode = testedPairs.find(penaltyQuery);
-
-   //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
-   if(testedPairs.empty()){
-    std::cout << "Map is empty, returning default min result\n";
-    return queryResult;
-   }
-
-    //Otherwise, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
-    std::cout << "Couldn't find tested pair, used lower_bound\n";
-    indexNode = testedPairs.lower_bound(penaltyQuery);
-
-    if(indexNode->first == penaltyQuery)
-      queryResult = MinimizeResult(std::make_pair(indexNode->second.model_size,indexNode->second.model_size));
-   
-   //Otherwise, make a range query that is unsure. 
-    else{
-
-
-    }
-    
-    return queryResult;
-}
-
-
 
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
