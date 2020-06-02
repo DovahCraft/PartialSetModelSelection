@@ -13,7 +13,7 @@ struct Model {
     int model_size = 0;
     //Loss associated with the given model 
     double loss = 0.0;
-
+    int modelSizeAfter; //Used for next Model?
     //Range of penalties for which this model is optimal.
     std::pair<double,double> optimalPenaltyRange;
 };
