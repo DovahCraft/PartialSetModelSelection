@@ -100,11 +100,19 @@ TEST(InsertTests, testInsertMiddlePanel){
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
+    bool verboseFlag = false;
     testMap.insert(4.0, model1Seg);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
-
+    testMinimize(testMap.minimize(5.0), 1, true, 5.0);
+    if(verboseFlag){
+      testMinimize(testMap.minimize(3.0), 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+      testMinimize(testMap.minimize(2.0), 1, false, 2.0);
+      testMinimize(testMap.minimize(1.0), 1, false, 1.0);
+      testMinimize(testMap.minimize(0.0), 1, false, 0.0);
+    }
+    
     //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
-    testMap.insert(model2Seg);
+    testMap.insert(model2Seg); //Need to compute breakpoint first?
     testMinimize(testMap.minimize(0.0), 1, false, 0.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
     //Add model with 3 segments that is found to be more optimal
     testMap.insert(1.0, model3Seg);     
