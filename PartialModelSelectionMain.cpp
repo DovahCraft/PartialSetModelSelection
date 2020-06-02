@@ -20,7 +20,7 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool certainFl
                      "; certain: " << certainFlag << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
-   EXPECT_EQ(certainFlag, testResult.optimalModels.second) << "\nMinimize certainty flag is different from expected.\n";      
+   EXPECT_EQ(certainFlag, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
 }
 
 //Testing method to test getNextPen
@@ -102,7 +102,7 @@ TEST(InsertTests, testInsertMiddlePanel){
     Model model3Seg = Model(3, 0.0);
     testMap.insert(4.0, model1Seg);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
-    
+
     //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
     testMap.insert(model2Seg);
     testMinimize(testMap.minimize(0.0), 1, false, 0.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
@@ -133,11 +133,11 @@ TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, model5Seg);
-    testMinimize(testMap.minimize(1.0), 5, 5, 1.0);
+    testMinimize(testMap.minimize(1.0), 5, true, 1.0);
     testMap.insert(2.0, model5Seg);
-    testMinimize(testMap.minimize(2.0), 5, 5, 2.0);
+    testMinimize(testMap.minimize(2.0), 5, true, 2.0);
     testMap.insert(3.0, model5Seg);
-    testMinimize(testMap.minimize(3.0), 5, 5, 3.0);
+    testMinimize(testMap.minimize(3.0), 5, true, 3.0);
     
     //This test passes under the current insert implementation, but the memory result is not constant. 
     testMap.displayMap(); 
