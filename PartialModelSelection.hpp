@@ -79,8 +79,6 @@ public:
 
     double getNewPenaltyList();
 
-    int getModelCount();
-
     void displayMap();
 
 
@@ -118,7 +116,7 @@ public:
 
     int maxModels;
     std::map<double, Model> testedPairs;
-    int modelCount = 0;
+    //int modelCount = 0;
 };
 
 

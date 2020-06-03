@@ -20,19 +20,23 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP)
 ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
 
 
-void ModelSelectionMap::insert(double penaltyQuery, Model currentModel)
+void ModelSelectionMap::insert(double newPenalty, Model newModel)
 {
-   //Insert into our TestedPair map in the ModelSelectionMap
-   TestedPair newTestedPair = TestedPair(penaltyQuery, currentModel);
-   testedPairs.insert(newTestedPair);
-   modelCount++;
-   //Insert into the MinimizeResult Vector to update ranges to test next.
-   //std::pair <double,double> optimalModels; 
-   //optimalModels = std::make_pair(penaltyQuery, penaltyQuery);
+   auto mapIterator = testedPairs.find(newPenalty);
+
+   if(mapIterator != testedPairs.end())
+      return;
+
+    //Insert into our TestedPair map in the ModelSelectionMap if the newPenalty is not within it.
+    //mapIterator = testedPairs.lower_bound(newPenalty);
+    TestedPair newTestedPair = TestedPair(newPenalty, newModel);
+    testedPairs.insert(newTestedPair);     
+
+
+   
    
 
-      
-   //Update the resultList to reflect the current path.
+
 }
 
 
@@ -175,10 +179,4 @@ std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery)
 
 
 
-//Basic getters/setters
-int ModelSelectionMap::getModelCount()
-{
- return modelCount;
-
-}
 

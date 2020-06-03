@@ -61,6 +61,17 @@ TEST(ModelTests, modelLossTestPos){
     ASSERT_EQ(emptyResult.optimalModels.second, expectedEnd);
    }
 
+   TEST(InsertTests, testDuplicatePenalty){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model1Seg = Model(1, 7.0);
+    int expectedCount = 1;
+    testMap.insert(2.0, model1Seg);
+    testMap.insert(2.0, model1Seg); //SHould not be allowed by insert function. 
+    ASSERT_EQ(expectedCount, testMap.testedPairs.count(2.0));
+   
+   }
+
+
    TEST(InsertTests, testRangeUpdate){
     ModelSelectionMap testMap = ModelSelectionMap();
     double expectedStart = 3.0;
