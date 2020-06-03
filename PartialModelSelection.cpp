@@ -63,9 +63,9 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     if(indexTestedPair->first == penaltyQuery)
       queryResult = MinimizeResult(std::make_pair(indexTestedPair->second.model_size,indexTestedPair->second.model_size));
    
-   //Otherwise, make a range query that is unsure. 
+    //Otherwise, make a range query that is unsure. 
     else{
-       queryResult = MinimizeResult();
+       queryResult = MinimizeResult(); //Returning default for now. 
 
     }
     

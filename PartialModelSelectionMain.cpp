@@ -61,6 +61,17 @@ TEST(ModelTests, modelLossTestPos){
     ASSERT_EQ(emptyResult.optimalModels.second, expectedEnd);
    }
 
+   TEST(InsertTests, testRangeUpdate){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    double expectedStart = 3.0;
+    double expectedEnd = 5.0;
+    Model model1Seg = Model(1, 7.0);
+    testMap.insert(3.0, model1Seg);
+    testMap.insert(5.0, model1Seg); //Currently this will work with two entries, need to update range instead. 
+    EXPECT_EQ(model1Seg.optimalPenaltyRange.first, expectedStart);
+    EXPECT_EQ(model1Seg.optimalPenaltyRange.second, expectedEnd); //Right now these should fail. 
+   }
+
  //Test TestedPair insertion based on panel 1 (left with two models.)
  TEST(InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
