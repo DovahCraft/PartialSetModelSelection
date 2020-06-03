@@ -100,8 +100,8 @@ double ModelSelectionMap::getNewPenaltyList()
 
   //TestedPair smallestPair = testedPairs.begin()->first;
   
-  for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
-      std::cout << it->first << " => " << it->second.model_size << '\n';   
+  //for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
+    //  std::cout << it->first << " => " << it->second.model_size << '\n';   
    return 0;
      
     
@@ -110,7 +110,7 @@ double ModelSelectionMap::getNewPenaltyList()
 
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
-   
+  std::cout << "#################################\n" << "Current Map Display\n" << "#################################\n"; 
   for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
       std::cout << it->first << " => " << it->second.model_size << '\n';
 
