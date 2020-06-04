@@ -3,6 +3,6 @@ language: cpp
 compiler: gcc
 
 script:
-  -g++ -g -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest
+  -g++ -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest
   -./partialSelect
 
