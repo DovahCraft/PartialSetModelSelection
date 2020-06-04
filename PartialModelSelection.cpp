@@ -22,13 +22,12 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel)
 {
-   auto mapIterator = testedPairs.find(newPenalty);
-
-   if(mapIterator != testedPairs.end())
+   if(testedPairs.count(newPenalty))
       return;
 
     //Insert into our TestedPair map in the ModelSelectionMap if the newPenalty is not within it.
-    //mapIterator = testedPairs.lower_bound(newPenalty);
+    auto mapIterator = testedPairs.lower_bound(newPenalty);
+
     TestedPair newTestedPair = TestedPair(newPenalty, newModel);
     testedPairs.insert(newTestedPair);     
 
