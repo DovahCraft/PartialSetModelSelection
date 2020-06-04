@@ -10,6 +10,8 @@ before_install:
 install:
   - sudo apt-get install -qq g++-9
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
+   # cppcheck
+  - sudo apt-get install -qq cppcheck
 
 script:
   g++ -std=c++14 -g -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest 
