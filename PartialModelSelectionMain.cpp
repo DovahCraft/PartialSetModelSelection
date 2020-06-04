@@ -3,7 +3,7 @@
 #include <map>
 #include <gtest/gtest.h>
 #include <math.h>
-
+#include <string>
 //Local Includes
 #include "PartialModelSelection.hpp"
 
@@ -16,8 +16,12 @@
 //Testing method to test minimize method (minimizeResults).   
 void testMinimize(MinimizeResult testResult, double lowModelSize, bool certainFlag, double penaltyQuery){
    //Log the test being run.
-   GTEST_MINCOUT << "Running test for minimize with: " << "low: " << lowModelSize << 
-                     "; certain: " << certainFlag << "; penalty: " << penaltyQuery << ";\n\n";
+   std::string certainFlagString = "";
+   
+   certainFlag ? certainFlagString = "true" : certainFlagString = "false";
+    
+   GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
+                     "; certainFlag: " << certainFlagString << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(certainFlag, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
@@ -117,7 +121,7 @@ TEST(ModelTests, modelLossTestPos){
 
 
 //Test TestedPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(InsertTests, testInsertMiddlePanel){
+TEST(DISABLED_InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -145,7 +149,7 @@ TEST(InsertTests, testInsertMiddlePanel){
 
 
 //Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(InsertTests, testInsertRightPanel){
+TEST(DISABLED_InsertTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
