@@ -93,7 +93,7 @@ TEST(ModelTests, modelLossTestPos){
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
 
-    testMinimize(testMap.minimize(5.0), -1, INFINITY, 5.0);
+    testMinimize(testMap.minimize(5.0), -1, false, 5.0);
    
     testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
 
