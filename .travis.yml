@@ -1,8 +1,17 @@
 #travis configuration for coverage testing
 language: cpp
 compiler: gcc
+dist: trusty
+
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -qq g++-9
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
 
 script:
-  -g++ -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest
+  g++ -std=c++14 -g -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest 
   -./partialSelect
-
+  - cppcheck --quiet --error-exitcode=1 . 
