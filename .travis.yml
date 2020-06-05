@@ -16,4 +16,4 @@ install:
 script:
   g++ -std=c++14 -g -o partialSelect PartialModelSelectionMain.cpp PartialModelSelection.cpp -pthread -lgtest 
   - ./partialSelect
-  - cppcheck --quiet --error-exitcode=1 . 
+  #- cppcheck --quiet --error-exitcode=1 . 
