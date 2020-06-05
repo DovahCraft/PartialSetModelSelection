@@ -10,6 +10,28 @@ before_install:
 install:
   - sudo apt-get install -qq g++-9
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90
+   #gtest
+   - sudo apt-get install libgtest-dev
+
+   - sudo apt-get install cmake # install cmake
+
+   - cd /usr/src/gtest
+
+   - sudo cmake CMakeLists.txt
+
+   - sudo make
+
+   - sudo cp *.a /usr/lib
+
+   - sudo mkdir /usr/local/lib/googletest
+
+   - sudo ln -s /usr/lib/libgtest.a /usr/local/lib/gtest/libgtest.a
+
+   - sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/gtest/libgtest_main.a
+
+
+
+
    # cppcheck
   - sudo apt-get install -qq cppcheck
 
