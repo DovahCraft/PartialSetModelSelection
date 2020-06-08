@@ -76,7 +76,7 @@ TEST(ModelTests, modelLossTestPos){
    }
 
 
-   TEST(InsertTests, testRangeUpdate){
+   TEST(DISABLED_InsertTests, testRangeUpdate){
     ModelSelectionMap testMap = ModelSelectionMap();
     double expectedStart = 3.0;
     double expectedEnd = 5.0;
@@ -88,7 +88,7 @@ TEST(ModelTests, modelLossTestPos){
    }
 
  //Test TestedPair insertion based on panel 1 (left with two models.)
- TEST(InsertTests, testInsertLeftPanel){
+ TEST(DISABLED_InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
