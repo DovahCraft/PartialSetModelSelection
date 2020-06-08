@@ -1,10 +1,8 @@
 #pragma once
 #include <iostream>
 #include <map>
+#include <vector>
 
-
-
-enum class ModelCapMessages {NO_MODEL_CAP, STD_MODEL_CAP=3};
 
 
 
@@ -14,62 +12,114 @@ struct Model {
     int model_size = 0;
     //Loss associated with the given model 
     double loss = 0.0;
+    int modelSizeAfter; //Used for next Model?
+    //Range of penalties for which this model is optimal.
+    std::pair<double,double> optimalPenaltyRange;
 };
 
 
-
-//Class to embody Model,Boolean pairs for model selection.
+//Class to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
-    int model_size = 0;
+    MinimizeResult();
+    MinimizeResult(std::pair<double,double> inputModelRange);
+    bool isValidRange(std::pair<double,double> inputModelRange);
     bool certain = false;
-    std::pair<double,double> range;
-    MinimizeResult *prev;
-    MinimizeResult *next;
+    //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
+    std::pair<double, double> optimalModels;
+    
 };
-
-//Wrapper class to contain a list of MinimizeResults
-struct MinimizeResultList {
-    MinimizeResult *head;
-};
-
 //struct TestedPair may be better here for more readability
 using TestedPair = std::pair<double, Model>;
 
 
 
+
+
 class ModelSelectionMap {
 public:
-    ModelSelectionMap(ModelCapMessages cap);
+    //Map constants and return codes.
+    const double EMPTY_MAP_QUERY = 0;
+    const double EMPTY_MAP_ERR = -99999;
+    const double DEFAULT_PENALTY = -9999;   
+    const int STD_MODEL_CAP = 3;
 
-    void insert(double penalty, Model currentModel);
-
-    void insert(Model currentModel);
-
-    MinimizeResult minimize(double penalty);
-
-    void addResult(MinimizeResult *toAdd);
-
-    double getNewPenalty();
-
-
+    //Method headers
     ModelSelectionMap();
 
-    //Linked list for path model selection ranges.
-    MinimizeResultList *resultList; 
+    ModelSelectionMap(int maxModels);
 
 
-public:
-    ModelCapMessages maxModels = ModelCapMessages::NO_MODEL_CAP;
-    std::map<double, Model> TestedPairs;
-    int modelCount = 0;
+    /*
+     Function name(s): insert
+     Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
+     Precondition: The model is formatted correctly and the
+        penalty is a valid double.
+     Postcondition: Inserts the model into the data structure.
+        No return type, maybe return success code eventually.
+     Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+     Note: none
+    */
+    void insert(double penalty, Model currentModel);
+
+    /*
+    Function name: insert (overloaded)
+    Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling
+    binary segmentation and other constrained style solvers. 
+    Precondition: The model is formatted correctly and the
+    penalty is a valid double.
+    Postcondition: Inserts the model into the data structure.
+    No return type, maybe return success code eventually.
+    Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+    Note: none
+    */
+    void insert(Model currentModel);
+
+
+    double getNewPenaltyList();
+
+    void displayMap();
+
+
+    /*
+    Function name: Solver
+    Algorithm:
+
+    Precondition: for correct operation, the passed penalty is a valid
+    float value.
+    Postcondition:
+    Exceptions: none yet. 
+    Note: none
+    */
+    std::pair<int, int> solver(double penalty);
+
+
+    /*
+    Function name: Minimize
+    Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
+    (the k value corresponding to the selected model, a boolean showing its accuracy)
+    Boolean values consist of: F for unsure, and T for a sure pairing.
+    Precondition: for correct operation, the passed penalty is a valid
+    float value.
+    Postcondition: in correct operation, computes what model is optimal
+    for the passed penalty, and gives a boolean signifying its accuracy.
+    Both these values are passed back as a struct.
+    Exceptions: none?
+    Note: none
+    */
+    MinimizeResult minimize(double penaltyQuery);
+
+    
+    //Wrapper struct to contain a list of MinimizeResults
+    std::vector<MinimizeResult> minResultVec; 
+
+    int maxModels;
+    std::map<double, Model> testedPairs;
+    //int modelCount = 0;
 };
 
 
 
 
 
-
-//Function definitions
-void insert(double penalty, Model currentModel, ModelSelectionMap currentMap);
-std::pair<int, bool> minimize(double penalty);
-std::pair<int, int> solver(double penalty);
