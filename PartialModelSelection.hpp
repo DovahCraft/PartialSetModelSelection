@@ -28,8 +28,8 @@ struct MinimizeResult {
     std::pair<double, double> optimalModels;
     
 };
-//struct TestedPair may be better here for more readability
-using TestedPair = std::pair<double, Model>;
+//struct penaltyModelPair may be better here for more readability
+using PenaltyModelPair = std::pair<double, Model>;
 
 
 
@@ -38,6 +38,7 @@ using TestedPair = std::pair<double, Model>;
 class ModelSelectionMap {
 public:
     //Map constants and return codes.
+    const double PLACEHOLDER_LOSS = 0.0;
     const double EMPTY_MAP_QUERY = 0;
     const double EMPTY_MAP_ERR = -99999;
     const double DEFAULT_PENALTY = -9999;   
@@ -115,7 +116,7 @@ public:
     std::vector<MinimizeResult> minResultVec; 
 
     int maxModels;
-    std::map<double, Model> testedPairs;
+    std::map<double, Model> penaltyModelMap;
     //int modelCount = 0;
 };
 

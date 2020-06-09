@@ -52,7 +52,7 @@ TEST(ModelTests, modelLossTestPos){
  TEST(TestedPairs, testBreakFormation){
     Model testModel = Model(2, 3);
     double expectedPen = 4.0;
-    TestedPair testBP = TestedPair(4.0, testModel);
+    PenaltyModelPair testBP = PenaltyModelPair(4.0, testModel);
     ASSERT_EQ(testBP.first, expectedPen);
    }
 
@@ -71,12 +71,12 @@ TEST(ModelTests, modelLossTestPos){
     int expectedCount = 1;
     testMap.insert(2.0, model1Seg);
     testMap.insert(2.0, model1Seg); //SHould not be allowed by insert function. 
-    ASSERT_EQ(expectedCount, testMap.testedPairs.count(2.0));
+    ASSERT_EQ(expectedCount, testMap.penaltyModelMap.count(2.0));
    
    }
 
 
-   TEST(DISABLED_InsertTests, testRangeUpdate){
+   TEST(InsertTests, testRangeUpdate){
     ModelSelectionMap testMap = ModelSelectionMap();
     double expectedStart = 3.0;
     double expectedEnd = 5.0;
@@ -87,7 +87,7 @@ TEST(ModelTests, modelLossTestPos){
     EXPECT_EQ(model1Seg.optimalPenaltyRange.second, expectedEnd); //Right now these should fail. 
    }
 
- //Test TestedPair insertion based on panel 1 (left with two models.)
+ //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
  TEST(DISABLED_InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
@@ -120,7 +120,7 @@ TEST(ModelTests, modelLossTestPos){
    }
 
 
-//Test TestedPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
+//Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
 TEST(DISABLED_InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
@@ -148,7 +148,7 @@ TEST(DISABLED_InsertTests, testInsertMiddlePanel){
 
 
 
-//Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
+//Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(DISABLED_InsertTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
@@ -162,7 +162,7 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
 
 
 
-//Test TestedPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
+//Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model5Seg = Model(5, 1.0);

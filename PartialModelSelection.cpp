@@ -13,8 +13,12 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 
 //Default contructor for model selection map, sets max models to std of 3.
-ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP)
-{}
+ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
+   //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
+   Model startingModel = Model(1,PLACEHOLDER_LOSS);
+
+   
+}
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
 ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
@@ -22,14 +26,14 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel)
 {
-   if(testedPairs.count(newPenalty))
+   if(penaltyModelMap.count(newPenalty))
       return;
 
-    //Insert into our TestedPair map in the ModelSelectionMap if the newPenalty is not within it.
-    auto mapIterator = testedPairs.lower_bound(newPenalty);
+    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
+    auto mapIterator = penaltyModelMap.lower_bound(newPenalty);
 
-    TestedPair newTestedPair = TestedPair(newPenalty, newModel);
-    testedPairs.insert(newTestedPair);     
+    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
+    penaltyModelMap.insert(newPair);     
 
 
    
@@ -44,7 +48,7 @@ void ModelSelectionMap::insert(Model currentModel)
    //Runs solver for penaltyQuery to insert
    //std::cout << "Adding model without penaltyQuery \n";
 
-   //Insert pair with created TestedPair from solver.
+   //Insert pair with createdpenaltyModelPair from solver.
 }
 
 
@@ -52,19 +56,20 @@ void ModelSelectionMap::insert(Model currentModel)
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
    MinimizeResult queryResult = MinimizeResult(); 
-   auto indexTestedPair = testedPairs.find(penaltyQuery);
+   auto indexPair = penaltyModelMap.find(penaltyQuery);
 
    //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
-   if(testedPairs.empty()){
+   if(penaltyModelMap.empty()){
     std::cout << "Map is empty, returning default min result\n";
     return queryResult;
    }
 
     //If we have models inserted, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
-    indexTestedPair = testedPairs.lower_bound(penaltyQuery);
+    indexPair = penaltyModelMap.lower_bound(penaltyQuery);
 
-    if(indexTestedPair->first == penaltyQuery)
-      queryResult = MinimizeResult(std::make_pair(indexTestedPair->second.model_size,indexTestedPair->second.model_size));
+    if(indexPair->first == penaltyQuery)
+      //Make a query result to return using the second element of a testedPair, Model. Get it's model_size. 
+      queryResult = MinimizeResult(std::make_pair(indexPair->second.model_size,indexPair->second.model_size));
    
     //Otherwise, make a range query that is unsure. 
     else{
@@ -92,14 +97,14 @@ double ModelSelectionMap::getNewPenaltyList()
 {
 
   //If the map of tested pairs is empty, query penaltyQuery 0 first.  
-  if(testedPairs.empty())
+  if(penaltyModelMap.empty())
      {
        return EMPTY_MAP_QUERY; //?
      }
 
-  //TestedPair smallestPair = testedPairs.begin()->first;
+  //penaltyModelpenaltyModelPair smallestPair = penaltyModelMap.begin()->first;
   
-  //for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
+  //for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
     //  std::cout << it->first << " => " << it->second.model_size << '\n';   
    return 0;
      
@@ -110,7 +115,7 @@ double ModelSelectionMap::getNewPenaltyList()
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout << "#################################\n" << "Current Map Display\n" << "#################################\n"; 
-  for (std::map<double,Model>::iterator it=testedPairs.begin(); it!=testedPairs.end(); ++it)
+  for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
       std::cout << it->first << " => " << it->second.model_size << '\n';
 
 }
