@@ -16,6 +16,7 @@
 ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
+   startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
    penaltyModelMap.insert(startingPair);
 }
@@ -23,6 +24,7 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
 //Initialization constructor for a ModelSelectionMap with passed cap value.
 ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {   
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
+   startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
    penaltyModelMap.insert(startingPair);
 }
@@ -77,8 +79,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    
     //Otherwise, make a range query that is unsure. 
     else{
-       queryResult = MinimizeResult(); //Returning default for now. 
-
+       queryResult = MinimizeResult(std::make_pair(indexPair->second.model_size, indexPair->second.modelSizeAfter)); //Returning default for now. 
+       queryResult.certain = false;
     }
     
     return queryResult;
