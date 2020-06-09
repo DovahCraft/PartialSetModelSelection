@@ -16,12 +16,16 @@
 ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
-
-   
+   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
+   penaltyModelMap.insert(startingPair);
 }
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
-ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {}
+ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {   
+   Model startingModel = Model(1,PLACEHOLDER_LOSS);
+   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
+   penaltyModelMap.insert(startingPair);
+}
 
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel)
