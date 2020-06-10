@@ -19,6 +19,8 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
    penaltyModelMap.insert(startingPair);
+
+   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
 }
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
@@ -27,6 +29,8 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
    penaltyModelMap.insert(startingPair);
+
+   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
 
 
@@ -65,7 +69,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    auto indexPair = penaltyModelMap.find(penaltyQuery);
 
    //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
-   if(penaltyModelMap.empty()){
+   if(!hasModelsInserted()){
     std::cout << "Map is empty, returning default min result\n";
     return queryResult;
    }
@@ -103,7 +107,7 @@ double ModelSelectionMap::getNewPenaltyList()
 {
 
   //If the map of tested pairs is empty, query penaltyQuery 0 first.  
-  if(penaltyModelMap.empty())
+  if(!hasModelsInserted())
      {
        return EMPTY_MAP_QUERY; //?
      }
@@ -126,6 +130,12 @@ void ModelSelectionMap::displayMap() {
 
 }
 
+
+ bool ModelSelectionMap::hasModelsInserted(){
+    //Check to see if only the default entry is in the map.
+    return insertedModels > 0;
+
+ }
 
 
 //MinimizeResult Method Implementations

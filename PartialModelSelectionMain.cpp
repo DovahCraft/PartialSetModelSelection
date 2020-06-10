@@ -66,7 +66,7 @@ TEST(ModelTests, modelLossTestPos){
    }
 
     
-   TEST(MinimizeTests, testInitialMinimization){
+   TEST(MinimizeTests, DISABLED_testInitialMinimization){
     ModelSelectionMap testMap = ModelSelectionMap();
     testMinimize(testMap.minimize(0.5), 1, false, 0.5);
    }
