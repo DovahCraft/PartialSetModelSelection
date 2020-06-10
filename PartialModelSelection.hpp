@@ -7,13 +7,13 @@
 
 
 struct Model {
-    Model(int model_size, double loss) : model_size(model_size), loss(loss) {}
+    Model(int modelSize, double loss) : modelSize(modelSize), loss(loss) {}
     //Number of segments (k-value)
-    int model_size = 0;
+    int modelSize = 0;
     //Loss associated with the given model 
     double loss = 0.0;
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
-    bool isSameAfter; //Used to determine if the current model_size is the same as the predicted next. 
+    bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next. 
     //Range of penalties for which this model is optimal.
     std::pair<double,double> optimalPenaltyRange;
 };
@@ -44,7 +44,11 @@ public:
     const double EMPTY_MAP_ERR = -99999;
     const double DEFAULT_PENALTY = -9999;   
     const int STD_MODEL_CAP = 3;
-    int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts. 
+    int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
+    int maxModels;
+    
+    //Map struct to hold penalty and model pairings from inserts.
+    std::map<double, Model> penaltyModelMap; 
 
     //Method headers
     ModelSelectionMap();
@@ -79,7 +83,17 @@ public:
     */
     void insert(Model currentModel);
 
-
+    /*
+    Function name: getNewpenaltyQuery
+    Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 
+    Precondition: for correct operation, the passed penaltyQuery is a valid
+    float value.
+    Postcondition: in correct operation, computes what model is optimal
+    for the passed penaltyQuery, and gives a boolean signifying its accuracy.
+    Both these values are passed back as a struct.
+    Exceptions: none?
+    Note: none
+    */
     double getNewPenaltyList();
 
     void displayMap();
@@ -104,7 +118,7 @@ public:
     Function name: Minimize
     Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:
     (the k value corresponding to the selected model, a boolean showing its accuracy)
-    Boolean values consist of: F for unsure, and T for a sure pairing.
+    Boolean values consist of: F for unsure, and T for a sure pairing. O(log N) query.
     Precondition: for correct operation, the passed penalty is a valid
     float value.
     Postcondition: in correct operation, computes what model is optimal
@@ -119,8 +133,7 @@ public:
     //Wrapper struct to contain a list of MinimizeResults
     std::vector<MinimizeResult> minResultVec; 
 
-    int maxModels;
-    std::map<double, Model> penaltyModelMap;
+    
     //int modelCount = 0;
 };
 

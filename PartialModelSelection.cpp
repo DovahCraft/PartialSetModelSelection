@@ -36,15 +36,30 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel)
 {
+   bool verboseFlag = true; //Used for testing to toggle additional error msgs. 
+
    if(penaltyModelMap.count(newPenalty))
       //TODO: update existing penalties if needed. 
       return;
 
     //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
-    auto mapIterator = penaltyModelMap.lower_bound(newPenalty);
+    auto indexPair = penaltyModelMap.lower_bound(newPenalty);
+    if(verboseFlag)
+    std::cout << "Current model size inserting: " << newModel.modelSize << "Index model size: " << indexPair->second.modelSize << "\n";
 
+    
+
+    //If we find a previous entry, update its modelSizeAfter field with the size of the new model we are inserting.
+    if(indexPair != penaltyModelMap.end()){
+      double indexPenalty = indexPair->first;
+      Model indexModel = indexPair->second;
+      indexModel.modelSizeAfter = newModel.modelSize;
+      std::cout << "Inserted: " << newModel.modelSize << "into the modelSizeAfter field of model: " << indexModel.modelSize << "\n"; 
+    }
+    
     PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-    penaltyModelMap.insert(newPair);     
+    penaltyModelMap.insert(newPair);
+    insertedModels++;     
 
 
    
@@ -68,6 +83,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
    MinimizeResult queryResult = MinimizeResult(); 
    auto indexPair = penaltyModelMap.find(penaltyQuery);
+   double indexPenalty = indexPair->first;
+   Model indexModel = indexPair->second;
 
    //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
    if(!hasModelsInserted()){
@@ -78,13 +95,14 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     //If we have models inserted, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
     indexPair = penaltyModelMap.lower_bound(penaltyQuery);
 
-    if(indexPair->first == penaltyQuery)
-      //Make a query result to return using the second element of a testedPair, Model. Get it's model_size. 
-      queryResult = MinimizeResult(std::make_pair(indexPair->second.model_size,indexPair->second.model_size));
+    //If we found an inserted pair that lies on the queried penalty itself
+    if(indexPenalty == penaltyQuery)
+      //Make a query result to return using the second element of a testedPair, Model. Get it's modelSize. 
+      queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
    
-    //Otherwise, make a range query that is unsure. 
+    //Otherwise, make a range query that does not lie on an inserted pair. 
     else{
-       queryResult = MinimizeResult(std::make_pair(indexPair->second.model_size, indexPair->second.modelSizeAfter)); //Returning default for now. 
+       queryResult = MinimizeResult(std::make_pair(indexModel.modelSize, indexModel.modelSizeAfter)); //Returning default for now. 
        queryResult.certain = false;
     }
     
@@ -93,17 +111,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
 
 
-/*
-Function name: getNewpenaltyQuery
-Algorithm: 
-Precondition: for correct operation, the passed penaltyQuery is a valid
-   float value.
-Postcondition: in correct operation, computes what model is optimal
-   for the passed penaltyQuery, and gives a boolean signifying its accuracy.
-   Both these values are passed back as a struct.
-Exceptions: none?
-Note: none
-*/
+
 double ModelSelectionMap::getNewPenaltyList()
 {
 
@@ -116,7 +124,7 @@ double ModelSelectionMap::getNewPenaltyList()
   //penaltyModelpenaltyModelPair smallestPair = penaltyModelMap.begin()->first;
   
   //for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-    //  std::cout << it->first << " => " << it->second.model_size << '\n';   
+    //  std::cout << it->first << " => " << it->second.modelSize << '\n';   
    return 0;
      
     
@@ -125,11 +133,14 @@ double ModelSelectionMap::getNewPenaltyList()
 
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
-  std::cout << "#################################\n" << "Current Map Display\n" << "#################################\n"; 
+  std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
+  std::cout << "Penalty          ModelSize\n"; 
   for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-      std::cout << it->first << " => " << it->second.model_size << '\n';
+      std::cout << it->first << "      =>           " << it->second.modelSize << '\n';
 
-}
+   std::cout << " \n";
+ }
+  
 
 
  bool ModelSelectionMap::hasModelsInserted(){
