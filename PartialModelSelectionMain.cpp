@@ -58,7 +58,7 @@ TEST(ModelTests, modelLossTestPos){
 
    TEST(PenaltyPairsTests, testEmptyMinimization){
     ModelSelectionMap testMap = ModelSelectionMap();
-    double expectedStart = -1;
+    double expectedStart = 1;
     double expectedEnd = INFINITY;
     MinimizeResult emptyResult = testMap.minimize(4.0);
     ASSERT_EQ(emptyResult.optimalModels.first, expectedStart);

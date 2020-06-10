@@ -37,6 +37,7 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
 void ModelSelectionMap::insert(double newPenalty, Model newModel)
 {
    if(penaltyModelMap.count(newPenalty))
+      //TODO: update existing penalties if needed. 
       return;
 
     //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
@@ -143,7 +144,7 @@ void ModelSelectionMap::displayMap() {
 //MinimizeResult default constructor to be used when no models have been inserted. 
 MinimizeResult::MinimizeResult(){
  //Initialize a default result, which has 1 selected, but unsure.
- optimalModels.first = -1;
+ optimalModels.first = 1;
  optimalModels.second = INFINITY;
  certain = false;
 
