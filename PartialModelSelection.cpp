@@ -144,12 +144,18 @@ void ModelSelectionMap::displayMap() {
 
  }
 
+ void ModelSelectionMap::updatePreviousEntry(){
+   std::cout << "Updating previous entry based on new insert!\n";
+}
+
 
  //General Utilities used in ModelSelectionMap
 
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
 std::map<double, Model>::iterator validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
+    auto validIterator = insertResult.first;
     
+    return validIterator;
 }
 
 

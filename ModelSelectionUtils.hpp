@@ -1,5 +1,11 @@
-#pragma once
+#ifndef MODELSELECTIONUTILS_H
+#define MODELSELECTIONUTILS_H
 
+#include <iostream>
+#include <map>
+#include <vector>
+
+#include "ModelSelectionUtils.hpp"
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
@@ -11,3 +17,5 @@ struct MinimizeResult {
     std::pair<double, double> optimalModels;
     
 };
+
+#endif
