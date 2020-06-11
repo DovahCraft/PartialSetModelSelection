@@ -132,11 +132,9 @@ public:
 
     private:
         void updatePreviousEntry();
-        bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.
-        std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);     
+        bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 
-
-
-
+//Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
+std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
 

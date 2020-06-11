@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 #include <math.h>
-
+#include <string>
 //Local includes
 #include "PartialModelSelection.hpp"
 #include "ModelSelectionUtils.hpp"
@@ -18,7 +18,16 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
-   penaltyModelMap.insert(startingPair);
+   try{
+      auto insertResult = penaltyModelMap.insert(startingPair);
+      validateInsert(insertResult);
+      prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
+      
+   }
+
+   catch(std::logic_error errorMessage) {
+      std::cout << "Insert failed, validation returned an error!\n";
+   }
 
 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
@@ -29,11 +38,18 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
-   auto insertResult = penaltyModelMap.insert(startingPair);
-   //If insertion was successful, set the iousInsertedPair 
-   if(insertResult.second){
-      prevInsertedPair = insertResult.first;
+   try{
+      auto insertResult = penaltyModelMap.insert(startingPair);
+      validateInsert(insertResult);
+      prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
+      
    }
+
+   catch(std::logic_error errorMessage) {
+      std::cout << "Insert failed, validation returned an error!\n";
+   }
+   
+   
    
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
@@ -153,8 +169,9 @@ void ModelSelectionMap::displayMap() {
 
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
 std::map<double, Model>::iterator validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
+    //The result from insert is: std::pair<iterator,bool> where the bool represents the success/failure of insertion.
+    if(!insertResult.second) throw std::logic_error("Invalid insert, key exists."); 
     auto validIterator = insertResult.first;
-    
     return validIterator;
 }
 
