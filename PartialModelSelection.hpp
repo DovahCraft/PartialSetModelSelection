@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 
+#include "ModelSelectionUtils.hpp"
 
 
 
@@ -19,16 +20,7 @@ struct Model {
 };
 
 
-//Class to embody Model,Boolean pairs for model selection path records.
-struct MinimizeResult {
-    MinimizeResult();
-    MinimizeResult(std::pair<double,double> inputModelRange);
-    bool isValidRange(std::pair<double,double> inputModelRange);
-    bool certain = false;
-    //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
-    std::pair<double, double> optimalModels;
-    
-};
+
 //struct penaltyModelPair may be better here for more readability
 using PenaltyModelPair = std::pair<double, Model>;
 
@@ -47,8 +39,11 @@ public:
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
     int maxModels;
     
+ 
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
+
+    std::map<double,Model>::iterator prevInsertedPair = penaltyModelMap.end();  //Pointer to the last inserted pair for updates.
 
     //Method headers
     ModelSelectionMap();
@@ -96,9 +91,7 @@ public:
     */
     double getNewPenaltyList();
 
-    void displayMap();
-
-    bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method. 
+    
 
 
     /*
@@ -133,8 +126,14 @@ public:
     //Wrapper struct to contain a list of MinimizeResults
     std::vector<MinimizeResult> minResultVec; 
 
-    
-    //int modelCount = 0;
+    /*UTILITY METHODS*/
+    void displayMap();
+
+
+    private:
+        void updatePreviousEntry();
+        bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.
+        std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);     
 };
 
 

@@ -7,7 +7,7 @@
 
 //Local includes
 #include "PartialModelSelection.hpp"
-
+#include "ModelSelectionUtils.hpp"
 
 
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
@@ -17,8 +17,9 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
-   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
+   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    penaltyModelMap.insert(startingPair);
+
 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
 }
@@ -28,44 +29,26 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
-   penaltyModelMap.insert(startingPair);
-
+   auto insertResult = penaltyModelMap.insert(startingPair);
+   //If insertion was successful, set the iousInsertedPair 
+   if(insertResult.second){
+      prevInsertedPair = insertResult.first;
+   }
+   
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
 
 
-void ModelSelectionMap::insert(double newPenalty, Model newModel)
-{
-   bool verboseFlag = true; //Used for testing to toggle additional error msgs. 
-
-   if(penaltyModelMap.count(newPenalty))
-      //TODO: update existing penalties if needed. 
-      return;
-
-    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
-    auto indexPair = penaltyModelMap.lower_bound(newPenalty);
-    if(verboseFlag)
-    std::cout << "Current model size inserting: " << newModel.modelSize << "Index model size: " << indexPair->second.modelSize << "\n";
-
-    
-
-    //If we find a previous entry, update its modelSizeAfter field with the size of the new model we are inserting.
-    if(indexPair != penaltyModelMap.end()){
-      double indexPenalty = indexPair->first;
-      Model indexModel = indexPair->second;
-      indexModel.modelSizeAfter = newModel.modelSize;
-      std::cout << "Inserted: " << newModel.modelSize << "into the modelSizeAfter field of model: " << indexModel.modelSize << "\n"; 
-    }
-    
-    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-    penaltyModelMap.insert(newPair);
-    insertedModels++;     
-
-
+void ModelSelectionMap::insert(double newPenalty, Model newModel){
+   //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
+   PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    
+   penaltyModelMap.insert(newPair);
+
+   //After inserting, update our previous entry as well. 
+   updatePreviousEntry();
    
-
-
+   insertedModels++;     
 }
 
 
@@ -131,6 +114,18 @@ double ModelSelectionMap::getNewPenaltyList()
   
 }
 
+
+
+std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery)
+{
+   auto tempPair = std::make_pair<int, bool>(4, true);
+   std::cout << "Testing solver!\n";
+   //Temporary stub return
+   return tempPair;
+}
+
+
+
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
@@ -150,64 +145,22 @@ void ModelSelectionMap::displayMap() {
  }
 
 
-//MinimizeResult Method Implementations
+ //General Utilities used in ModelSelectionMap
 
-//MinimizeResult default constructor to be used when no models have been inserted. 
-MinimizeResult::MinimizeResult(){
- //Initialize a default result, which has 1 selected, but unsure.
- optimalModels.first = 1;
- optimalModels.second = INFINITY;
- certain = false;
-
+//Takes in an insertion result and returns the iterator to the insertion if it is valid. 
+std::map<double, Model>::iterator validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
+    
 }
 
-MinimizeResult::MinimizeResult(std::pair<double, double> inputModels)
-   {
-       //Check for a valid range of models. 
-       if(!isValidRange(inputModels))
-          {
-           throw std::out_of_range("Invalid range inputted to MinimizeResult creation."); 
-          }
-
-       else
-          {
-           //Check if our penaltyQueryRange is a solved point (Where the beginning and end are identical.)
-           if(optimalModels.first == optimalModels.second)
-              {
-               certain = true;
-              }
-            else{
-               certain = false;  
-
-            }
-            optimalModels.first = inputModels.first;
-            optimalModels.second = inputModels.second;
-
-          }
-       
-      
-   }
-
-
-bool MinimizeResult::isValidRange(std::pair<double,double> optimalModels)
-   {
-    //Tie a model size and pairing to a penaltyQuery range.
-    if(optimalModels.first < 0 || optimalModels.first < optimalModels.second)
-       {
-        return false;   
-       }
-    return true;
-   }
 
 
 
-std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery)
-{
-   auto tempPair = std::make_pair<int, bool>(4, true);
-   std::cout << "Testing solver!\n";
-   //Temporary stub return
-   return tempPair;
-}
+
+
+
+
+
+
 
 
 
