@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <string>
+
 //Local Includes
 #include "PartialModelSelection.hpp"
 #include "ModelSelectionUtils.hpp"
@@ -84,7 +85,13 @@ TEST(ModelTests, DISABLED_modelLossTestPos){
    
    }
 
-   TEST(InsertTests, testModelSizeAfterUpdate){
+   TEST(InsertTests, testPreviousModelIterator){
+     ModelSelectionMap testMap = ModelSelectionMap();
+     double expectedPrevPen = 0.0;
+     ASSERT_EQ(expectedPrevPen, testMap.prevInsertedPair->first);
+   }
+
+   TEST(DISABLED_InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap();
      Model model3Seg = Model(3, 2.0);
      testMap.displayMap();
