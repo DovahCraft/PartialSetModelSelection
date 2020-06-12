@@ -7,7 +7,6 @@
 
 //Local Includes
 #include "PartialModelSelection.hpp"
-#include "ModelSelectionUtils.hpp"
 
 //Macros to display test info in gtest format. 
 #define GTEST_MINCOUT std::cerr << "[ MINIMIZE ] [INFO] "

@@ -3,10 +3,6 @@
 #include <map>
 #include <vector>
 
-#include "ModelSelectionUtils.hpp"
-
-
-
 struct Model {
     Model(int modelSize, double loss) : modelSize(modelSize), loss(loss) {}
     //Number of segments (k-value)
@@ -20,13 +16,20 @@ struct Model {
 };
 
 
+//Struct to embody Model,Boolean pairs for model selection path records.
+struct MinimizeResult {
+    MinimizeResult();
+    MinimizeResult(std::pair<double,double> inputModelRange);
+    bool isValidRange(std::pair<double,double> inputModelRange);
+    bool certain = false;
+    //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
+    std::pair<double, double> optimalModels;
+};
+
+
 
 //struct penaltyModelPair may be better here for more readability
 using PenaltyModelPair = std::pair<double, Model>;
-
-
-
-
 
 class ModelSelectionMap {
 public:
@@ -89,7 +92,7 @@ public:
     Exceptions: none?
     Note: none
     */
-    double getNewPenaltyList();
+    double getNewPenalty();
 
     
 
