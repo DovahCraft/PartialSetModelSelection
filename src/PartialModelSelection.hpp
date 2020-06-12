@@ -134,7 +134,6 @@ public:
 
 
     private:
-        void updatePreviousEntry();
         bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 

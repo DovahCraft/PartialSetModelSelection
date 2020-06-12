@@ -126,9 +126,7 @@ void ModelSelectionMap::displayMap() {
 
  }
 
- void ModelSelectionMap::updatePreviousEntry(){
-   std::cout << "Updating previous entry based on new insert!\n";
-}
+
 
 
 //General Utilities used in ModelSelectionMap

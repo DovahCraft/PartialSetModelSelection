@@ -32,7 +32,7 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool certainFl
 void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
     GTEST_GETPENCOUT << "Running test for getNextPenalty\n\n";
 
-    EXPECT_EQ(testMap.getNewPenaltyList(), expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
+    EXPECT_EQ(testMap.getNewPenalty(), expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
     
 }
 
