@@ -55,7 +55,6 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult);
       //After inserting, update our previous entry as well. 
-      updatePreviousEntry();
       prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
    }
 
@@ -64,6 +63,8 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    }
    insertedModels++;     
 }
+
+void ModelSelectionMap::insert(Model currentModel){};
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
