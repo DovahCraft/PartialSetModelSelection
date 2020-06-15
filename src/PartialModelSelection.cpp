@@ -17,7 +17,6 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
-   startingModel.isDefaultQuery = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    try{
       auto insertResult = penaltyModelMap.insert(startingPair);
@@ -77,8 +76,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery)
-    
-    //Make a query result to return using the second element of a testedPair, Model. Get it's modelSize. 
+    //Make a query result to return using the second element of a testedPair, Model. Get its modelSize. 
     queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
    
     //Otherwise, make a range query that does not lie on an inserted pair. 

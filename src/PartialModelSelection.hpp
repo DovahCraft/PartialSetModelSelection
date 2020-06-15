@@ -34,7 +34,7 @@ using PenaltyModelPair = std::pair<double, Model>;
 class ModelSelectionMap {
 public:
     //Map constants and return codes.
-    const double PLACEHOLDER_LOSS = -9.0;
+    const double PLACEHOLDER_LOSS = -9999.0;
     const double EMPTY_MAP_QUERY = 0;
     const double EMPTY_MAP_ERR = -99999;
     const double DEFAULT_PENALTY = -9999;   

@@ -77,13 +77,19 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
    
   TEST(MinimizeTests, testLowerBoundInsertion){
     ModelSelectionMap testMap = ModelSelectionMap();
-    Model model3Seg = Model(3, 0.0);
-    Model model2Seg = Model(2, 4.0);
+    Model model3Seg = Model(3, 0.0); //Previous
+    Model model2Seg = Model(2, 4.0); //Given with lower_bound
     testMap.insert(2.0, model3Seg);
-    testMap.insert(4.0, model2Seg);
+    testMap.insert(5.0, model2Seg);
+    testMap.displayMap();
     auto lowerBPair = testMap.penaltyModelMap.lower_bound(3.0);
+    auto prevPair = std::prev(lowerBPair, 1);
+    auto firstPair = std::prev(prevPair, 1);
+    int prevModelSize = prevPair->second.modelSize;
     int lowerBoundModelSize = lowerBPair->second.modelSize;
     ASSERT_EQ(2, lowerBoundModelSize);
+    ASSERT_EQ(3, prevModelSize);
+    ASSERT_EQ(1, firstPair->second.modelSize);
   }
 
    TEST(InsertTests, DISABLED_testDuplicatePenalty){
