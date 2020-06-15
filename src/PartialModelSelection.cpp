@@ -26,7 +26,7 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    }
 
    catch(std::logic_error errorMessage) {
-      std::cout << "Insert failed, validation returned an error!\n";
+      std::cout << "Insert failed, key exists!\n";
    }
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
 }
@@ -42,7 +42,7 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
       prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.  
    }
    catch(std::logic_error errorMessage) {
-      std::cout << "Insert failed, validation returned an error!\n";
+      std::cout << "Insert failed, key exists!\n";
    }
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
@@ -59,7 +59,7 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    }
 
    catch(std::logic_error errorMessage) {
-      std::cout << "Insert failed, validation returned an error!\n";
+      std::cout << "Insert failed, key exists!\n";
    }
    insertedModels++;     
 }
