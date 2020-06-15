@@ -80,13 +80,16 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
     Model model3Seg = Model(3, 0.0); //Previous
     Model model2Seg = Model(2, 4.0); //Given with lower_bound
     testMap.insert(2.0, model3Seg);
+    auto lowerBeforeInserts = testMap.penaltyModelMap.lower_bound(5.0);
+    ASSERT_EQ(lowerBeforeInserts, testMap.penaltyModelMap.end());
+    ASSERT_EQ(prev(lowerBeforeInserts)->first, 2.0);
     testMap.insert(5.0, model2Seg);
     testMap.displayMap();
-    auto lowerBPair = testMap.penaltyModelMap.lower_bound(3.0);
-    auto prevPair = std::prev(lowerBPair, 1);
+    auto lowerBAfterInserts = testMap.penaltyModelMap.lower_bound(3.0);
+    auto prevPair = std::prev(lowerBAfterInserts, 1);
     auto firstPair = std::prev(prevPair, 1);
     int prevModelSize = prevPair->second.modelSize;
-    int lowerBoundModelSize = lowerBPair->second.modelSize;
+    int lowerBoundModelSize = lowerBAfterInserts->second.modelSize;
     ASSERT_EQ(2, lowerBoundModelSize);
     ASSERT_EQ(3, prevModelSize);
     ASSERT_EQ(1, firstPair->second.modelSize);

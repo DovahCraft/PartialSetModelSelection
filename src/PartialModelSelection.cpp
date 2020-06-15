@@ -49,17 +49,24 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
 void ModelSelectionMap::insert(double newPenalty, Model newModel){
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-   auto nextLowest = penaltyModelMap.lower_bound(newPenalty);
+   auto nextKey = penaltyModelMap.lower_bound(newPenalty);
+   auto prevKey = prev(nextKey);
+    
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult);
       //After inserting, update our previous entry as well. 
       prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
+
+      //Note that we inserted a model. 
+      insertedModels++;
+
+   //Update the model before us.    
    }
    catch(std::logic_error errorMessage) {
       std::cout << "Insert failed, key exists!\n";
    }
-   insertedModels++;     
+    
 }
 
 void ModelSelectionMap::insert(Model currentModel){};
