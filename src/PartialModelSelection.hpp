@@ -10,7 +10,7 @@ struct Model {
     //Loss associated with the given model 
     double loss = 0.0;
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
-    bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next. 
+    bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next.
     //Range of penalties for which this model is optimal.
     std::pair<double,double> optimalPenaltyRange;
 };

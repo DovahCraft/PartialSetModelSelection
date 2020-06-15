@@ -38,13 +38,13 @@ void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
 
 
 //Tests to ensure correct model formation and associated logic.
-TEST(ModelTests, DISABLED_modelTest){
+TEST(ModelCreationTests, DISABLED_modelTest){
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.modelSize, 3);
    }
 
    
-TEST(ModelTests, DISABLED_modelLossTestPos){
+TEST(ModelCreationTests, DISABLED_modelLossTestPos){
     Model model3segs = Model(3, 5);
     ASSERT_EQ(model3segs.loss, 5);
 
@@ -73,6 +73,18 @@ TEST(ModelTests, DISABLED_modelLossTestPos){
     ModelSelectionMap testMap = ModelSelectionMap();
     testMinimize(testMap.minimize(0.5), 1, false, 0.5);
    }
+
+   
+  TEST(MinimizeTests, testLowerBoundInsertion){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model3Seg = Model(3, 0.0);
+    Model model2Seg = Model(2, 4.0);
+    testMap.insert(2.0, model3Seg);
+    testMap.insert(4.0, model2Seg);
+    auto lowerBPair = testMap.penaltyModelMap.lower_bound(3.0);
+    int lowerBoundModelSize = lowerBPair->second.modelSize;
+    ASSERT_EQ(2, lowerBoundModelSize);
+  }
 
    TEST(InsertTests, DISABLED_testDuplicatePenalty){
     ModelSelectionMap testMap = ModelSelectionMap();

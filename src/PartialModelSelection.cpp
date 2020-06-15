@@ -17,6 +17,7 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
+   startingModel.isDefaultQuery = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    try{
       auto insertResult = penaltyModelMap.insert(startingPair);
@@ -24,7 +25,6 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
       prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
       
    }
-
    catch(std::logic_error errorMessage) {
       std::cout << "Insert failed, key exists!\n";
    }
@@ -47,17 +47,16 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
 
- void ModelSelectionMap::insert(double newPenalty, Model newModel){
+void ModelSelectionMap::insert(double newPenalty, Model newModel){
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-   
+   auto nextLowest = penaltyModelMap.lower_bound(newPenalty);
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult);
       //After inserting, update our previous entry as well. 
       prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
    }
-
    catch(std::logic_error errorMessage) {
       std::cout << "Insert failed, key exists!\n";
    }
@@ -73,11 +72,6 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    double indexPenalty = indexPair->first;
    Model indexModel = indexPair->second;
 
-   //If we have no inserted model/penaltyQuery pairs, return the default result from 0 to inf.
-   if(!hasModelsInserted()){
-    std::cout << "Map is empty, returning default min result\n";
-    return queryResult;
-   }
     //If we have models inserted, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
     indexPair = penaltyModelMap.lower_bound(penaltyQuery);
 
