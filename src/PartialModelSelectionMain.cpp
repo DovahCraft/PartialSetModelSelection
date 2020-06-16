@@ -76,24 +76,24 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
 
    
   TEST(InsertTests, testLowerBoundInsertion){
-    ModelSelectionMap testMap = ModelSelectionMap();
+    ModelSelectionMap testMap = ModelSelectionMap(); //Create a new model selection map class
     Model model3Seg = Model(3, 0.0); //Previous
     Model model2Seg = Model(2, 4.0); //Given with lower_bound
-    testMap.insert(2.0, model3Seg);
-    auto lowerBeforeInserts = testMap.penaltyModelMap.lower_bound(5.0);
+    testMap.insert(2.0, model3Seg); //Insert the three segment model at penalty 3.0.
+    auto lowerBeforeInserts = testMap.penaltyModelMap.lower_bound(3.0); //This returns map::end as no key exceeds 3.0
     
-    ASSERT_EQ(lowerBeforeInserts, testMap.penaltyModelMap.end());
-    ASSERT_EQ(prev(lowerBeforeInserts)->first, 2.0);
-    testMap.insert(5.0, model2Seg);
-    testMap.displayMap();
-    auto lowerBAfterInserts = testMap.penaltyModelMap.lower_bound(3.0);
-    auto prevPair = prev(lowerBAfterInserts);
-    auto firstPair = prev(lowerBAfterInserts, 2);
-    int prevModelSize = prevPair->second.modelSize;
-    int lowerBoundModelSize = lowerBAfterInserts->second.modelSize;
-    ASSERT_EQ(2, lowerBoundModelSize);
-    ASSERT_EQ(3, prevModelSize);
-    ASSERT_EQ(1, firstPair->second.modelSize);
+    ASSERT_EQ(lowerBeforeInserts, testMap.penaltyModelMap.end()); //Testing that this is indeed the case. 
+
+    ASSERT_EQ(prev(lowerBeforeInserts)->first, 2.0); //Used std::iterator's prev() to revert to the current entry from lower_bound iterator in O(1) time
+    testMap.insert(5.0, model2Seg); //Insert a new model with two segments at penalty 5.0
+    testMap.displayMap(); 
+    auto lowerBAfterInserts = testMap.penaltyModelMap.lower_bound(3.0); //Created a new iterator to the new value returned by lower_bound, iterator points to 5.0 entry.
+    ASSERT_EQ(lowerBAfterInserts->first, 5.0); //This lower bound call does indeed return the model stored with key 5.0. THIS IS AFTER THE QUERY, I WANT WHAT IS BEFORE AS WELL.
+    auto prevPair = prev(lowerBAfterInserts); //To get what is before the query of 3.0, I must use the prev function on the iterator given by lower_bound
+    auto firstPair = prev(lowerBAfterInserts, 2); //To get to the firstPair, I call prev with parameter 2 as well, to get an iterator to the key 0.0, or two keys before. 
+    ASSERT_EQ(prevPair->first, 2.0); //Assert that the pair before the lower_bound call is the model we inserted with penalty key 2.0. (the model before).
+    ASSERT_EQ(firstPair->first, 0.0); //Assert that the pair two steps before the lower_bound iterator is the first model (key 0).
+    //All asserts pass 6/16/20.
   }
 
    TEST(InsertTests, DISABLED_testDuplicatePenalty){
@@ -106,7 +106,7 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
    
    }
 
-   TEST(InsertTests, testPreviousModelIterator){
+   TEST(DISABLED_InsertTests, testPreviousModelIterator){
      ModelSelectionMap testMap = ModelSelectionMap();
      double expectedPrevPen = 0.0;
      ASSERT_EQ(expectedPrevPen, testMap.prevInsertedPair->first);
@@ -163,7 +163,7 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(DISABLED_InsertTests, testInsertMiddlePanel){
+TEST(InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -191,6 +191,7 @@ TEST(DISABLED_InsertTests, testInsertMiddlePanel){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
+//TODO complete this test after the left and middle panel tests pass.
 TEST(DISABLED_InsertTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
@@ -205,7 +206,7 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(DISABLED_InsertTests, insertSameModelSize){
+TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, model5Seg);
@@ -215,7 +216,7 @@ TEST(DISABLED_InsertTests, insertSameModelSize){
     testMap.insert(3.0, model5Seg);
     testMinimize(testMap.minimize(3.0), 5, true, 3.0);
     
-    //This test passes under the current insert implementation, but the memory result is not constant. 
+    //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!
     testMap.displayMap(); 
 
    }
