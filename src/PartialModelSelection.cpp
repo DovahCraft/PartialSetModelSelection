@@ -75,11 +75,14 @@ void ModelSelectionMap::insert(double newPenalty, Model newModel){
       //update the placeholder on value instead of returning an error message if penalty is 0.
       if(newPenalty == 0){
          auto placeHolder = penaltyModelMap.find(0.0);
-         placeHolder->second = newModel; 
+         placeHolder->second = newModel;
+         std::cout << "Insert of penalty 0 found, updating placeholder value!\n"; 
       }
          
-
-      std::cout << "Insert failed, key exists!\n";
+      else{
+         std::cout << "Insert failed, key exists and is not 0!\n";
+      }
+      
       return;
    }
 
@@ -99,21 +102,23 @@ void ModelSelectionMap::insert(Model currentModel){};
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
    MinimizeResult queryResult = MinimizeResult(); 
-   auto indexPair = penaltyModelMap.find(penaltyQuery);
+   auto indexPair = penaltyModelMap.lower_bound(penaltyQuery);
    double indexPenalty = indexPair->first;
    Model indexModel = indexPair->second;
 
-    //If we have models inserted, we need to find a penaltyQuery result that is closest to the queried penaltyQuery
-    indexPair = penaltyModelMap.lower_bound(penaltyQuery);
-
     //If we found an inserted pair that lies on the queried penalty itself
-    if(indexPenalty == penaltyQuery)
-    //Make a query result to return using the second element of a testedPair, Model. Get its modelSize. 
-    queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
+    if(indexPenalty == penaltyQuery) {
+       //Make a query result to return using the second element of a testedPair, Model. Get its modelSize. 
+       queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
+       queryResult.certain = true;
+    }
+    
    
     //Otherwise, make a range query that does not lie on an inserted pair. 
     else{
-       queryResult = MinimizeResult(std::make_pair(indexModel.modelSize, indexModel.modelSizeAfter)); //Returning default for now. 
+       auto prevPair = prev(indexPair);
+       Model prevModel = prevPair->second;
+       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now. 
        queryResult.certain = false;
     }
     
