@@ -49,11 +49,16 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
 void ModelSelectionMap::insert(double newPenalty, Model newModel){
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-   auto nextKey = penaltyModelMap.lower_bound(newPenalty);
-   auto prevKey = prev(nextKey);
+   auto nextHighestKey = penaltyModelMap.lower_bound(newPenalty);
+   std::map<double, Model>::iterator prevKey;
    //If we found a model/penalty pairing that is higher than our current query
-   if(nextKey != penaltyModelMap.end())
-      newPair.second.modelSizeAfter = nextKey->second.modelSize;
+   if(nextHighestKey != penaltyModelMap.end())
+      newPair.second.modelSizeAfter = nextHighestKey->second.modelSize;
+
+   //If the 
+   if(nextHighestKey->first != 0.0){
+      prevKey = prev(nextHighestKey);
+   }
 
    try{
       auto insertResult = penaltyModelMap.insert(newPair);

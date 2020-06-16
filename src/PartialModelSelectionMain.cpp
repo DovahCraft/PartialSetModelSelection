@@ -75,7 +75,7 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
    }
 
    
-  TEST(MinimizeTests, testLowerBoundInsertion){
+  TEST(InsertTests, testLowerBoundInsertion){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model3Seg = Model(3, 0.0); //Previous
     Model model2Seg = Model(2, 4.0); //Given with lower_bound
