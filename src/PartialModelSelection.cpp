@@ -51,7 +51,10 @@ void ModelSelectionMap::insert(double newPenalty, Model newModel){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextKey = penaltyModelMap.lower_bound(newPenalty);
    auto prevKey = prev(nextKey);
-    
+   //If we found a model/penalty pairing that is higher than our current query
+   if(nextKey != penaltyModelMap.end())
+      newPair.second.modelSizeAfter = nextKey->second.modelSize;
+
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult);
@@ -64,9 +67,26 @@ void ModelSelectionMap::insert(double newPenalty, Model newModel){
    //Update the model before us.    
    }
    catch(std::logic_error errorMessage) {
+      //update the placeholder on value instead of returning an error message if penalty is 0.
+      if(newPenalty == 0){
+         auto placeHolder = penaltyModelMap.find(0.0);
+         placeHolder->second = newModel; 
+      }
+         
+
       std::cout << "Insert failed, key exists!\n";
+      return;
    }
-    
+
+
+
+   //If we have a key before us, update that key's modelSizeAfter to our newly inserted modelsize. 
+   //if(prevKey != nullptr)
+      //prevKey->second.modelSizeAfter = newPair.second.modelSize;
+   
+   
+
+
 }
 
 void ModelSelectionMap::insert(Model currentModel){};
