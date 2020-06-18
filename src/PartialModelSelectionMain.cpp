@@ -15,17 +15,17 @@
 
 
 //Testing method to test minimize method (minimizeResults).   
-void testMinimize(MinimizeResult testResult, double lowModelSize, bool certainFlag, double penaltyQuery){
+void testMinimize(MinimizeResult testResult, double lowModelSize, bool expectedCertainty, double penaltyQuery){
    //Log the test being run.
-   std::string certainFlagString = "";
+   std::string certaintyString = "";
    
-   certainFlag ? certainFlagString = "true" : certainFlagString = "false";
+   expectedCertainty ? certaintyString = "true" : certaintyString = "false";
     
    GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
-                     "; certainFlag: " << certainFlagString << "; penalty: " << penaltyQuery << ";\n\n";
+                     "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
-   EXPECT_EQ(certainFlag, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
+   EXPECT_EQ(expectedCertainty, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
 }
 
 //Testing method to test getNextPen

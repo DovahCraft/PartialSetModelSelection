@@ -95,6 +95,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    auto indexPair = penaltyModelMap.lower_bound(penaltyQuery);
    double indexPenalty = indexPair->first;
    Model indexModel = indexPair->second;
+   auto prevPair = prev(indexPair);
+   Model prevModel = prevPair->second;
 
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
@@ -102,11 +104,21 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
        queryResult.certain = true;
     }
-    //Otherwise, make a range query that does not lie on an inserted pair. 
+
+
+    //Otherwise, make a range query that does not lie on an inserted pair.
+    else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
+       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, prevModel.modelSize));
+    } 
+
     else{
-       auto prevPair = prev(indexPair);
-       Model prevModel = prevPair->second;
-       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now.
+       if(indexPair->first != 0){
+          
+          auto prevPair = prev(indexPair);
+          Model prevModel = prevPair->second;
+          queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now.
+       }
+       
       
        queryResult.certain = false;
     } 
