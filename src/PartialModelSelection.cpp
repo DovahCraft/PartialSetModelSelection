@@ -87,14 +87,6 @@ void ModelSelectionMap::insert(double newPenalty, Model newModel){
    }
 
 
-
-   //If we have a key before us, update that key's modelSizeAfter to our newly inserted modelsize. 
-   //if(prevKey != nullptr)
-      //prevKey->second.modelSizeAfter = newPair.second.modelSize;
-   
-   
-
-
 }
 
 void ModelSelectionMap::insert(Model currentModel){};
@@ -112,16 +104,14 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
        queryResult.certain = true;
     }
-    
-   
     //Otherwise, make a range query that does not lie on an inserted pair. 
     else{
        auto prevPair = prev(indexPair);
        Model prevModel = prevPair->second;
-       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now. 
+       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now.
+      
        queryResult.certain = false;
-    }
-    
+    } 
     return queryResult;
 }
 
@@ -143,9 +133,9 @@ std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery){
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
-  std::cout << "Penalty          ModelSize\n"; 
+  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
   for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-      std::cout << it->first << "      =>           " << it->second.modelSize << '\n';
+      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
 
    std::cout << " \n";
  }
