@@ -114,14 +114,18 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
 
    TEST(InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap();
-     Model model1Seg = Model(3, 0.0);
-     testMap.insert(4.0, model1Seg);
+     Model model2Seg = Model(2, 3.0);
+     Model model3Seg = Model(3, 2.0);
+     Model model5Seg = Model(5, 0.0);
+     testMap.insert(4.0, model2Seg);
+     testMap.insert(2.0, model3Seg);
+     testMap.insert(0.0, model5Seg);
      testMap.displayMap(); 
 
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_InsertTests, testInsertLeftPanel){
+ TEST(InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
