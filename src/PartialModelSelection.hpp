@@ -10,7 +10,7 @@ struct Model {
     //Loss associated with the given model 
     double loss = 0.0;
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
-    bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next. 
+    bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next.
     //Range of penalties for which this model is optimal.
     std::pair<double,double> optimalPenaltyRange;
 };
@@ -34,7 +34,7 @@ using PenaltyModelPair = std::pair<double, Model>;
 class ModelSelectionMap {
 public:
     //Map constants and return codes.
-    const double PLACEHOLDER_LOSS = -9.0;
+    const double PLACEHOLDER_LOSS = -9999.0;
     const double EMPTY_MAP_QUERY = 0;
     const double EMPTY_MAP_ERR = -99999;
     const double DEFAULT_PENALTY = -9999;   
@@ -134,7 +134,6 @@ public:
 
 
     private:
-        void updatePreviousEntry();
         bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 
