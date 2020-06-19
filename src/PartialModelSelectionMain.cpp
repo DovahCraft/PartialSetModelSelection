@@ -50,6 +50,17 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
 
    }
 
+
+
+TEST(ModelCreationTests, testBreakFormation){
+    Model model1segs = Model(1, 7);
+    Model model2segs = Model(2, 4);
+    
+    double breakpoint = findBreakpoint(model1segs, model2segs);
+
+    ASSERT_EQ(breakpoint, 3.0);
+
+   }
  
 
  TEST(PenaltyPairsTests, DISABLED_testBreakFormation){

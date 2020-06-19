@@ -48,7 +48,7 @@ public:
     std::map<double, Model> penaltyModelMap; 
 
     //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
-    std::vector<double> newPenaltyList;
+    std::vector<double> newPenalties;
 
 
     //Method headers
@@ -98,6 +98,7 @@ public:
     double getNewPenalty();
 
     
+    
 
 
     /*
@@ -140,3 +141,5 @@ public:
 //Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
 std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
 
+//Utility to compute a breakpoint between two models for use in other functions.
+double findBreakpoint(Model firstModel, Model secondModel);

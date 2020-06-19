@@ -21,7 +21,8 @@ ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
    startingModel.isPlaceHolder = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    penaltyModelMap.insert(startingPair);
-   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
+   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
+   newPenalties.push_back(0.0); 
 }
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
@@ -33,6 +34,7 @@ ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    penaltyModelMap.insert(startingPair);
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
+   newPenalties.push_back(0.0);
 }
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel){
@@ -129,6 +131,12 @@ double ModelSelectionMap::getNewPenalty(){
   }
    return 0; 
 }
+
+double findBreakpoint(Model firstModel, Model secondModel){
+   //Intersection between two candidate models to solve sures (and add to new penalty vec?)
+   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+}
+
 
 std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery){
    auto tempPair = std::make_pair<int, bool>(4, true);
