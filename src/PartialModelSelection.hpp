@@ -11,7 +11,6 @@ struct Model {
     double loss = 0.0;
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
     bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next.
-    bool isPlaceHolder; //Used to determine if the key at 0 is the initial key we insert.
     //Range of penalties for which this model is optimal.
     std::pair<double,double> optimalPenaltyRange;
 };
