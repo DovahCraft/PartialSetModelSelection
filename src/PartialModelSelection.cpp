@@ -81,7 +81,6 @@ void ModelSelectionMap::insert(double newPenalty, Model newModel){
          std::cout << "Insert failed, key exists and is not the initial placeholder!\n";
       }
       
-      return;
    }
 
 
@@ -101,8 +100,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
        //Make a query result to return using the second element of a testedPair, Model. Get its modelSize. 
-       queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
-       queryResult.certain = true;
+       queryResult = MinimizeResult(indexModel.modelSize, true);
     }
 
 
@@ -116,7 +114,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
           
           auto prevPair = prev(indexPair);
           Model prevModel = prevPair->second;
-          queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now.
+          queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); 
        }
        
       
@@ -179,30 +177,9 @@ MinimizeResult::MinimizeResult(){
 
 }
 
-MinimizeResult::MinimizeResult(std::pair<double, double> inputModels){
-       //Check for a valid range of models. 
-       if(!isValidRange(inputModels)) {
-           throw std::out_of_range("Invalid range inputted to MinimizeResult creation."); 
-      }
-       else {
-           //Check if our penaltyQueryRange is a solved point (Where the beginning and end are identical.)
-           if(optimalModels.first == optimalModels.second)
-               certain = true;
-            else{
-               certain = false;  
-            }
-            optimalModels.first = inputModels.first;
-            optimalModels.second = inputModels.second;
-      }
-   }
+//Initialization constructor for a minimizeResult based on passed args from the minimize method. 
+MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
 
-bool MinimizeResult::isValidRange(std::pair<double,double> optimalModels){
-    //Tie a model size and pairing to a penaltyQuery range.
-    if(optimalModels.first < 0 || optimalModels.first < optimalModels.second){
-        return false;   
-    }
-    return true;
-}
 
 
 
