@@ -19,9 +19,9 @@ struct Model {
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
     MinimizeResult();
-    MinimizeResult(int modelSize, bool certain);
-    bool certain;
-    int modelSize;
+    MinimizeResult(std::pair<double,double> inputModelRange);
+    bool isValidRange(std::pair<double,double> inputModelRange);
+    bool certain = false;
     //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
     std::pair<double, double> optimalModels;
 };
@@ -46,9 +46,7 @@ public:
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
 
-    //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
-    std::vector<double> newPenaltyList;
-
+    std::map<double,Model>::iterator prevInsertedPair = penaltyModelMap.end();  //Pointer to the last inserted pair for updates.
 
     //Method headers
     ModelSelectionMap();
@@ -127,6 +125,9 @@ public:
     */
     MinimizeResult minimize(double penaltyQuery);
 
+    
+    //Wrapper struct to contain a list of MinimizeResults
+    std::vector<MinimizeResult> minResultVec; 
 
     /*UTILITY METHODS*/
     void displayMap();
