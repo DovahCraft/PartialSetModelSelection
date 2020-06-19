@@ -104,22 +104,21 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     }
 
 
-    //Otherwise, make a range query that does not lie on an inserted pair.
+    //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
-       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, prevModel.modelSize));
+       queryResult = MinimizeResult(prevModel.modelSize, true);
     } 
 
     else{
+       //If we find a result that is not zero, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds. 
        if(indexPair->first != 0){
-          
           auto prevPair = prev(indexPair);
           Model prevModel = prevPair->second;
-          queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); 
+          queryResult = MinimizeResult(prevModel.modelSize, false); 
        }
-       
-      
-       queryResult.certain = false;
     } 
+
+    //Return the processed query to the user.
     return queryResult;
 }
 

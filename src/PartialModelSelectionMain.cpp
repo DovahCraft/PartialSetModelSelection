@@ -24,7 +24,7 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool expectedC
    GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
                      "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
-   EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
+   EXPECT_EQ(lowModelSize, testResult.modelSize) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(expectedCertainty, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
 }
 
