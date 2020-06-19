@@ -14,75 +14,85 @@
 
 //Default contructor for model selection map, sets max models to std of 3.
 ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
-   //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
+   //Set a starting point to be stored at penalty 0 using placeholders to be updated. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
-   
-   startingModel.isPlaceHolder = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
-   penaltyModelMap.insert(startingPair);
+   try{
+      auto insertResult = penaltyModelMap.insert(startingPair);
+      validateInsert(insertResult);
+      prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
+      
+   }
+   catch(std::logic_error errorMessage) {
+      std::cout << "Insert failed, key exists!\n";
+   }
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
 }
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
 ModelSelectionMap::ModelSelectionMap(int maxModels) : maxModels(maxModels) {   
-   //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
-   startingModel.isPlaceHolder = true;
-   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
-   penaltyModelMap.insert(startingPair);
-   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
+   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel); 
+   try{
+      auto insertResult = penaltyModelMap.insert(startingPair);
+      validateInsert(insertResult);
+      prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.  
+   }
+   catch(std::logic_error errorMessage) {
+      std::cout << "Insert failed, key exists!\n";
+   }
+   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
 }
 
 void ModelSelectionMap::insert(double newPenalty, Model newModel){
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-   auto nextPair = penaltyModelMap.lower_bound(newPenalty);
-   std::map<double, Model>::iterator prevPair;
-   try{
-      auto insertResult = penaltyModelMap.insert(newPair);
-      validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.       
-      if(insertedModels == 0){
-         auto placeHolder = penaltyModelMap.begin();
-         placeHolder->second.modelSize = newModel.modelSize;
-      }
-      //Note that we inserted a model. 
-      insertedModels++;
-      //UPDATE MODELS AFTER US
-      //If we found a model/penalty pairing that is higher than our current query
-      if(nextPair != penaltyModelMap.end())
-         newPair.second.modelSizeAfter = nextPair->second.modelSize;
-      //If there is nothing different after us, set the after value to the current value. 
-      else{
-         newPair.second.modelSizeAfter = newModel.modelSize;
-      }
-      //UPDATE MODELS BEFORE US
-      //If we found another key besides the 0 key from lowerbound. 
-      if(nextPair->first != 0.0){
-         prevPair = prev(nextPair);
-         prevPair->second.modelSizeAfter = newModel.modelSize;
-      }
+   auto nextHighestKey = penaltyModelMap.lower_bound(newPenalty);
+   std::map<double, Model>::iterator prevKey;
+   //If we found a model/penalty pairing that is higher than our current query
+   if(nextHighestKey != penaltyModelMap.end())
+      newPair.second.modelSizeAfter = nextHighestKey->second.modelSize;
+
+   //If the 
+   if(nextHighestKey->first != 0.0){
+      prevKey = prev(nextHighestKey);
    }
 
+   try{
+      auto insertResult = penaltyModelMap.insert(newPair);
+      validateInsert(insertResult);
+      //After inserting, update our previous entry as well. 
+      prevInsertedPair = insertResult.first; //Set the iterator to the previous insert to the validated insert as we did not error.
+
+      //Note that we inserted a model. 
+      insertedModels++;
+
+   //Update the model before us.    
+   }
    catch(std::logic_error errorMessage) {
       //update the placeholder on value instead of returning an error message if penalty is 0.
-      auto firstKey = penaltyModelMap.begin();
-      if(newPenalty == 0 && firstKey->second.isPlaceHolder){
-         firstKey->second.modelSize = newModel.modelSize;
-         firstKey->second.modelSizeAfter = newModel.modelSize;
-         std::cout << "Insert of penalty 0 found, updating placeholder value!\n";
-         firstKey->second.isPlaceHolder = false;
-         //As we official solved a model for 0, increment the inserted models as it is no longer a placeholder. 
-         insertedModels++;
+      if(newPenalty == 0){
+         auto placeHolder = penaltyModelMap.find(0.0);
+         placeHolder->second = newModel;
+         std::cout << "Insert of penalty 0 found, updating placeholder value!\n"; 
       }
          
       else{
-         std::cout << "Insert failed, key exists and is not the initial placeholder!\n";
+         std::cout << "Insert failed, key exists and is not 0!\n";
       }
       
       return;
    }
+
+
+
+   //If we have a key before us, update that key's modelSizeAfter to our newly inserted modelsize. 
+   //if(prevKey != nullptr)
+      //prevKey->second.modelSizeAfter = newPair.second.modelSize;
+   
+   
 
 
 }
@@ -95,8 +105,6 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    auto indexPair = penaltyModelMap.lower_bound(penaltyQuery);
    double indexPenalty = indexPair->first;
    Model indexModel = indexPair->second;
-   auto prevPair = prev(indexPair);
-   Model prevModel = prevPair->second;
 
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
@@ -104,24 +112,16 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        queryResult = MinimizeResult(std::make_pair(indexModel.modelSize,indexModel.modelSize));
        queryResult.certain = true;
     }
-
-
-    //Otherwise, make a range query that does not lie on an inserted pair.
-    else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
-       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, prevModel.modelSize));
-    } 
-
+    
+   
+    //Otherwise, make a range query that does not lie on an inserted pair. 
     else{
-       if(indexPair->first != 0){
-          
-          auto prevPair = prev(indexPair);
-          Model prevModel = prevPair->second;
-          queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now.
-       }
-       
-      
+       auto prevPair = prev(indexPair);
+       Model prevModel = prevPair->second;
+       queryResult = MinimizeResult(std::make_pair(prevModel.modelSize, indexModel.modelSize)); //Returning default for now. 
        queryResult.certain = false;
-    } 
+    }
+    
     return queryResult;
 }
 
@@ -143,9 +143,9 @@ std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery){
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
-  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
+  std::cout << "Penalty          ModelSize\n"; 
   for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
+      std::cout << it->first << "      =>           " << it->second.modelSize << '\n';
 
    std::cout << " \n";
  }
