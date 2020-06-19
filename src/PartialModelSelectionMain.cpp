@@ -24,8 +24,9 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool certainFl
    GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
                      "; certainFlag: " << certainFlagString << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
-   EXPECT_EQ(lowModelSize, testResult.optimalModels.first) << "\nMinimize first parameter is different from expected.\n";
-   EXPECT_EQ(certainFlag, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
+   EXPECT_EQ(lowModelSize, testResult.modelSize) << "\nMinimize first parameter is different from expected.\n";
+   EXPECT_EQ(expectedCertainty, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
+
 }
 
 //Testing method to test getNextPen
@@ -106,11 +107,7 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
    
    }
 
-   TEST(DISABLED_InsertTests, testPreviousModelIterator){
-     ModelSelectionMap testMap = ModelSelectionMap();
-     double expectedPrevPen = 0.0;
-     ASSERT_EQ(expectedPrevPen, testMap.prevInsertedPair->first);
-   }
+
 
    TEST(DISABLED_InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap();
