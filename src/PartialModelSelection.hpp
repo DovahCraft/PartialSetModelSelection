@@ -47,7 +47,9 @@ public:
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
 
-    std::map<double,Model>::iterator prevInsertedPair = penaltyModelMap.end();  //Pointer to the last inserted pair for updates.
+    //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
+    std::vector<double> newPenaltyList;
+
 
     //Method headers
     ModelSelectionMap();

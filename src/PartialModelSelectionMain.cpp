@@ -106,13 +106,7 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
    
    }
 
-   TEST(DISABLED_InsertTests, testPreviousModelIterator){
-     ModelSelectionMap testMap = ModelSelectionMap();
-     double expectedPrevPen = 0.0;
-     ASSERT_EQ(expectedPrevPen, testMap.prevInsertedPair->first);
-   }
-
-   TEST(InsertTests, testModelSizeAfterUpdate){
+  TEST(InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap();
      Model model2Seg = Model(2, 3.0);
      Model model3Seg = Model(3, 2.0);
