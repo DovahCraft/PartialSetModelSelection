@@ -55,9 +55,12 @@ TEST(ModelCreationTests, DISABLED_modelLossTestPos){
 TEST(ModelCreationTests, testBreakFormation){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
-    
+    ModelSelectionMap testMap = ModelSelectionMap();
+    testMap.insert(model2segs);
+    testMap.insert(model1segs);
     double breakpoint = findBreakpoint(model1segs, model2segs);
-
+    testMinimize(testMap.minimize(1.0), 2, true, 1.0);
+    testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     ASSERT_EQ(breakpoint, 3.0);
 
    }
