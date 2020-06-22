@@ -95,7 +95,7 @@ public:
     Exceptions: none?
     Note: none
     */
-    double getNewPenalty();
+    std::vector<double> getNewPenaltyList();
 
     
     
@@ -133,6 +133,8 @@ public:
     /*UTILITY METHODS*/
     void displayMap();
 
+    
+    void displayPenList();
 
     private:
         bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     

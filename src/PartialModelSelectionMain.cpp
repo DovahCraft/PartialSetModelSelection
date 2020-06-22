@@ -31,28 +31,13 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool expectedC
 //Testing method to test getNextPen
 void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
     GTEST_GETPENCOUT << "Running test for getNextPenalty\n\n";
-
-    EXPECT_EQ(testMap.getNewPenalty(), expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
+    std::vector<double> currentPenList = testMap.getNewPenaltyList();
+    double firstPen = currentPenList.front();
+    EXPECT_EQ(0.0, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
     
 }
 
-
-//Tests to ensure correct model formation and associated logic.
-TEST(ModelCreationTests, DISABLED_modelTest){
-    Model model3segs = Model(3, 5);
-    ASSERT_EQ(model3segs.modelSize, 3);
-   }
-
-   
-TEST(ModelCreationTests, DISABLED_modelLossTestPos){
-    Model model3segs = Model(3, 5);
-    ASSERT_EQ(model3segs.loss, 5);
-
-   }
-
-
-
-TEST(ModelCreationTests, testBreakFormation){
+TEST(DISABLED_breakpointTests, testBreakFormation){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
@@ -62,9 +47,20 @@ TEST(ModelCreationTests, testBreakFormation){
     testMinimize(testMap.minimize(1.0), 2, true, 1.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     ASSERT_EQ(breakpoint, 3.0);
+}
 
+
+TEST(breakpointTests, testGetNewPenList){
+    Model model1segs = Model(1, 7);
+    Model model2segs = Model(2, 4);
+    ModelSelectionMap testMap = ModelSelectionMap();
+    testMap.insert(model2segs);
+    testMap.insert(model1segs);
+    double breakpoint = findBreakpoint(model1segs, model2segs);
+    testMap.displayPenList();
+    testGetPen(testMap, 0.0);
    }
- 
+
 
  TEST(PenaltyPairsTests, DISABLED_testBreakFormation){
     Model testModel = Model(2, 3);
@@ -129,7 +125,7 @@ TEST(ModelCreationTests, testBreakFormation){
      testMap.insert(2.0, model3Seg);
      testMap.insert(0.0, model5Seg);
      testMap.displayMap(); 
-
+     //TODO: Asserts here.
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)

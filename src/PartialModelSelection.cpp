@@ -5,6 +5,8 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <iterator>
+#include <algorithm>
 //Local includes
 #include "PartialModelSelection.hpp"
 
@@ -124,12 +126,9 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     return queryResult;
 }
 
-double ModelSelectionMap::getNewPenalty(){
-  //If the map of tested pairs is empty, query penaltyQuery 0 first.  
-  if(!hasModelsInserted()){
-       return EMPTY_MAP_QUERY; //?
-  }
-   return 0; 
+std::vector<double> ModelSelectionMap::getNewPenaltyList(){
+  //Return the list of potential penalties to query next.   
+   return newPenalties; 
 }
 
 double findBreakpoint(Model firstModel, Model secondModel){
@@ -152,6 +151,15 @@ void ModelSelectionMap::displayMap() {
   for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
       std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
 
+   std::cout << " \n";
+ }
+
+
+ void ModelSelectionMap::displayPenList(){
+    std::cout << "Candidate penalties in newPenList: " << "\n";
+    for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
+      std::cout << *it << "   ";
+   
    std::cout << " \n";
  }
   
