@@ -102,6 +102,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    Model indexModel = indexPair->second;
    auto prevPair = prev(indexPair);
    Model prevModel = prevPair->second;
+   bool isCertain = false;
 
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
@@ -112,16 +113,17 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
     //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
-       queryResult = MinimizeResult(prevModel.modelSize, true);
+       isCertain = true;
+       queryResult = MinimizeResult(prevModel.modelSize, isCertain);
     } 
 
+    //If we find a result that is not after 1, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
-       //If we find a result that is not zero, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds. 
+       //Check if the prevPair set above is valid. If so, use it. 
        if(indexPair->first != 0){
-          auto prevPair = prev(indexPair);
-          Model prevModel = prevPair->second;
-          queryResult = MinimizeResult(prevModel.modelSize, false); 
+          queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
        }
+
     } 
 
     //Return the processed query to the user.
