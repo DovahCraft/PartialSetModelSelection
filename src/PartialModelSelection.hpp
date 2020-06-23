@@ -27,6 +27,12 @@ struct MinimizeResult {
     std::pair<double, double> optimalModels;
 };
 
+    //Map constants and return codes.
+    const double PLACEHOLDER_LOSS = -9999.0;
+    const double EMPTY_MAP_QUERY = 0;
+    const double EMPTY_MAP_ERR = -99999;
+    const double DEFAULT_PENALTY = -9999;   
+    const int STD_MODEL_CAP = 3;
 
 
 //struct penaltyModelPair may be better here for more readability
@@ -34,12 +40,6 @@ using PenaltyModelPair = std::pair<double, Model>;
 
 class ModelSelectionMap {
 public:
-    //Map constants and return codes.
-    const double PLACEHOLDER_LOSS = -9999.0;
-    const double EMPTY_MAP_QUERY = 0;
-    const double EMPTY_MAP_ERR = -99999;
-    const double DEFAULT_PENALTY = -9999;   
-    const int STD_MODEL_CAP = 3;
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
     int maxModels;
     

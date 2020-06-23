@@ -130,7 +130,7 @@ TEST(breakpointTests, testGetNewPenList){
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
  TEST(InsertTests, testInsertLeftPanel){
-    ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
+    ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
 
@@ -163,7 +163,7 @@ TEST(breakpointTests, testGetNewPenList){
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
 TEST(InsertTests, DISABLED_testInsertMiddlePanel){
-    ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
+    ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
