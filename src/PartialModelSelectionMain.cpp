@@ -89,13 +89,13 @@ TEST(breakpointTests, testGetNewPenList){
     ModelSelectionMap testMap = ModelSelectionMap(); //Create a new model selection map class
     Model model3Seg = Model(3, 0.0); //Previous
     Model model2Seg = Model(2, 4.0); //Given with lower_bound
-    testMap.insert(2.0, model3Seg); //Insert the three segment model at penalty 3.0.
+    testMap.insert(2.0, 3, 0.0); //Insert the three segment model at penalty 3.0.
     auto lowerBeforeInserts = testMap.penaltyModelMap.lower_bound(3.0); //This returns map::end as no key exceeds 3.0
     
     ASSERT_EQ(lowerBeforeInserts, testMap.penaltyModelMap.end()); //Testing that this is indeed the case. 
 
     ASSERT_EQ(prev(lowerBeforeInserts)->first, 2.0); //Used std::iterator's prev() to revert to the current entry from lower_bound iterator in O(1) time
-    testMap.insert(5.0, model2Seg); //Insert a new model with two segments at penalty 5.0
+    testMap.insert(5.0, 2, 4.0); //Insert a new model with two segments at penalty 5.0
     testMap.displayMap(); 
     auto lowerBAfterInserts = testMap.penaltyModelMap.lower_bound(3.0); //Created a new iterator to the new value returned by lower_bound, iterator points to 5.0 entry.
     ASSERT_EQ(lowerBAfterInserts->first, 5.0); //This lower bound call does indeed return the model stored with key 5.0. THIS IS AFTER THE QUERY, I WANT WHAT IS BEFORE AS WELL.
@@ -110,20 +110,17 @@ TEST(breakpointTests, testGetNewPenList){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     int expectedCount = 1;
-    testMap.insert(2.0, model1Seg);
-    testMap.insert(2.0, model1Seg); //SHould not be allowed by insert function. 
+    testMap.insert(2.0, 1, 7.0);
+    testMap.insert(2.0, 1, 7.0); //SHould not be allowed by insert function. 
     ASSERT_EQ(expectedCount, testMap.penaltyModelMap.count(2.0));
    
    }
 
   TEST(InsertTests, testModelSizeAfterUpdate){
-     ModelSelectionMap testMap = ModelSelectionMap();
-     Model model2Seg = Model(2, 3.0);
-     Model model3Seg = Model(3, 2.0);
-     Model model5Seg = Model(5, 0.0);
-     testMap.insert(4.0, model2Seg);
-     testMap.insert(2.0, model3Seg);
-     testMap.insert(0.0, model5Seg);
+     ModelSelectionMap testMap = ModelSelectionMap(6);
+     testMap.insert(4.0, 2, 3.0);
+     testMap.insert(2.0, 3, 2.0);
+     testMap.insert(0.0, 5, 0.0);
      testMap.displayMap(); 
      //TODO: Asserts here.
    }
@@ -139,7 +136,7 @@ TEST(breakpointTests, testGetNewPenList){
     testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
 
     //Insert the one segment model for an incomplete path, given the model cap is 3.  
-    testMap.insert(4.0, model1Seg); 
+    testMap.insert(4.0, 1, 7.0); 
     //Test getNextPenalty
     testGetPen(testMap, 0.0);
     testMinimize(testMap.minimize(5.0), 1, true, 5.0); //This should be certain as nothing will become optimal after it has been solved for a penalty value. 
@@ -151,7 +148,7 @@ TEST(breakpointTests, testGetNewPenList){
     testMinimize(testMap.minimize(0.0), 1, false, 0.0);
 
     //Insert two segment model and test again, should be complete path.  
-    testMap.insert(0.0, model2Seg);
+    testMap.insert(0.0, 2, 4.0);
     testMinimize(testMap.minimize(5.0), 1, true, 5.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(3.0), 2, true, 3.0); //Breakpoint is at 3.0, so 2.0 and 1.0 should yield model with two segments as it was inserted with penatly 0.0
@@ -168,7 +165,7 @@ TEST(InsertTests, DISABLED_testInsertMiddlePanel){
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 0.0);
     bool verboseFlag = false;
-    testMap.insert(4.0, model1Seg);
+    testMap.insert(4.0, 1, 7.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(5.0), 1, true, 5.0);
     if(verboseFlag){
@@ -182,7 +179,7 @@ TEST(InsertTests, DISABLED_testInsertMiddlePanel){
     testMap.insert(model2Seg); //Need to compute breakpoint first?
     testMinimize(testMap.minimize(0.0), 1, false, 0.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
     //Add model with 3 segments that is found to be more optimal
-    testMap.insert(1.0, model3Seg);     
+    testMap.insert(1.0, 3, 0.0);     
     testMinimize(testMap.minimize(2.0), 3, true, 2.0);
     //testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
    }
@@ -192,13 +189,13 @@ TEST(InsertTests, DISABLED_testInsertMiddlePanel){
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 //TODO complete this test after the left and middle panel tests pass.
 TEST(DISABLED_InsertTests, testInsertRightPanel){
-    ModelSelectionMap testMap = ModelSelectionMap(testMap.STD_MODEL_CAP);
+    ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 2.0);
-    testMap.insert(4.0, model1Seg);
-    testMap.insert(2.5, model2Seg);
-    testMap.insert(1.0, model3Seg);
+    testMap.insert(4.0, 1, 7.0);
+    testMap.insert(2.5, 2, 4.0);
+    testMap.insert(1.0, 3, 2.0);
     testGetPen(testMap, 0.0);
    }
 
@@ -206,13 +203,13 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(InsertTests, DISABLED_insertSameModelSize){
-    ModelSelectionMap testMap = ModelSelectionMap();
+    ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
-    testMap.insert(1.0, model5Seg);
+    testMap.insert(1.0, 5, 1.0);
     testMinimize(testMap.minimize(1.0), 5, true, 1.0);
-    testMap.insert(2.0, model5Seg);
+    testMap.insert(2.0, 5, 1.0);
     testMinimize(testMap.minimize(2.0), 5, true, 2.0);
-    testMap.insert(3.0, model5Seg);
+    testMap.insert(3.0, 5, 1.0);
     testMinimize(testMap.minimize(3.0), 5, true, 3.0);
     
     //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!

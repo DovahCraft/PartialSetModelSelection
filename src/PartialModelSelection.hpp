@@ -41,7 +41,7 @@ using PenaltyModelPair = std::pair<double, Model>;
 class ModelSelectionMap {
 public:
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
-    int maxModels;
+    const double modelSizeCap;
     
  
     //Map struct to hold penalty and model pairings from inserts.
@@ -52,9 +52,7 @@ public:
 
 
     //Method headers
-    ModelSelectionMap();
-
-    ModelSelectionMap(int maxModels);
+    ModelSelectionMap(double maxModels = INFINITY);
 
 
     /*
@@ -68,7 +66,7 @@ public:
         responds to and reports failure to insert the model.
      Note: none
     */
-    void insert(double penalty, Model currentModel);
+    void insert(double penalty, int modelSize, double loss);
 
     /*
     Function name: insert (overloaded)

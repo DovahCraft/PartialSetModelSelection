@@ -28,7 +28,7 @@
 }*/
 
 //Initialization constructor for a ModelSelectionMap with passed cap value.
-ModelSelectionMap::ModelSelectionMap(int maxModels = STD_MODEL_CAP) : maxModels(maxModels) {   
+ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
    Model startingModel = Model(1,PLACEHOLDER_LOSS);
    startingModel.modelSizeAfter = 1;
@@ -39,8 +39,10 @@ ModelSelectionMap::ModelSelectionMap(int maxModels = STD_MODEL_CAP) : maxModels(
    newPenalties.push_back(0.0);
 }
 
-void ModelSelectionMap::insert(double newPenalty, Model newModel){
+void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
+
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
+   Model newModel = Model(modelSize, loss);
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair;
