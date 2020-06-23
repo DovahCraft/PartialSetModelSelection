@@ -106,8 +106,9 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
-       //Make a query result to return using the second element of a testedPair, Model. Get its modelSize. 
-       queryResult = MinimizeResult(indexModel.modelSize, true);
+       //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
+       isCertain = true; 
+       queryResult = MinimizeResult(indexModel.modelSize, isCertain);
     }
 
 
