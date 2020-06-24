@@ -13,24 +13,9 @@
 
 
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
-
-//Default contructor for model selection map, sets max models to std of 3.
-/*ModelSelectionMap::ModelSelectionMap() : maxModels(STD_MODEL_CAP){
-   //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
-   Model startingModel = Model(1,PLACEHOLDER_LOSS);
-   startingModel.modelSizeAfter = 1;
-   
-   startingModel.isPlaceHolder = true;
-   PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
-   penaltyModelMap.insert(startingPair);
-   insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder.
-   newPenalties.push_back(0.0); 
-}*/
-
-//Initialization constructor for a ModelSelectionMap with passed cap value.
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
-   Model startingModel = Model(1,PLACEHOLDER_LOSS);
+   Model startingModel = Model(1,9);
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
