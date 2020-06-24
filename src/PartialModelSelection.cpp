@@ -63,7 +63,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       else{
          newPair.second.modelSizeAfter = newModel.modelSize;
       }
-      //UPDATE MODELS BEFORE US
+      //UPDATE MODEL BEFORE US 
       //If we found another key besides the 0 key from lowerbound. 
       if(nextPair->first != 0.0){
          prevPair = prev(nextPair);
@@ -105,7 +105,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    bool isCertain = false;
 
     //If we found an inserted pair that lies on the queried penalty itself
-    if(indexPenalty == penaltyQuery) {
+    if(indexPenalty == penaltyQuery && !indexModel.isPlaceHolder) {
        //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
        isCertain = true; 
        queryResult = MinimizeResult(indexModel.modelSize, isCertain);
@@ -114,20 +114,28 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
     //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
+       std::cout << "AFTER MODEL SIZE 1 MINIMIZED\n";
        isCertain = true;
        queryResult = MinimizeResult(prevModel.modelSize, isCertain);
     } 
 
     //If we find a result that is not after 1, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
+       //If we are below the final model size alloted, then the result is certain. 
+       if(prevModel.modelSize == modelSizeCap){
+          std::cout << "MINIMIZE MODEL CAP CONDITION!\n";
+          isCertain = true;
+          queryResult = MinimizeResult(prevModel.modelSize, isCertain);
+       }
+       
        //Check if the prevPair set above is valid. If so, use it. 
-       if(indexPair->first != 0){
+       else{
           queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
        }
 
     } 
 
-    //Return the processed query to the user.
+    //Return the processed query.
     return queryResult;
 }
 

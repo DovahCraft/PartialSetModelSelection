@@ -200,6 +200,13 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
    }
 
 
+//Example with insert of 2 and 6 for breakpoint usage and storage. 
+TEST(DISABLED_InsertTests, testInsertNonLinear){
+    ModelSelectionMap testMap = ModelSelectionMap(7);
+    testMap.insert(1.0, 6, 0.0);
+    testMap.insert(3.0, 2, 5.0);
+    
+   }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(InsertTests, DISABLED_insertSameModelSize){
