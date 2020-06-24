@@ -126,7 +126,7 @@ TEST(breakpointTests, testGetNewPenList){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(InsertTests, testInsertLeftPanel){
+ TEST(DISABLED_InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -159,29 +159,42 @@ TEST(breakpointTests, testGetNewPenList){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(InsertTests, DISABLED_testInsertMiddlePanel){
+TEST(InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
-    Model model2Seg = Model(2, 4.0); 
+    Model model2Seg = Model(2, 4.0);
+    double bkpt2to1 = findBreakpoint(model2Seg, model1Seg);
+    std::cout << "BREAKPOINT BETWEEN MODELS 2 AND 1 " << bkpt2to1 << "\n"; //3.0
     Model model3Seg = Model(3, 0.0);
-    bool verboseFlag = false;
     testMap.insert(4.0, 1, 7.0);
-    testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(5.0), 1, true, 5.0);
-    if(verboseFlag){
-      testMinimize(testMap.minimize(3.0), 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
-      testMinimize(testMap.minimize(2.0), 1, false, 2.0);
-      testMinimize(testMap.minimize(1.0), 1, false, 1.0);
-      testMinimize(testMap.minimize(0.0), 1, false, 0.0);
-    }
+    testMinimize(testMap.minimize(4.0), 1, true, 4.0);
+    testMinimize(testMap.minimize(3.0), 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap.minimize(2.0), 1, false, 2.0);
+    testMinimize(testMap.minimize(1.0), 1, false, 1.0);
+    testMinimize(testMap.minimize(0.0), 1, false, 0.0);
     
     //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
     testMap.insert(model2Seg); //Need to compute breakpoint first?
-    testMinimize(testMap.minimize(0.0), 1, false, 0.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal. 
+    testMinimize(testMap.minimize(5.0), 1, true, 0.0);
+    testMinimize(testMap.minimize(4.0), 1, true, 4.0);
+    testMinimize(testMap.minimize(3.0), 1, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.0), 2, false, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
+    testMinimize(testMap.minimize(0.0), 2, false, 0.0);
+     
     //Add model with 3 segments that is found to be more optimal
-    testMap.insert(1.0, 3, 0.0);     
-    testMinimize(testMap.minimize(2.0), 3, true, 2.0);
-    //testMap.insert(model2Seg);//Non penalty insert for not optimal models. 
+    testMap.insert(1.0, 3, 0.0);
+    double bkpt3to2 = findBreakpoint(model3Seg, model2Seg); 
+    std::cout << "BREAKPOINT BETWEEN MODELS 3 AND 2 " << bkpt3to2 << "\n"; //4.0 Removed
+    double bkpt3to1 = findBreakpoint(model3Seg, model1Seg); 
+    std::cout << "BREAKPOINT BETWEEN MODELS 3 AND 1 " << bkpt3to1 << "\n"; //3.5
+    testMinimize(testMap.minimize(5.0), 1, true, 0.0);
+    testMinimize(testMap.minimize(4.0), 1, true, 4.0);
+    testMinimize(testMap.minimize(3.5), 1, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap.minimize(3.0), 3, true, 2.0);
+    testMinimize(testMap.minimize(1.0), 3, true, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
+     testMinimize(testMap.minimize(0.0), 3, true, 0.0); 
    }
 
 
