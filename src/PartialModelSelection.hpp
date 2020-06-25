@@ -28,33 +28,26 @@ struct MinimizeResult {
 };
 
 
-
 //struct penaltyModelPair may be better here for more readability
 using PenaltyModelPair = std::pair<double, Model>;
 
 class ModelSelectionMap {
 public:
-    //Map constants and return codes.
-    const double PLACEHOLDER_LOSS = -9999.0;
-    const double EMPTY_MAP_QUERY = 0;
-    const double EMPTY_MAP_ERR = -99999;
-    const double DEFAULT_PENALTY = -9999;   
-    const int STD_MODEL_CAP = 3;
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
-    int maxModels;
+    const double modelSizeCap;
     
  
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
 
     //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
-    std::vector<double> newPenaltyList;
+    std::vector<double> newPenalties;
 
 
     //Method headers
-    ModelSelectionMap();
 
-    ModelSelectionMap(int maxModels);
+    //Default value of INFINITY for no passed cap
+    ModelSelectionMap(double maxModels = INFINITY);
 
 
     /*
@@ -68,7 +61,7 @@ public:
         responds to and reports failure to insert the model.
      Note: none
     */
-    void insert(double penalty, Model currentModel);
+    void insert(double penalty, int modelSize, double loss);
 
     /*
     Function name: insert (overloaded)
@@ -95,8 +88,9 @@ public:
     Exceptions: none?
     Note: none
     */
-    double getNewPenalty();
+    std::vector<double> getNewPenaltyList();
 
+    
     
 
 
@@ -132,6 +126,8 @@ public:
     /*UTILITY METHODS*/
     void displayMap();
 
+    
+    void displayPenList();
 
     private:
         bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
@@ -140,3 +136,5 @@ public:
 //Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
 std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
 
+//Utility to compute a breakpoint between two models for use in other functions.
+double findBreakpoint(Model firstModel, Model secondModel);
