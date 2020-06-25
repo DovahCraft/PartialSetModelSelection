@@ -41,8 +41,8 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
-    testMap.insert(model2segs);
-    testMap.insert(model1segs);
+    testMap.insert(2,4.0);
+    testMap.insert(1,7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMinimize(testMap.minimize(1.0), 2, true, 1.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
@@ -54,8 +54,8 @@ TEST(breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
-    testMap.insert(model2segs);
-    testMap.insert(model1segs);
+    testMap.insert(2,4.0);
+    testMap.insert(1, 7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMap.displayPenList();
     testGetPen(testMap, 0.0);
@@ -175,7 +175,7 @@ TEST(InsertTests, testInsertMiddlePanel){
     testMinimize(testMap.minimize(0.0), 1, false, 0.0);
     
     //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
-    testMap.insert(model2Seg); //Need to compute breakpoint first?
+    testMap.insert(2, 4.0); //Need to compute breakpoint first?
     testMinimize(testMap.minimize(5.0), 1, true, 0.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(3.0), 1, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0

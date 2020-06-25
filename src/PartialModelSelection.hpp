@@ -16,6 +16,11 @@ struct Model {
     std::pair<double,double> optimalPenaltyRange;
 };
 
+struct Breakpoint {
+    int firstModel;
+    int secondModel;
+
+};
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
@@ -35,21 +40,13 @@ class ModelSelectionMap {
 public:
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
     const double modelSizeCap;
-    
- 
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
-
     //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
     std::vector<double> newPenalties;
-
-
     //Method headers
-
     //Default value of INFINITY for no passed cap
     ModelSelectionMap(double maxModels = INFINITY);
-
-
     /*
      Function name(s): insert
      Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
@@ -62,7 +59,6 @@ public:
      Note: none
     */
     void insert(double penalty, int modelSize, double loss);
-
     /*
     Function name: insert (overloaded)
     Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling
@@ -75,8 +71,7 @@ public:
         responds to and reports failure to insert the model.
     Note: none
     */
-    void insert(Model currentModel);
-
+    void insert(int modelSize, double loss);
     /*
     Function name: getNewpenaltyQuery
     Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 
@@ -90,13 +85,9 @@ public:
     */
     std::vector<double> getNewPenaltyList();
 
-    
-    
-
-
-    /*
+   /*
     Function name: Solver
-    Algorithm:
+    Algorithm: Binary segmentation? 
 
     Precondition: for correct operation, the passed penalty is a valid
     float value.

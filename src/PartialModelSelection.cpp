@@ -25,7 +25,6 @@ ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels)
 }
 
 void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
-
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    Model newModel = Model(modelSize, loss);
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
@@ -35,13 +34,11 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.       
       if(insertedModels == 0){
-         auto placeHolder = penaltyModelMap.begin();
+         std::map<double, Model>::iterator placeHolder = penaltyModelMap.begin();
          placeHolder->second.modelSize = newModel.modelSize;
-      }
-      //Note that we inserted a model. 
+      } 
       insertedModels++;
       //UPDATE MODELS AFTER US
-      //If we found a model/penalty pairing that is higher than our current query
       if(nextPair != penaltyModelMap.end())
          newPair.second.modelSizeAfter = nextPair->second.modelSize;
       //If there is nothing different after us, set the after value to the current value. 
@@ -55,7 +52,6 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          prevPair->second.modelSizeAfter = newModel.modelSize;
       }
    }
-
    catch(std::logic_error errorMessage) {
       //update the placeholder on value instead of returning an error message if penalty is 0.
       auto firstKey = penaltyModelMap.begin();
@@ -66,18 +62,18 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          firstKey->second.isPlaceHolder = false;
          //As we official solved a model for 0, increment the inserted models as it is no longer a placeholder. 
          insertedModels++;
-      }
-         
+      }  
       else{
          std::cout << "Insert failed, key exists and is not the initial placeholder!\n";
-      }
-      
+      }  
    }
+}
+
+void ModelSelectionMap::insert(int modelSize, double loss){
+   Model newModel = Model(modelSize, loss);
 
 
 }
-
-void ModelSelectionMap::insert(Model currentModel){};
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
@@ -95,31 +91,25 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        isCertain = true; 
        queryResult = MinimizeResult(indexModel.modelSize, isCertain);
     }
-
-
     //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
-       std::cout << "AFTER MODEL SIZE 1 MINIMIZED\n";
+       //std::cout << "AFTER MODEL SIZE 1 MINIMIZED\n";
        isCertain = true;
        queryResult = MinimizeResult(prevModel.modelSize, isCertain);
     } 
-
     //If we find a result that is not after 1, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
        //If we are below the final model size alloted, then the result is certain. 
        if(prevModel.modelSize == modelSizeCap){
-          std::cout << "MINIMIZE MODEL CAP CONDITION!\n";
+          //std::cout << "MINIMIZE MODEL CAP CONDITION!\n";
           isCertain = true;
           queryResult = MinimizeResult(prevModel.modelSize, isCertain);
-       }
-       
+       } 
        //Check if the prevPair set above is valid. If so, use it. 
        else{
           queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
        }
-
     } 
-
     //Return the processed query.
     return queryResult;
 }
@@ -132,14 +122,6 @@ std::vector<double> ModelSelectionMap::getNewPenaltyList(){
 double findBreakpoint(Model firstModel, Model secondModel){
    //Intersection between two candidate models to solve sures (and add to new penalty vec?)
    return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
-}
-
-
-std::pair<int, int> ModelSelectionMap::solver(double penaltyQuery){
-   auto tempPair = std::make_pair<int, bool>(4, true);
-   std::cout << "Testing solver!\n";
-   //Temporary stub return
-   return tempPair;
 }
 
 //Method to display the currently stored pairs in the map. 
