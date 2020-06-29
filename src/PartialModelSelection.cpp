@@ -163,14 +163,7 @@ std::map<double, Model>::iterator validateInsert(std::pair<std::map<double, Mode
 
 
 //MinimizeResult Method Implementations
-//MinimizeResult default constructor to be used when no models have been inserted. 
-MinimizeResult::MinimizeResult(){
- //Initialize a default result, which has 1 selected, but unsure.
- optimalModels.first = 1;
- optimalModels.second = INFINITY;
- certain = false;
 
-}
 
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}

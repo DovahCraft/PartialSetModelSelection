@@ -16,16 +16,10 @@ struct Model {
     std::pair<double,double> optimalPenaltyRange;
 };
 
-struct Breakpoint {
-    int firstModel;
-    int secondModel;
-
-};
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
-    MinimizeResult();
-    MinimizeResult(int modelSize, bool certain);
+    MinimizeResult(int modelSize = 1, bool certain = false);
     bool certain;
     int modelSize;
     //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
@@ -40,6 +34,7 @@ class ModelSelectionMap {
 public:
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
     const double modelSizeCap;
+    std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion. 
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
     //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
