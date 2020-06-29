@@ -15,11 +15,12 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
-   Model startingModel = Model(1,9);
+   Model startingModel = Model(1,-1); //Used -1 as a default starting loss, will probably refactor.
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    penaltyModelMap.insert(startingPair);
+   lastInsertedPair = penaltyModelMap.end(); //Set the previous pair to the end of the map as placeholder does not count. 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
    newPenalties.push_back(0.0);
 }
@@ -77,7 +78,7 @@ void ModelSelectionMap::insert(int modelSize, double loss){
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    //Default result if we do not find a matching penaltyQuery.
-   MinimizeResult queryResult = MinimizeResult(); 
+   MinimizeResult queryResult{}; 
    auto indexPair = penaltyModelMap.lower_bound(penaltyQuery);
    double indexPenalty = indexPair->first;
    Model indexModel = indexPair->second;
@@ -103,12 +104,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        if(prevModel.modelSize == modelSizeCap){
           //std::cout << "MINIMIZE MODEL CAP CONDITION!\n";
           isCertain = true;
-          queryResult = MinimizeResult(prevModel.modelSize, isCertain);
        } 
-       //Check if the prevPair set above is valid. If so, use it. 
-       else{
-          queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
-       }
+       queryResult = MinimizeResult(prevModel.modelSize, isCertain);
     } 
     //Return the processed query.
     return queryResult;
