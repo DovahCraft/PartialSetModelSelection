@@ -72,7 +72,11 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
 
 void ModelSelectionMap::insert(int modelSize, double loss){
    Model newModel = Model(modelSize, loss);
+   double candidateBkpt = -1;
 
+   if(lastInsertedPair != penaltyModelMap.end()){
+      findBreakpoint(newModel, lastInsertedPair->second);
+   }
 
 }
 
@@ -117,7 +121,6 @@ std::vector<double> ModelSelectionMap::getNewPenaltyList(){
 }
 
 double findBreakpoint(Model firstModel, Model secondModel){
-   //Intersection between two candidate models to solve sures (and add to new penalty vec?)
    return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
 }
 
@@ -130,7 +133,6 @@ void ModelSelectionMap::displayMap() {
 
    std::cout << " \n";
  }
-
 
  void ModelSelectionMap::displayPenList(){
     std::cout << "Candidate penalties in newPenList: " << "\n";
@@ -145,9 +147,6 @@ void ModelSelectionMap::displayMap() {
     return insertedModels > 0;
 
  }
-
-
-
 
 //General Utilities used in ModelSelectionMap
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
