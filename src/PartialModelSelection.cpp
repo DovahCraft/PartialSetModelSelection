@@ -75,7 +75,7 @@ void ModelSelectionMap::insert(int modelSize, double loss){
    double candidateBkpt = -1;
 
    if(lastInsertedPair != penaltyModelMap.end()){
-      findBreakpoint(newModel, lastInsertedPair->second);
+      candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
    }
 
 }
@@ -96,17 +96,16 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        isCertain = true; 
        queryResult = MinimizeResult(indexModel.modelSize, isCertain);
     }
-    //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  
+    //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  End of map clause.
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
-       //std::cout << "AFTER MODEL SIZE 1 MINIMIZED\n";
        isCertain = true;
        queryResult = MinimizeResult(prevModel.modelSize, isCertain);
     } 
-    //If we find a result that is not after 1, but is not a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
+
+    //If we find a result that is not after 1, nor is it a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
        //If we are below the final model size alloted, then the result is certain. 
        if(prevModel.modelSize == modelSizeCap){
-          //std::cout << "MINIMIZE MODEL CAP CONDITION!\n";
           isCertain = true;
        } 
        queryResult = MinimizeResult(prevModel.modelSize, isCertain);

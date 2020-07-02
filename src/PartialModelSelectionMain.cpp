@@ -116,7 +116,26 @@ TEST(breakpointTests, testGetNewPenList){
    
    }
 
-  TEST(InsertTests, testNoParamInsertions){
+TEST(InsertTests, testOneNoParamInsertion){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model2segs = Model(2, 5.0);
+    Model model6segs = Model(6, 0.0);
+    double breakpoint = findBreakpoint(model6segs, model2segs); //1.25
+    std::cout << "Breakpoint between 2 and 6: " << breakpoint << "\n";
+    testMap.insert(3.0, 2, 5.0);
+    testMap.insert(6, 0.0);
+    
+    testMinimize(testMap.minimize(5.0), 2, false, 5.0);
+    testMinimize(testMap.minimize(4.0), 2, false, 4.0);
+    testMinimize(testMap.minimize(3.0), 2, false, 3.0);
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.25), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.0), 6, false, 1.0);
+    testMinimize(testMap.minimize(0.0), 6, true, 0.0);
+  }
+
+
+  TEST(InsertTests, testMultiNoParamInsertions){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model2segs = Model(2, 5.0);
     Model model6segs = Model(6, 0.0);
