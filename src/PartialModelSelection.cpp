@@ -31,9 +31,11 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair;
+
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
-      validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.       
+      validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
+      //Update initial placeholder pair       
       if(insertedModels == 0){
          std::map<double, Model>::iterator placeHolder = penaltyModelMap.begin();
          placeHolder->second.modelSize = newModel.modelSize;
@@ -52,6 +54,9 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          prevPair = prev(nextPair);
          prevPair->second.modelSizeAfter = newModel.modelSize;
       }
+
+      //Update the last inserted pair iterator
+      lastInsertedPair = penaltyModelMap.find(newPair.first);
    }
    catch(std::logic_error errorMessage) {
       //update the placeholder on value instead of returning an error message if penalty is 0.
