@@ -70,7 +70,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          insertedModels++;
       }  
       else{
-         std::cout << "Insert failed, key exists and is not the initial placeholder!\n";
+         std::cerr << errorMessage.what() << "\n";
       }  
    }
 }
@@ -154,17 +154,24 @@ void ModelSelectionMap::displayMap() {
 
 //General Utilities used in ModelSelectionMap
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
-std::map<double, Model>::iterator validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
+std::map<double, Model>::iterator ModelSelectionMap::validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
+    //Get existing pair for error code
     //The result from insert is: std::pair<iterator,bool> where the bool represents the success/failure of insertion.
-    if(!insertResult.second) throw std::logic_error("Invalid insert, key exists."); 
+    if(!insertResult.second){
+     auto existingKey = penaltyModelMap.find(insertResult.first->first);
+     int existingModelSize = existingKey->second.modelSize;
+     int attemptedInsertSize = insertResult.first->first;
+     double insertPenalty = insertResult.first->first;
+     throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
+      + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
+         + std::to_string(insertPenalty) + "\n");
+    }  
     auto validIterator = insertResult.first;
     return validIterator;
 }
 
 
 //MinimizeResult Method Implementations
-
-
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
 

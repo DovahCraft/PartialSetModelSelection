@@ -106,17 +106,17 @@ TEST(breakpointTests, testGetNewPenList){
     //All asserts pass 6/16/20.
   }
 
-   TEST(InsertTests, DISABLED_testDuplicatePenalty){
+   TEST(InsertTests, testDuplicatePenalty){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     int expectedCount = 1;
     testMap.insert(2.0, 1, 7.0);
-    testMap.insert(2.0, 1, 7.0); //SHould not be allowed by insert function. 
+    testMap.insert(2.0, 2, 7.0); //SHould not be allowed by insert function. 
     ASSERT_EQ(expectedCount, testMap.penaltyModelMap.count(2.0));
    
    }
 
-TEST(InsertTests, testOneNoParamInsertion){
+TEST(DISABLED_InsertTests, testOneNoParamInsertion){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model2segs = Model(2, 5.0);
     Model model6segs = Model(6, 0.0);
@@ -135,7 +135,7 @@ TEST(InsertTests, testOneNoParamInsertion){
   }
 
 
-  TEST(InsertTests, testMultiNoParamInsertions){
+  TEST(DISABLED_InsertTests, testMultiNoParamInsertions){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model2segs = Model(2, 5.0);
     Model model6segs = Model(6, 0.0);
@@ -154,7 +154,7 @@ TEST(InsertTests, testOneNoParamInsertion){
   }
 
 
-  TEST(InsertTests, testModelSizeAfterUpdate){
+  TEST(DISABLED_InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap(6);
      testMap.insert(4.0, 2, 3.0);
      testMap.insert(2.0, 3, 2.0);

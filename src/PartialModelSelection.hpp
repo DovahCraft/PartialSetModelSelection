@@ -116,11 +116,12 @@ public:
     void displayPenList();
 
     private:
-        bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
+    //Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
+    std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
+    bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 
-//Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
-std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
+
 
 //Utility to compute a breakpoint between two models for use in other functions.
 double findBreakpoint(Model firstModel, Model secondModel);
