@@ -88,6 +88,9 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
      ModelSelectionMap testMap = ModelSelectionMap();
      testMap.insert(2,2.0);
      testMinimize(testMap.minimize(1.0), 2, false, 1.0);
+     EXPECT_EQ(testMap.lastInsertedPair->first, 0.0);
+     EXPECT_EQ(testMap.lastInsertedPair->second.modelSize,2);
+     EXPECT_EQ(testMap.lastInsertedPair->second.isPlaceHolder, false);
 
    }
 
@@ -204,7 +207,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(InsertTests, testInsertMiddlePanel){
+TEST(DISABLED_InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -242,8 +245,6 @@ TEST(InsertTests, testInsertMiddlePanel){
      testMinimize(testMap.minimize(0.0), 3, true, 0.0); 
    }
 
-
-
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 //TODO complete this test after the left and middle panel tests pass.
 TEST(DISABLED_InsertTests, testInsertRightPanel){
@@ -255,15 +256,6 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
     testMap.insert(2.5, 2, 4.0);
     testMap.insert(1.0, 3, 2.0);
     testGetPen(testMap, 0.0);
-   }
-
-
-//Example with insert of 2 and 6 for breakpoint usage and storage. 
-TEST(DISABLED_InsertTests, testInsertNonLinear){
-    ModelSelectionMap testMap = ModelSelectionMap(7);
-    testMap.insert(1.0, 6, 0.0);
-    testMap.insert(3.0, 2, 5.0);
-    
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
@@ -281,9 +273,6 @@ TEST(InsertTests, DISABLED_insertSameModelSize){
     testMap.displayMap(); 
 
    }
-
-
-
 
 //Driver function for google test
 int main (int argc, char* argv[]){

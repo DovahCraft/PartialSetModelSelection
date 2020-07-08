@@ -65,6 +65,9 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          firstKey->second.isPlaceHolder = false;
          //As we official solved a model for 0, increment the inserted models as it is no longer a placeholder. 
          insertedModels++;
+
+         //Update the last inserted pair iterator
+         lastInsertedPair = penaltyModelMap.find(newPair.first);
       }  
       else{
          std::cerr << errorMessage.what() << "\n";
@@ -84,7 +87,6 @@ void ModelSelectionMap::insert(int modelSize, double loss){
       //Call the insert function and update the 0.0 placeholder to reflect insertion
       insert(0.0, modelSize, loss);
    }
-
 }
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
