@@ -10,8 +10,6 @@
 //Local includes
 #include "PartialModelSelection.hpp"
 
-
-
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
@@ -31,7 +29,6 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair;
-
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
@@ -81,6 +78,11 @@ void ModelSelectionMap::insert(int modelSize, double loss){
 
    if(lastInsertedPair != penaltyModelMap.end()){
       candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
+   }
+   //If there is nothing in there, add at penalty 0
+   else{
+      PenaltyModelPair newPair = PenaltyModelPair(0.0, newModel);
+      penaltyModelMap.insert(newPair);
    }
 
 }
@@ -142,15 +144,10 @@ void ModelSelectionMap::displayMap() {
     std::cout << "Candidate penalties in newPenList: " << "\n";
     for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
       std::cout << *it << "   ";
-   
    std::cout << " \n";
  }
   
- bool ModelSelectionMap::hasModelsInserted(){
-    //Check to see if only the default entry is in the map.
-    return insertedModels > 0;
-
- }
+bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 
 //General Utilities used in ModelSelectionMap
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 

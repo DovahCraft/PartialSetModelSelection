@@ -50,7 +50,7 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
 }
 
 
-TEST(breakpointTests, testGetNewPenList){
+TEST(DISABLED_breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
@@ -84,7 +84,14 @@ TEST(breakpointTests, testGetNewPenList){
     testMinimize(testMap.minimize(0.5), 1, false, 0.5);
    }
 
-   
+   TEST(InsertTests, testEmptyMapNoParamInsert){
+     ModelSelectionMap testMap = ModelSelectionMap();
+     testMap.insert(2,2.0);
+     testMinimize(testMap.minimize(1.0), 2, false, 1.0);
+
+   }
+
+   //Informational test using lower_bound showing what we should expect in several cases.
   TEST(InsertTests, DISABLED_testLowerBoundInsertion){
     ModelSelectionMap testMap = ModelSelectionMap(); //Create a new model selection map class
     Model model3Seg = Model(3, 0.0); //Previous
@@ -106,7 +113,7 @@ TEST(breakpointTests, testGetNewPenList){
     //All asserts pass 6/16/20.
   }
 
-   TEST(InsertTests, testDuplicatePenalty){
+   TEST(DISABLED_InsertTests, testDuplicatePenalty){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     int expectedCount = 1;
@@ -116,7 +123,7 @@ TEST(breakpointTests, testGetNewPenList){
    
    }
 
-TEST(DISABLED_InsertTests, testOneNoParamInsertion){
+TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model2segs = Model(2, 5.0);
     Model model6segs = Model(6, 0.0);
@@ -197,7 +204,7 @@ TEST(DISABLED_InsertTests, testOneNoParamInsertion){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(DISABLED_InsertTests, testInsertMiddlePanel){
+TEST(InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
