@@ -81,8 +81,8 @@ void ModelSelectionMap::insert(int modelSize, double loss){
    }
    //If there is nothing in there, add at penalty 0
    else{
-      PenaltyModelPair newPair = PenaltyModelPair(0.0, newModel);
-      penaltyModelMap.insert(newPair);
+      //Call the insert function and update the 0.0 placeholder to reflect insertion
+      insert(0.0, modelSize, loss);
    }
 
 }
