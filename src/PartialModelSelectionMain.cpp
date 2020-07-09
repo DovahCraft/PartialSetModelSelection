@@ -207,7 +207,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(DISABLED_InsertTests, testInsertMiddlePanel){
+TEST(InsertTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -227,7 +227,9 @@ TEST(DISABLED_InsertTests, testInsertMiddlePanel){
     testMinimize(testMap.minimize(5.0), 1, true, 0.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(3.0), 2, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0
-    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    std::cout << "MIDDLE BREAK\n";
+    testMap.displayMap();
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0); //Breaks down here because placeholder model size is not updated? 7/9/2020
     testMinimize(testMap.minimize(1.0), 2, false, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
     testMinimize(testMap.minimize(0.0), 2, false, 0.0);
      

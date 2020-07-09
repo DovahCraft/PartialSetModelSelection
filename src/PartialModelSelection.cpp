@@ -81,6 +81,7 @@ void ModelSelectionMap::insert(int modelSize, double loss){
 
    if(lastInsertedPair != penaltyModelMap.end()){
       candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
+      insert(candidateBkpt, modelSize, loss);
    }
    //If there is nothing in there, add at penalty 0
    else{
