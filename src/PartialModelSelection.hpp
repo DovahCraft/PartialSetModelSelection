@@ -67,6 +67,21 @@ public:
     Note: none
     */
     void insert(int modelSize, double loss);
+
+     /*
+    Function name: remove
+    Algorithm: Removes a model/penalty pairing if deemed to no longer be optimal.  
+    Precondition: The model is formatted correctly and the
+    penalty is a valid double.
+    Postcondition: Removes the model from the data structure.
+    Returns the removed pair.
+    Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+    Note: none
+    */
+    void remove(std::map<double, Model>::iterator toRemove);
+
+
     /*
     Function name: getNewpenaltyQuery
     Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 

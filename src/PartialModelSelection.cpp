@@ -28,7 +28,8 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    Model newModel = Model(modelSize, loss);
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextPair = penaltyModelMap.lower_bound(newPenalty);
-   std::map<double, Model>::iterator prevPair;
+   std::map<double, Model>::iterator prevPair = prev(nextPair);
+
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
@@ -48,8 +49,9 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       //UPDATE MODEL BEFORE US 
       //If we found another key besides the 0 key from lowerbound. 
       if(nextPair->first != 0.0){
-         prevPair = prev(nextPair);
          prevPair->second.modelSizeAfter = newModel.modelSize;
+         if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
+         
       }
 
       //Update the last inserted pair iterator
@@ -81,13 +83,22 @@ void ModelSelectionMap::insert(int modelSize, double loss){
 
    if(lastInsertedPair != penaltyModelMap.end()){
       candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
-      insert(candidateBkpt, modelSize, loss);
+      int lastModelSize = lastInsertedPair->second.modelSize;
+      insert(candidateBkpt, modelSize, loss); //This will update the last inserted pair, so we need to use the variable above
+      lastInsertedPair->second.modelSizeAfter = lastModelSize;
    }
    //If there is nothing in there, add at penalty 0
    else{
       //Call the insert function and update the 0.0 placeholder to reflect insertion
       insert(0.0, modelSize, loss);
    }
+}
+
+void ModelSelectionMap::remove(std::map<double, Model>::iterator toRemove){
+   //Remove from map
+   penaltyModelMap.erase(toRemove);
+   //Update other entries to reflect new path (May need to be before removal
+   
 }
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
