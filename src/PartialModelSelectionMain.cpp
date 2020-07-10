@@ -41,8 +41,9 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
-    testMap.insert(model2segs);
-    testMap.insert(model1segs);
+
+    testMap.insert(2,4.0);
+    testMap.insert(1,7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMinimize(testMap.minimize(1.0), 2, true, 1.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
@@ -50,12 +51,13 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
 }
 
 
-TEST(breakpointTests, testGetNewPenList){
+
+TEST(DISABLED_breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
-    testMap.insert(model2segs);
-    testMap.insert(model1segs);
+    testMap.insert(2,4.0);
+    testMap.insert(1, 7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMap.displayPenList();
     testGetPen(testMap, 0.0);
@@ -84,7 +86,17 @@ TEST(breakpointTests, testGetNewPenList){
     testMinimize(testMap.minimize(0.5), 1, false, 0.5);
    }
 
-   
+   TEST(InsertTests, testEmptyMapNoParamInsert){
+     ModelSelectionMap testMap = ModelSelectionMap();
+     testMap.insert(2,2.0);
+     testMinimize(testMap.minimize(1.0), 2, false, 1.0);
+     EXPECT_EQ(testMap.lastInsertedPair->first, 0.0);
+     EXPECT_EQ(testMap.lastInsertedPair->second.modelSize,2);
+     EXPECT_EQ(testMap.lastInsertedPair->second.isPlaceHolder, false);
+
+   }
+
+   //Informational test using lower_bound showing what we should expect in several cases.
   TEST(InsertTests, DISABLED_testLowerBoundInsertion){
     ModelSelectionMap testMap = ModelSelectionMap(); //Create a new model selection map class
     Model model3Seg = Model(3, 0.0); //Previous
@@ -106,17 +118,57 @@ TEST(breakpointTests, testGetNewPenList){
     //All asserts pass 6/16/20.
   }
 
-   TEST(InsertTests, DISABLED_testDuplicatePenalty){
+   TEST(DISABLED_InsertTests, testDuplicatePenalty){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     int expectedCount = 1;
     testMap.insert(2.0, 1, 7.0);
-    testMap.insert(2.0, 1, 7.0); //SHould not be allowed by insert function. 
+
+    testMap.insert(2.0, 2, 7.0); //SHould not be allowed by insert function. 
     ASSERT_EQ(expectedCount, testMap.penaltyModelMap.count(2.0));
    
    }
 
-  TEST(InsertTests, testModelSizeAfterUpdate){
+
+TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model2segs = Model(2, 5.0);
+    Model model6segs = Model(6, 0.0);
+    double breakpoint = findBreakpoint(model6segs, model2segs); //1.25
+    std::cout << "Breakpoint between 2 and 6: " << breakpoint << "\n";
+    testMap.insert(3.0, 2, 5.0);
+    testMap.insert(6, 0.0);
+    
+    testMinimize(testMap.minimize(5.0), 2, false, 5.0);
+    testMinimize(testMap.minimize(4.0), 2, false, 4.0);
+    testMinimize(testMap.minimize(3.0), 2, false, 3.0);
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.25), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.0), 6, false, 1.0);
+    testMinimize(testMap.minimize(0.0), 6, true, 0.0);
+  }
+
+
+  TEST(DISABLED_InsertTests, testMultiNoParamInsertions){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model2segs = Model(2, 5.0);
+    Model model6segs = Model(6, 0.0);
+    double breakpoint = findBreakpoint(model6segs, model2segs); //1.25
+    std::cout << "Breakpoint between 2 and 6: " << breakpoint << "\n";
+    testMap.insert(2, 5.0);
+    testMap.insert(6, 0.0);
+    
+    testMinimize(testMap.minimize(5.0), 2, false, 5.0);
+    testMinimize(testMap.minimize(4.0), 2, false, 4.0);
+    testMinimize(testMap.minimize(3.0), 2, false, 3.0);
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.25), 2, false, 2.0);
+    testMinimize(testMap.minimize(1.0), 6, false, 1.0);
+    testMinimize(testMap.minimize(0.0), 6, true, 0.0);
+  }
+
+
+  TEST(DISABLED_InsertTests, testModelSizeAfterUpdate){
      ModelSelectionMap testMap = ModelSelectionMap(6);
      testMap.insert(4.0, 2, 3.0);
      testMap.insert(2.0, 3, 2.0);
@@ -175,11 +227,14 @@ TEST(InsertTests, testInsertMiddlePanel){
     testMinimize(testMap.minimize(0.0), 1, false, 0.0);
     
     //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
-    testMap.insert(model2Seg); //Need to compute breakpoint first?
+
+    testMap.insert(2, 4.0); //Need to compute breakpoint first?
     testMinimize(testMap.minimize(5.0), 1, true, 0.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
-    testMinimize(testMap.minimize(3.0), 1, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0
-    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(3.0), 2, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0
+    std::cout << "MIDDLE BREAK\n";
+    testMap.displayMap();
+    testMinimize(testMap.minimize(2.0), 2, false, 2.0); //Breaks down here because placeholder model size is not updated? 7/9/2020
     testMinimize(testMap.minimize(1.0), 2, false, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
     testMinimize(testMap.minimize(0.0), 2, false, 0.0);
      
@@ -197,8 +252,6 @@ TEST(InsertTests, testInsertMiddlePanel){
      testMinimize(testMap.minimize(0.0), 3, true, 0.0); 
    }
 
-
-
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 //TODO complete this test after the left and middle panel tests pass.
 TEST(DISABLED_InsertTests, testInsertRightPanel){
@@ -211,16 +264,6 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
     testMap.insert(1.0, 3, 2.0);
     testGetPen(testMap, 0.0);
    }
-
-
-//Example with insert of 2 and 6 for breakpoint usage and storage. 
-TEST(DISABLED_InsertTests, testInsertNonLinear){
-    ModelSelectionMap testMap = ModelSelectionMap(7);
-    testMap.insert(1.0, 6, 0.0);
-    testMap.insert(3.0, 2, 5.0);
-    
-   }
-
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(InsertTests, DISABLED_insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
@@ -236,9 +279,6 @@ TEST(InsertTests, DISABLED_insertSameModelSize){
     testMap.displayMap(); 
 
    }
-
-
-
 
 //Driver function for google test
 int main (int argc, char* argv[]){

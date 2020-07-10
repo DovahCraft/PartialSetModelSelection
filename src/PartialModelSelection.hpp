@@ -19,8 +19,7 @@ struct Model {
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
-    MinimizeResult();
-    MinimizeResult(int modelSize, bool certain);
+    MinimizeResult(int modelSize = 1, bool certain = false);
     bool certain;
     int modelSize;
     //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
@@ -35,21 +34,15 @@ class ModelSelectionMap {
 public:
     int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
     const double modelSizeCap;
-    
- 
+
+    std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion. 
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
-
     //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
     std::vector<double> newPenalties;
-
-
     //Method headers
-
     //Default value of INFINITY for no passed cap
     ModelSelectionMap(double maxModels = INFINITY);
-
-
     /*
      Function name(s): insert
      Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
@@ -75,7 +68,21 @@ public:
         responds to and reports failure to insert the model.
     Note: none
     */
-    void insert(Model currentModel);
+    void insert(int modelSize, double loss);
+
+     /*
+    Function name: remove
+    Algorithm: Removes a model/penalty pairing if deemed to no longer be optimal.  
+    Precondition: The model is formatted correctly and the
+    penalty is a valid double.
+    Postcondition: Removes the model from the data structure.
+    Returns the removed pair.
+    Exceptions: correctly and appropriately (without program failure)
+        responds to and reports failure to insert the model.
+    Note: none
+    */
+    void remove(std::map<double, Model>::iterator toRemove);
+
 
     /*
     Function name: getNewpenaltyQuery
@@ -90,13 +97,8 @@ public:
     */
     std::vector<double> getNewPenaltyList();
 
-    
-    
-
-
-    /*
     Function name: Solver
-    Algorithm:
+    Algorithm: Binary segmentation? 
 
     Precondition: for correct operation, the passed penalty is a valid
     float value.
@@ -130,11 +132,11 @@ public:
     void displayPenList();
 
     private:
-        bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
+    //Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
+    std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
+    bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 
-//Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
-std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
 
 //Utility to compute a breakpoint between two models for use in other functions.
 double findBreakpoint(Model firstModel, Model secondModel);
