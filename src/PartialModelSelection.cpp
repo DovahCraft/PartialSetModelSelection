@@ -137,7 +137,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 
 std::vector<double> ModelSelectionMap::getNewPenaltyList(){
   //Return the list of potential penalties to query next.   
-   return newPenalties; 
+   return newPenalties;
+}
 
 double findBreakpoint(Model firstModel, Model secondModel){
    return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
