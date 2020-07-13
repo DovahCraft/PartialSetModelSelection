@@ -96,19 +96,7 @@ public:
     Note: none
     */
     std::vector<double> getNewPenaltyList();
-
-    Function name: Solver
-    Algorithm: Binary segmentation? 
-
-    Precondition: for correct operation, the passed penalty is a valid
-    float value.
-    Postcondition:
-    Exceptions: none yet. 
-    Note: none
-    */
-    std::pair<int, int> solver(double penalty);
-
-
+    
     /*
     Function name: Minimize
     Algorithm: Acquires a penalty value lambda and returns a minimization result consisting of:

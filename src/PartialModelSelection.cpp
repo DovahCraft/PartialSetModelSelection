@@ -112,6 +112,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    Model prevModel = prevPair->second;
    bool isCertain = false;
 
+    
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery && !indexModel.isPlaceHolder) {
        //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
@@ -125,6 +126,9 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     } 
     //If we find a result that is not after 1, nor is it a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
+       if(indexModel.isPlaceHolder)
+         return MinimizeResult(indexModel.modelSize, isCertain);
+
        //If we are below the final model size alloted, then the result is certain. 
        if(prevModel.modelSize == modelSizeCap){
           isCertain = true;

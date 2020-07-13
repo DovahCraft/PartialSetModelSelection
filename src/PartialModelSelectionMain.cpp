@@ -9,8 +9,8 @@
 #include "PartialModelSelection.hpp"
 
 //Macros to display test info in gtest format. 
-#define GTEST_MINCOUT std::cerr << "[ MINIMIZE ] [INFO] "
-#define GTEST_GETPENCOUT std::cerr << "[ GETPEN ] [INFO] "
+#define GTEST_MINCOUT std::cout << "[ MINIMIZE ] [INFO] "
+#define GTEST_GETPENCOUT std::cout << "[ GETPEN ] [INFO] "
 
 
 
@@ -237,7 +237,8 @@ TEST(InsertTests, testInsertMiddlePanel){
     testMinimize(testMap.minimize(2.0), 2, false, 2.0); //Breaks down here because placeholder model size is not updated? 7/9/2020
     testMinimize(testMap.minimize(1.0), 2, false, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
     testMinimize(testMap.minimize(0.0), 2, false, 0.0);
-     
+    std::cout << "Testing minimize model size at zero: " << testMap.minimize(0.0).modelSize << "\n";
+    testMap.displayMap();
     //Add model with 3 segments that is found to be more optimal
     testMap.insert(1.0, 3, 0.0);
     double bkpt3to2 = findBreakpoint(model3Seg, model2Seg); 
