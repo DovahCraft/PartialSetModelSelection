@@ -178,7 +178,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_InsertTests, testInsertLeftPanel){
+ TEST(InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
