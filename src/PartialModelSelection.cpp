@@ -13,7 +13,6 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
-
    Model startingModel = Model(1,-1); //Used -1 as a default starting loss, will probably refactor.
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
@@ -30,7 +29,6 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    auto nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
-
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
@@ -98,8 +96,7 @@ void ModelSelectionMap::insert(int modelSize, double loss){
 void ModelSelectionMap::remove(std::map<double, Model>::iterator toRemove){
    //Remove from map
    penaltyModelMap.erase(toRemove);
-   //Update other entries to reflect new path (May need to be before removal
-   
+   //Update other entries to reflect new path (May need to be before removal 
 }
 
 MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
@@ -153,7 +150,7 @@ void ModelSelectionMap::displayMap() {
 
    std::cout << " \n";
  }
- void ModelSelectionMap::displayPenList(){
+void ModelSelectionMap::displayPenList(){
     std::cout << "Candidate penalties in newPenList: " << "\n";
     for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
       std::cout << *it << "   ";
