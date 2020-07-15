@@ -326,7 +326,7 @@ TEST(InsertTests, testTwoParamBreakpoints){
     testMap.insert(3, 2.0);
     testMap.displayMap();
     std::cout << "BREAKPOINT BETWEEN 3 and 4: " << findBreakpoint(model3Seg, model4Seg) << "\n\n"; //1
-    testMap.insert(1, 4, 0.0);
+    testMap.insert(0, 4, 0.0);
     testMap.displayMap();
     testMap.displayMap();
     testGetPen(testMap, 0.0);

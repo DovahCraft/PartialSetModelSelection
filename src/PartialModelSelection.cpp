@@ -29,6 +29,8 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    std::map<double,Model>::iterator nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
+   //By default, we have the same model size after us, unless it is updated below.
+   newPair.second.modelSizeAfter = modelSize;
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
@@ -85,10 +87,10 @@ void ModelSelectionMap::insert(int modelSize, double loss){
       insert(candidateBkpt, modelSize, loss); //This will update the last inserted pair, so we need to use the variable above
       lastInsertedPair->second.modelSizeAfter = lastModelSize;
    }
-   //If there is nothing in there, add at penalty 0
+   //If there is nothing in there, add at penalty INFINITY as we don't know anything about other models to chain to. 
    else{
       //Call the insert function and update the 0.0 placeholder to reflect insertion
-      insert(0.0, modelSize, loss);
+      insert(INFINITY, modelSize, loss);
       penaltyModelMap.begin()->second.isPlaceHolder = true;
    }
 }
@@ -144,9 +146,9 @@ double findBreakpoint(Model firstModel, Model secondModel){
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
-  std::cout << "Penalty          ModelSize          ModelSizeAfter             isPlaceHolder?\n"; 
-  for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << it->second.isPlaceHolder << '\n';
+  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
+  for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it) 
+      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
 
    std::cout << " \n";
  }
