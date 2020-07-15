@@ -18,9 +18,7 @@
 void testMinimize(MinimizeResult testResult, double lowModelSize, bool expectedCertainty, double penaltyQuery){
    //Log the test being run.
    std::string certaintyString = "";
-   
    expectedCertainty ? certaintyString = "true" : certaintyString = "false";
-    
    GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
                      "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << ";\n\n";
    //Check if the expected range of values is correct.
@@ -80,7 +78,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
      ModelSelectionMap testMap = ModelSelectionMap();
      testMap.insert(2,2.0);
      testMinimize(testMap.minimize(1.0), 2, false, 1.0);
-     EXPECT_EQ(testMap.lastInsertedPair->first, 0.0);
+     EXPECT_EQ(testMap.lastInsertedPair->first, INFINITY);
      EXPECT_EQ(testMap.lastInsertedPair->second.modelSize,2);
      EXPECT_EQ(testMap.lastInsertedPair->second.isPlaceHolder, false);
 
@@ -108,7 +106,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     //All asserts pass 6/16/20.
   }
 
-   TEST(DISABLED_InsertTests, testDuplicatePenalty){
+  TEST(DISABLED_InsertTests, testDuplicatePenalty){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     int expectedCount = 1;
@@ -264,7 +262,7 @@ TEST(DISABLED_InsertTests, testInsertRightPanelPen){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(DISABLED_InsertTests, testInsertRightPanel){
+TEST(InsertTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -309,7 +307,7 @@ TEST(DISABLED_InsertTests, testInsertRightPanel){
     testGetPen(testMap, 0.0);
    }
 //Test for right panel insertion without minimize checks to fix issues with the two param inserts.
-TEST(InsertTests, testTwoParamBreakpoints){
+TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 

@@ -17,6 +17,13 @@ struct Model {
 };
 
 
+struct Breakpoint {
+    double penalty;
+    std::pair<int, int> optimalModelSizes;
+
+};
+
+
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
     MinimizeResult(int modelSize = 1, bool certain = false);
