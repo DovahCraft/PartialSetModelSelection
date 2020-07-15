@@ -22,8 +22,6 @@ struct MinimizeResult {
     MinimizeResult(int modelSize = 1, bool certain = false);
     bool certain;
     int modelSize;
-    //Stores the potential models that could encompass a penalty query. Identical first and second value if certain (solved).
-    std::pair<double, double> optimalModels;
 };
 
 

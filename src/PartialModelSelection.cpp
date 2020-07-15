@@ -27,7 +27,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    //Insert into ourpenaltyModelPair map in the ModelSelectionMap if the newPenalty is not within it.
    Model newModel = Model(modelSize, loss);
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
-   auto nextPair = penaltyModelMap.lower_bound(newPenalty);
+   std::map<double,Model>::iterator nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
    try{
       auto insertResult = penaltyModelMap.insert(newPair);
@@ -66,7 +66,6 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          firstKey->second.isPlaceHolder = false;
          //As we official solved a model for 0, increment the inserted models as it is no longer a placeholder. 
          insertedModels++;
-
          //Update the last inserted pair iterator
          lastInsertedPair = penaltyModelMap.find(newPair.first);
       }  
@@ -90,6 +89,7 @@ void ModelSelectionMap::insert(int modelSize, double loss){
    else{
       //Call the insert function and update the 0.0 placeholder to reflect insertion
       insert(0.0, modelSize, loss);
+      penaltyModelMap.begin()->second.isPlaceHolder = true;
    }
 }
 
@@ -144,9 +144,9 @@ double findBreakpoint(Model firstModel, Model secondModel){
 //Method to display the currently stored pairs in the map. 
 void ModelSelectionMap::displayMap() {
   std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
-  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
+  std::cout << "Penalty          ModelSize          ModelSizeAfter             isPlaceHolder?\n"; 
   for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it)
-      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
+      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << it->second.isPlaceHolder << '\n';
 
    std::cout << " \n";
  }
