@@ -112,10 +112,10 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
    bool isCertain = false;
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
-       //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
-       if(!indexModel.isPlaceHolder)
+      //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
+      if(!indexModel.isPlaceHolder)
          isCertain = true; 
-       queryResult = MinimizeResult(indexModel.modelSize, isCertain);
+      queryResult = MinimizeResult(indexModel.modelSize, isCertain);
     }
     //If we find a result that lies after an inserted 1 segment model, it should 1 for sure.  End of map clause.
     else if(indexPair == penaltyModelMap.end() && prevModel.modelSize == 1 && !prevModel.isPlaceHolder){
@@ -141,6 +141,10 @@ std::vector<double> ModelSelectionMap::getNewPenaltyList(){
 
 double findBreakpoint(Model firstModel, Model secondModel){
    return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+}
+
+double findCost( double penalty, int modelSize, double loss){
+   return penalty*modelSize + loss;
 }
 
 //Method to display the currently stored pairs in the map. 

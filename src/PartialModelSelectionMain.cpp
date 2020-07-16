@@ -281,7 +281,7 @@ TEST(InsertTests, testInsertRightPanel){
     std::cout << "BREAKPOINT BETWEEN 1 and 2: " << findBreakpoint(model1Seg, model2Seg) << "\n"; //3.0
     testMinimize(testMap.minimize(5.0), 1, false, 5.0);
     testMinimize(testMap.minimize(4.0), 1, false, 4.0);
-    testMinimize(testMap.minimize(3.0), 1, false, 3.0); 
+    testMinimize(testMap.minimize(3.0), 2, false, 3.0); 
     testMinimize(testMap.minimize(2.0), 2, false, 2.0); //1 and two should be able to return true results after 3 is inserted. 
     testMinimize(testMap.minimize(1.0), 2, false, 1.0);
     testMinimize(testMap.minimize(0.0), 2, false, 0.0);
@@ -289,8 +289,8 @@ TEST(InsertTests, testInsertRightPanel){
     testMap.insert(3, 2.0);
     testMinimize(testMap.minimize(5.0), 1, false, 5.0);
     testMinimize(testMap.minimize(4.0), 1, false, 4.0);
-    testMinimize(testMap.minimize(3.0), 1, false, 3.0); 
-    testMinimize(testMap.minimize(2.0), 2, false, 2.0);
+    testMinimize(testMap.minimize(3.0), 2, false, 3.0); 
+    testMinimize(testMap.minimize(2.0), 3, false, 2.0);
     testMinimize(testMap.minimize(1.0), 3, false, 1.0); //With a cap this an easy solution. To be true. 
     testMinimize(testMap.minimize(0.0), 3, false, 0.0); //This will likely never be true in this case with an infinite cap. Does it need to be?
     testMap.displayMap();

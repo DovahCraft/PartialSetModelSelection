@@ -130,6 +130,8 @@ public:
     bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
 };
 
-
 //Utility to compute a breakpoint between two models for use in other functions.
 double findBreakpoint(Model firstModel, Model secondModel);
+//Computes the penalized cost of k*lambda for breakpoint comparison. 
+double findCost(double penalty, int modelSize, int loss);
+
