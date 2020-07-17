@@ -4,7 +4,7 @@
 #include <vector>
 
 struct Model {
-    Model(int modelSize, double loss) : modelSize(modelSize), loss(loss) {}
+    Model(int modelSize, double loss) : modelSize(modelSize), loss(loss), isPlaceHolder(false) {}
     //Number of segments (k-value)
     int modelSize = 0;
     //Loss associated with the given model 
@@ -12,8 +12,6 @@ struct Model {
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
     bool isSameAfter; //Used to determine if the current modelSize is the same as the predicted next.
     bool isPlaceHolder; //Used to determine if the key at 0 is the initial key we insert.
-    //Range of penalties for which this model is optimal.
-    std::pair<double,double> optimalPenaltyRange;
 };
 
 

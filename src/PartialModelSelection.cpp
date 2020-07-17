@@ -36,7 +36,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
       //Update initial placeholder pair       
       if(insertedModels == 0){
-         std::map<double, Model>::iterator placeHolder = penaltyModelMap.begin();
+         auto placeHolder = penaltyModelMap.begin();
          placeHolder->second.modelSize = newModel.modelSize;
       } 
       insertedModels++;
@@ -91,7 +91,6 @@ void ModelSelectionMap::insert(int modelSize, double loss){
    else{
       //Call the insert function and update the 0.0 placeholder to reflect insertion
       insert(INFINITY, modelSize, loss);
-      penaltyModelMap.begin()->second.isPlaceHolder = true;
    }
 }
 
@@ -128,9 +127,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        if(prevModel.modelSize == modelSizeCap){
           isCertain = true;
        }
-       queryResult = MinimizeResult(prevModel.modelSize, isCertain);
+       queryResult = MinimizeResult(prevModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb
     } 
-    //Return the processed query.
     return queryResult;
 }
 

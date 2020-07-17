@@ -31,8 +31,7 @@ void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
     GTEST_GETPENCOUT << "Running test for getNextPenalty\n\n";
     std::vector<double> currentPenList = testMap.getNewPenaltyList();
     double firstPen = currentPenList.front();
-    EXPECT_EQ(0.0, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n";
-    
+    EXPECT_EQ(0.0, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n"; 
 }
 
 TEST(DISABLED_breakpointTests, testBreakFormation){
@@ -77,9 +76,10 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
    TEST(InsertTests, testEmptyMapNoParamInsert){
      ModelSelectionMap testMap = ModelSelectionMap();
      testMap.insert(2,2.0);
+     testMap.displayMap();
      testMinimize(testMap.minimize(1.0), 2, false, 1.0);
      EXPECT_EQ(testMap.lastInsertedPair->first, INFINITY);
-     EXPECT_EQ(testMap.lastInsertedPair->second.modelSize,2);
+     EXPECT_EQ(testMap.lastInsertedPair->second.modelSize,2); 
      EXPECT_EQ(testMap.lastInsertedPair->second.isPlaceHolder, false);
 
    }
@@ -166,7 +166,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_InsertTests, testInsertLeftPanel){
+ TEST(InsertTests, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -279,7 +279,7 @@ TEST(InsertTests, testInsertRightPanel){
     testMap.insert(2, 4.0);
     testMap.displayMap();
     std::cout << "BREAKPOINT BETWEEN 1 and 2: " << findBreakpoint(model1Seg, model2Seg) << "\n"; //3.0
-    testMinimize(testMap.minimize(5.0), 1, false, 5.0);
+    testMinimize(testMap.minimize(5.0), 1, false, 5.0);//BReak here
     testMinimize(testMap.minimize(4.0), 1, false, 4.0);
     testMinimize(testMap.minimize(3.0), 2, false, 3.0); 
     testMinimize(testMap.minimize(2.0), 2, false, 2.0); //1 and two should be able to return true results after 3 is inserted. 
