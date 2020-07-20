@@ -3,6 +3,18 @@
 #include <map>
 #include <vector>
 
+struct Breakpoint {
+    double penalty;
+    std::pair<int, int> optimalModelSizes;
+};
+
+//Struct to embody Model,Boolean pairs for model selection path records.
+struct MinimizeResult {
+    MinimizeResult(int modelSize = 1, bool certain = false);
+    bool certain;
+    int modelSize;
+};
+
 struct Model {
     Model(int modelSize, double loss) : modelSize(modelSize), loss(loss), isPlaceHolder(false) {}
     //Number of segments (k-value)
@@ -14,22 +26,6 @@ struct Model {
     bool isPlaceHolder; //Used to determine if the key at 0 is the initial key we insert.
     std::pair<double,double> optimalPenalties; //Used to filter out unnecessary penalties within optimal range. 
 };
-
-
-struct Breakpoint {
-    double penalty;
-    std::pair<int, int> optimalModelSizes;
-
-};
-
-
-//Struct to embody Model,Boolean pairs for model selection path records.
-struct MinimizeResult {
-    MinimizeResult(int modelSize = 1, bool certain = false);
-    bool certain;
-    int modelSize;
-};
-
 
 //struct penaltyModelPair may be better here for more readability
 using PenaltyModelPair = std::pair<double, Model>;

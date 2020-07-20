@@ -20,18 +20,20 @@ void testMinimize(MinimizeResult testResult, double lowModelSize, bool expectedC
    std::string certaintyString = "";
    expectedCertainty ? certaintyString = "true" : certaintyString = "false";
    GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
-                     "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << ";\n\n";
+                     "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << "\n\n";
    //Check if the expected range of values is correct.
    EXPECT_EQ(lowModelSize, testResult.modelSize) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(expectedCertainty, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
 }
 
 //Testing method to test getNextPen
-void testGetPen(ModelSelectionMap testMap, double expectedPenalty ){
-    GTEST_GETPENCOUT << "Running test for getNextPenalty\n\n";
+void testGetPen(ModelSelectionMap testMap, double expectedPenalty, int index = 0 ){
+    GTEST_GETPENCOUT << "Running test for getNextPenalty with parameters: " << "expectedPen: " << expectedPenalty 
+                << "; Index: " << index << " \n\n";
     std::vector<double> currentPenList = testMap.getNewPenaltyList();
-    double firstPen = currentPenList.front();
-    EXPECT_EQ(0.0, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n"; 
+    testMap.displayPenList();
+    double storedPen = currentPenList.at(index);
+    EXPECT_EQ(storedPen, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n"; 
 }
 
 TEST(DISABLED_breakpointTests, testBreakFormation){
@@ -166,7 +168,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_PanelInserts, testInsertLeftPanel){
+ TEST(PanelInserts, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -196,6 +198,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMinimize(testMap.minimize(2.0), 2, true, 2.0); //These two queries return 2 for sure after we insert it at 0.0, and with the breakpoint at 3.0 computed from the loss and slope.  
     testMinimize(testMap.minimize(1.0), 2, true, 1.0);
     testMinimize(testMap.minimize(1.0), 2, true, 0.0);
+    testGetPen(testMap, 3.0, 1);
    }
 
 
@@ -245,7 +248,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 //TODO complete this test after the left and middle panel tests pass.
-TEST(DISABLED_InsertTests, testInsertRightPanelPen){
+TEST(DISABLED_PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -336,8 +339,10 @@ TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);
+    testMap.displayMap(); 
     testMinimize(testMap.minimize(1.0), 5, true, 1.0);
     testMap.insert(2.0, 5, 1.0);
+    testMap.displayMap(); 
     testMinimize(testMap.minimize(2.0), 5, true, 2.0);
     testMap.insert(3.0, 5, 1.0);
     testMinimize(testMap.minimize(3.0), 5, true, 3.0);
@@ -350,8 +355,10 @@ TEST(InsertTests, insertSameModelSize){
 TEST(InsertTests, insertLargeModelFirst){
   ModelSelectionMap testMap = ModelSelectionMap();
   testMap.insert(6, 1.0);
+  testMap.displayMap();
   testMap.insert(1,5.0);
   testMap.displayMap();
+  testMinimize(testMap.minimize(3.0), 1, false, 3.0);
 }
 
 //Driver function for google test

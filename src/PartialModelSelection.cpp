@@ -43,20 +43,27 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          placeHolder->second.modelSize = newModel.modelSize;
       } 
       insertedModels++;
-      //UPDATE MODELS AFTER US
-      if(nextPair != penaltyModelMap.end())
-         newPair.second.modelSizeAfter = nextPair->second.modelSize;
-      //If there is nothing different after us, set the after value to the current value. 
-      else{
-         newPair.second.modelSizeAfter = newModel.modelSize;
-      }
       //UPDATE MODEL BEFORE US 
       //If we found another key besides the 0 key from lowerbound. 
       if(nextPair->first != 0.0){
          prevPair->second.modelSizeAfter = newModel.modelSize;
          if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
          
+            newPenalties.push_back(findBreakpoint(newModel, prevPair->second)); //Check here is breaking things, need to fix. 
+         
+         
       }
+      //UPDATE MODELS AFTER US
+      if(nextPair != penaltyModelMap.end()){
+         newPair.second.modelSizeAfter = nextPair->second.modelSize;
+         newPenalties.push_back(findBreakpoint(newModel, nextPair->second));
+      }
+         
+      //If there is nothing different after us, set the after value to the current value. 
+      else{
+         newPair.second.modelSizeAfter = newModel.modelSize;
+      }
+      
 
       //Update the last inserted pair iterator
       lastInsertedPair = penaltyModelMap.find(newPair.first);
@@ -127,10 +134,13 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     //If we find a result that is not after 1, nor is it a solved point for sure. TODO: updated logic here with breakpoints and model cap bounds.
     else{
        //If we are below the final model size alloted, then the result is certain. 
-       if(prevModel.modelSize == modelSizeCap){
-          isCertain = true;
-       }
-       queryResult = MinimizeResult(prevModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb   
+       if(prevModel.modelSize == modelSizeCap) isCertain = true;
+
+       if(indexPair == penaltyModelMap.end())
+          queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
+       else{
+          queryResult = MinimizeResult(indexModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb
+       }  
     } 
     return queryResult;
 }
