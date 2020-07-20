@@ -341,7 +341,7 @@ TEST(InsertTests, insertSameModelSize){
     testMinimize(testMap.minimize(2.0), 5, true, 2.0);
     testMap.insert(3.0, 5, 1.0);
     testMinimize(testMap.minimize(3.0), 5, true, 3.0);
-    
+    testMinimize(testMap.minimize(0.0), 5, false, 0.0);
     //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!
     testMap.displayMap(); 
    }

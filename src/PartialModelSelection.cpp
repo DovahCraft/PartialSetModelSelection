@@ -14,6 +14,8 @@
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
    Model startingModel = Model(1,-1); //Used -1 as a default starting loss, will probably refactor.
+   startingModel.minimizeResult = MinimizeResult(1,false);
+   startingModel.optimalPenalties = std::make_pair(0,0);
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
@@ -21,6 +23,7 @@ ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels)
    lastInsertedPair = penaltyModelMap.end(); //Set the previous pair to the end of the map as placeholder does not count. 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
    newPenalties.push_back(0.0);
+
 }
 
 void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){

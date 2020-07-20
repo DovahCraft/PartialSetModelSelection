@@ -10,6 +10,7 @@ struct Model {
     //Loss associated with the given model 
     double loss = 0.0;
     int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
+    MinimizeResult minimizeResult;
     bool isPlaceHolder; //Used to determine if the key at 0 is the initial key we insert.
     std::pair<double,double> optimalPenalties; //Used to filter out unnecessary penalties within optimal range. 
 };
