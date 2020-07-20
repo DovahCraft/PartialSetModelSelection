@@ -127,7 +127,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        if(prevModel.modelSize == modelSizeCap){
           isCertain = true;
        }
-       queryResult = MinimizeResult(prevModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb
+       queryResult = MinimizeResult(prevModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb   
     } 
     return queryResult;
 }

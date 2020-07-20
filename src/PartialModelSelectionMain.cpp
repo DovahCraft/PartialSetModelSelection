@@ -118,7 +118,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
    }
 
 
-TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
+  TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model2segs = Model(2, 5.0);
     Model model6segs = Model(6, 0.0);
@@ -166,7 +166,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(InsertTests, testInsertLeftPanel){
+ TEST(DISABLED_PanelInserts, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -189,6 +189,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
 
     //Insert two segment model and test again, should be complete path.  
     testMap.insert(0.0, 2, 4.0);
+    testMap.displayMap();
     testMinimize(testMap.minimize(5.0), 1, true, 5.0);
     testMinimize(testMap.minimize(4.0), 1, true, 4.0);
     testMinimize(testMap.minimize(3.0), 2, true, 3.0); //Breakpoint is at 3.0, so 2.0 and 1.0 should yield model with two segments as it was inserted with penatly 0.0
@@ -199,7 +200,7 @@ TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
 
 
 //Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
-TEST(DISABLED_InsertTests, testInsertMiddlePanel){
+TEST(DISABLED_PanelTests, testInsertMiddlePanel){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -239,7 +240,7 @@ TEST(DISABLED_InsertTests, testInsertMiddlePanel){
     testMinimize(testMap.minimize(3.5), 1, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
     testMinimize(testMap.minimize(3.0), 3, true, 2.0);
     testMinimize(testMap.minimize(1.0), 3, true, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
-     testMinimize(testMap.minimize(0.0), 3, true, 0.0); 
+    testMinimize(testMap.minimize(0.0), 3, true, 0.0); 
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
@@ -262,7 +263,7 @@ TEST(DISABLED_InsertTests, testInsertRightPanelPen){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(InsertTests, testInsertRightPanel){
+TEST(DISABLED_PanelTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -331,7 +332,7 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 without penalties.
-TEST(InsertTests, DISABLED_insertSameModelSize){
+TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);
@@ -343,8 +344,15 @@ TEST(InsertTests, DISABLED_insertSameModelSize){
     
     //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!
     testMap.displayMap(); 
-
    }
+
+
+TEST(InsertTests, insertLargeModelFirst){
+  ModelSelectionMap testMap = ModelSelectionMap();
+  testMap.insert(6, 1.0);
+  testMap.insert(1,5.0);
+  testMap.displayMap();
+}
 
 //Driver function for google test
 int main (int argc, char* argv[]){
