@@ -48,23 +48,19 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       if(nextPair->first != 0.0){
          prevPair->second.modelSizeAfter = newModel.modelSize;
          if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
-         
-            newPenalties.push_back(findBreakpoint(newModel, prevPair->second)); //Check here is breaking things, need to fix. 
-         
-         
+         if(newModel.modelSize != prevPair->second.modelSize)
+            newPenalties.push_back(findBreakpoint(newModel, prevPair->second));
       }
       //UPDATE MODELS AFTER US
       if(nextPair != penaltyModelMap.end()){
          newPair.second.modelSizeAfter = nextPair->second.modelSize;
-         newPenalties.push_back(findBreakpoint(newModel, nextPair->second));
+         if(newModel.modelSize != prevPair->second.modelSize)
+            newPenalties.push_back(findBreakpoint(newModel, prevPair->second)); 
       }
-         
       //If there is nothing different after us, set the after value to the current value. 
       else{
          newPair.second.modelSizeAfter = newModel.modelSize;
       }
-      
-
       //Update the last inserted pair iterator
       lastInsertedPair = penaltyModelMap.find(newPair.first);
    }

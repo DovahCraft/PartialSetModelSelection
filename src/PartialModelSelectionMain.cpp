@@ -76,7 +76,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMinimize(testMap, 1, false, 0.5);
    }
 
-   TEST(InsertTests, testEmptyMapNoParamInsert){
+   TEST(DISABLED_InsertTests, testEmptyMapNoParamInsert){
      ModelSelectionMap testMap = ModelSelectionMap();
      testMap.insert(2,2.0);
      testMap.displayMap();
@@ -169,7 +169,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(PanelInserts, testInsertLeftPanel){
+ TEST(DISABLED_PanelInserts, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -340,12 +340,16 @@ TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);
+    testMap.displayPenList();
     testMap.displayMap(); 
     testMinimize(testMap, 5, true, 1.0);
+    testMap.displayPenList();
     testMap.insert(2.0, 5, 1.0);
+    testMap.displayPenList();
     testMap.displayMap(); 
     testMinimize(testMap, 5, true, 2.0);
     testMap.insert(3.0, 5, 1.0);
+    testMap.displayPenList();
     testMinimize(testMap, 5, true, 3.0);
     testMinimize(testMap, 5, false, 0.0);
     //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!
@@ -353,7 +357,7 @@ TEST(InsertTests, insertSameModelSize){
    }
 
 
-TEST(InsertTests, insertLargeModelFirst){
+TEST(DISABLED_InsertTests, insertLargeModelFirst){
   ModelSelectionMap testMap = ModelSelectionMap();
   testMap.insert(6, 1.0);
   testMap.displayMap();
