@@ -48,14 +48,12 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       if(nextPair->first != 0.0){
          prevPair->second.modelSizeAfter = newModel.modelSize;
          if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
-         if(newModel.modelSize != prevPair->second.modelSize)
-            newPenalties.push_back(findBreakpoint(newModel, prevPair->second));
+         addBreakpoint(newModel, prevPair->second);
       }
       //UPDATE MODELS AFTER US
       if(nextPair != penaltyModelMap.end()){
          newPair.second.modelSizeAfter = nextPair->second.modelSize;
-         if(newModel.modelSize != prevPair->second.modelSize)
-            newPenalties.push_back(findBreakpoint(newModel, prevPair->second)); 
+         addBreakpoint(newModel, nextPair->second); 
       }
       //If there is nothing different after us, set the after value to the current value. 
       else{
@@ -139,6 +137,11 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
        }  
     } 
     return queryResult;
+}
+
+void ModelSelectionMap::addBreakpoint(Model firstModel, Model secondModel){
+   if(firstModel.modelSize != secondModel.modelSize)
+      newPenalties.push_back(findBreakpoint(firstModel, secondModel)); //Make this a function.
 }
 
 std::vector<double> ModelSelectionMap::getNewPenaltyList(){

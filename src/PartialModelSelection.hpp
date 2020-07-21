@@ -116,7 +116,9 @@ public:
     /*UTILITY METHODS*/
     void displayMap();
 
-    
+    void addBreakpoint(Model firstModel, Model secondModel);
+
+
     void displayPenList();
 
     private:
