@@ -62,24 +62,21 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testGetPen(testMap, 0.0);
    }
 
-   TEST(breakpointTests, testInvalidBounds){
+   TEST(DISABLED_breakpointTests, testInvalidBounds){
      ModelSelectionMap testMap = ModelSelectionMap();     
      try{
-       std::cout << "Running try block 1!\n";
        Model modelWrongSegs = Model(-4, 3);
      }
      catch(std::out_of_range errorMessage){
        std::cerr << errorMessage.what() << " \n";
      }
      try{
-       std::cout << "Running try block 2!\n";
        Model modelWrongLoss = Model(4, -3);
      }
      catch(std::out_of_range errorMessage){
        std::cerr << errorMessage.what() << " \n";
      }
      try{
-       std::cout << "Running try block 3!\n";
        Model model1Seg = Model(2, 3.0);
        testMap.insert(-2, 2, 3.0);
      }
@@ -276,8 +273,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-//TODO complete this test after the left and middle panel tests pass.
-TEST(DISABLED_PanelTests, testInsertRightPanelPen){
+TEST(PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -290,7 +286,21 @@ TEST(DISABLED_PanelTests, testInsertRightPanelPen){
     testMinimize(testMap, 1, false, 1.0);
     testMinimize(testMap, 1, false, 0.0);
     testMap.insert(2.5, 2, 4.0);
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 2, true, 2.5);
+    testMinimize(testMap, 2, false, 2.0);
+    testMinimize(testMap, 2, false, 1.0);
+    testMinimize(testMap, 2, false, 0.0);
     testMap.insert(1.0, 3, 2.0);
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 2, true, 2.5);
+    testMinimize(testMap, 3, true, 2.0); //Breakpoint between 3 and 2
+    testMinimize(testMap, 3, true, 1.0);
+    testMinimize(testMap, 3, true, 0.0);
     testGetPen(testMap, 0.0);
    }
 
