@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <math.h>
 #include <string>
+#include <stdexcept>
 
 //Local Includes
 #include "PartialModelSelection.hpp"
@@ -61,8 +62,35 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testGetPen(testMap, 0.0);
    }
 
+   TEST(breakpointTests, testInvalidBounds){
+     ModelSelectionMap testMap = ModelSelectionMap();     
+     try{
+       std::cout << "Running try block 1!\n";
+       Model modelWrongSegs = Model(-4, 3);
+     }
+     catch(std::out_of_range errorMessage){
+       std::cerr << errorMessage.what() << " \n";
+     }
+     try{
+       std::cout << "Running try block 2!\n";
+       Model modelWrongLoss = Model(4, -3);
+     }
+     catch(std::out_of_range errorMessage){
+       std::cerr << errorMessage.what() << " \n";
+     }
+     try{
+       std::cout << "Running try block 3!\n";
+       Model model1Seg = Model(2, 3.0);
+       testMap.insert(-2, 2, 3.0);
+     }
+     catch(std::out_of_range errorMessage){
+       std::cerr << errorMessage.what() << " \n";
+     }
+     
+   }
 
-   TEST(PenaltyPairsTests, testEmptyMinimization){
+
+   TEST(DISABLED_PenaltyPairsTests, testEmptyMinimization){
     ModelSelectionMap testMap = ModelSelectionMap();
     double expectedStart = 1;
     MinimizeResult emptyResult = testMap.minimize(4.0);
@@ -336,7 +364,7 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 without penalties.
-TEST(InsertTests, insertSameModelSize){
+TEST(DISABLED_InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);

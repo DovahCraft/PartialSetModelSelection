@@ -13,7 +13,7 @@
 /*MODEL SELECTION MAP IMPLEMENTATIONS*/
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
-   Model startingModel = Model(1,-1); //Used -1 as a default starting loss, will probably refactor.
+   Model startingModel = Model(1,1);
    startingModel.minimizeResult = MinimizeResult(1,false);
    startingModel.optimalPenalties = std::make_pair(0,0);
    startingModel.modelSizeAfter = 1;
@@ -178,9 +178,16 @@ bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 //General Utilities used in ModelSelectionMap
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
 std::map<double, Model>::iterator ModelSelectionMap::validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
-    //Get existing pair for error code
-    //The result from insert is: std::pair<iterator,bool> where the bool represents the success/failure of insertion.
+    double candidatePenalty = insertResult.first->first;
+    //If the candidate penalty for insertion is less than the min value of 0, throw an error.
+    if(candidatePenalty < 0){
+       throw std::out_of_range("[ ERROR ] Cannot insert with penalty = " + std::to_string(candidatePenalty) +
+         " because it is less than 0!");
+    }
+
+
     if(!insertResult.second){
+     //Get existing pair for error code
      auto existingKey = penaltyModelMap.find(insertResult.first->first);
      int existingModelSize = existingKey->second.modelSize;
      int attemptedInsertSize = insertResult.first->first;

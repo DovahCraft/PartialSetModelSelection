@@ -16,7 +16,16 @@ struct MinimizeResult {
 };
 
 struct Model {
-    Model(int modelSize, double loss) : modelSize(modelSize), loss(loss), isPlaceHolder(false) {}
+    Model(int inputSize, double inputLoss) : modelSize(inputSize), loss(loss), isPlaceHolder(false) {
+        if(inputSize >= 0 && inputLoss >= 0){
+            modelSize = inputSize;
+            loss = inputLoss;
+        }
+        else{
+            throw std::out_of_range("[ ERROR ] Cannot create model with negative size or loss values! Provided model_size = " 
+            + std::to_string(inputSize) + ", loss = " + std::to_string(inputLoss) + "\n");
+        }
+    }
     //Number of segments (k-value)
     int modelSize = 0;
     //Loss associated with the given model 
@@ -122,9 +131,15 @@ public:
     void displayPenList();
 
     private:
-    //Utility function to validate an insertion, used before setting previous penaltyModel Pair inserted. 
+    /*
+    Utility function to validate an insertion to delegate it away from the main insert functions.
+    The result from std::map insert() is: std::pair<iterator,bool> where the bool represents the success/failure of insertion.
+    The function uses this bool value to ensure there is not a duplicate penalty already in the map
+    Another case to check for is an invalid penalty value. If the penalty is negative, it is not a valid penalty to insert with a model.*/ 
     std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
-    bool hasModelsInserted(); //Custom isEmpty method as we will add a initial model, nullifing built-in method.     
+
+    //Custom isEmpty method as we will add a initial model, nullifing built-in method with std::map.
+    bool hasModelsInserted();  
 };
 
 //Utility to compute a breakpoint between two models for use in other functions.
