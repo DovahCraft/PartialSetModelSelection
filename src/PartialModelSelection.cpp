@@ -32,6 +32,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    std::map<double,Model>::iterator nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
+   std::vector<double>::iterator cachedPenalty = std::find(newPenalties.begin(), newPenalties.end(), newPenalty);
    //By default, we have the same model size after us, unless it is updated below.
    newPair.second.modelSizeAfter = modelSize;
    try{
@@ -61,6 +62,12 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       }
       //Update the last inserted pair iterator
       lastInsertedPair = penaltyModelMap.find(newPair.first);
+      //If the penalty was already suggested in the getNextPenalty list, remove it. TODO: REFACTOR OR TALK ABOUT O(N) complexity here!
+     /* if(cachedPenalty != newPenalties.end()){
+         std::cout<< "TRYING TO REMOVE PENALTY: " << newPenalty << "\n";
+         newPenalties.erase(cachedPenalty);
+      }*/
+         
    }
    catch(std::logic_error errorMessage) {
       //update the placeholder on value instead of returning an error message if penalty is 0.

@@ -29,13 +29,11 @@ void testMinimize(ModelSelectionMap testMap, double lowModelSize, bool expectedC
 }
 
 //Testing method to test getNextPen
-void testGetPen(ModelSelectionMap testMap, double expectedPenalty, int index = 0 ){
-    GTEST_GETPENCOUT << "Running test for getNextPenalty with parameters: " << "expectedPen: " << expectedPenalty 
-                << "; Index: " << index << " \n\n";
+void testGetPen(ModelSelectionMap testMap, std::vector<double> expectedPenList){
+    GTEST_GETPENCOUT << "Running test for getNextPenalty\n";
     std::vector<double> currentPenList = testMap.getNewPenaltyList();
     testMap.displayPenList();
-    double storedPen = currentPenList.at(index);
-    EXPECT_EQ(storedPen, expectedPenalty) << "Penalty returned by getNewPenalty differs from expected.\n"; 
+    EXPECT_EQ(currentPenList, expectedPenList) << "Penalty returned by getNewPenalty differs from expected.\n"; 
 }
 
 TEST(DISABLED_breakpointTests, testBreakFormation){
@@ -55,11 +53,13 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
+    std::vector<double> expectedPenalties{0, 3.0};
     testMap.insert(2,4.0);
     testMap.insert(1, 7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMap.displayPenList();
-    testGetPen(testMap, 0.0);
+
+    testGetPen(testMap, expectedPenalties);
    }
 
    TEST(DISABLED_breakpointTests, testInvalidBounds){
@@ -198,15 +198,15 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
-
+    std::vector<double> expectedPenalties{0, 3.0};
     testMinimize(testMap, 1, false, 5.0);
    
-    testGetPen(testMap, 0.0); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
+    testGetPen(testMap, expectedPenalties); //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
 
     //Insert the one segment model for an incomplete path, given the model cap is 3.  
     testMap.insert(4.0, 1, 7.0); 
     //Test getNextPenalty
-    testGetPen(testMap, 0.0);
+    testGetPen(testMap, expectedPenalties);
     testMinimize(testMap, 1, true, 5.0); //This should be certain as nothing will become optimal after it has been solved for a penalty value. 
     //Mimize Query here
     testMinimize(testMap, 1, true, 4.0); //We solved this on through the insert.
@@ -224,7 +224,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMinimize(testMap, 2, true, 2.0); //These two queries return 2 for sure after we insert it at 0.0, and with the breakpoint at 3.0 computed from the loss and slope.  
     testMinimize(testMap, 2, true, 1.0);
     testMinimize(testMap, 2, true, 0.0);
-    testGetPen(testMap, 3.0, 1);
+    testGetPen(testMap, expectedPenalties);
    }
 
 
@@ -300,13 +300,15 @@ TEST(PanelTests, testInsertRightPanelPen){
     testMinimize(testMap, 2, true, 2.5);
     testMinimize(testMap, 3, true, 2.0); //Breakpoint between 3 and 2
     testMinimize(testMap, 3, true, 1.0);
+    std::cout << "MADE IT TO FINAL MINIMIZE\n";
+    testMap.displayPenList();
     testMinimize(testMap, 3, true, 0.0);
-    testGetPen(testMap, 0.0);
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
 TEST(DISABLED_PanelTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
+    std::vector<double> expectedPenalties{0, 3.0};
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 2.0);
@@ -347,11 +349,12 @@ TEST(DISABLED_PanelTests, testInsertRightPanel){
     testMinimize(testMap, 3, true, 1.0); //With a cap this an easy solution. To be true. 
     testMinimize(testMap, 4, true, 0.0); //This will likely never be true in this case with an infinite cap. Does it need to be?
     testMap.displayMap();
-    testGetPen(testMap, 0.0);
+    testGetPen(testMap, expectedPenalties);
    }
 //Test for right panel insertion without minimize checks to fix issues with the two param inserts.
 TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     ModelSelectionMap testMap = ModelSelectionMap();
+    std::vector<double> expectedPenalties{0, 3.0};
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 2.0);
@@ -369,8 +372,7 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     std::cout << "BREAKPOINT BETWEEN 3 and 4: " << findBreakpoint(model3Seg, model4Seg) << "\n\n"; //1
     testMap.insert(0, 4, 0.0);
     testMap.displayMap();
-    testMap.displayMap();
-    testGetPen(testMap, 0.0);
+    testGetPen(testMap, expectedPenalties);
    }
 
 //Test PenaltyModelPair insertion based on panel 2 without penalties.
