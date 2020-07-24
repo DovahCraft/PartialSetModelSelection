@@ -273,7 +273,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(PanelTests, testInsertRightPanelPen){
+TEST(DISABLED_PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -376,7 +376,7 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 without penalties.
-TEST(DISABLED_InsertTests, insertSameModelSize){
+TEST(InsertTests, insertSameModelSize){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);

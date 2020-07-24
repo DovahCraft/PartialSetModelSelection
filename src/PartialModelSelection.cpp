@@ -36,38 +36,37 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    //By default, we have the same model size after us, unless it is updated below.
    newPair.second.modelSizeAfter = modelSize;
    try{
-      auto insertResult = penaltyModelMap.insert(newPair);
-      validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
-      //Update initial placeholder pair       
-      if(insertedModels == 0){
-         auto placeHolder = penaltyModelMap.begin();
-         placeHolder->second.modelSize = newModel.modelSize;
+       auto insertResult = penaltyModelMap.insert(newPair);
+       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
+       //Update initial placeholder pair       
+       if(insertedModels == 0){
+          auto placeHolder = penaltyModelMap.begin();
+          placeHolder->second.modelSize = newModel.modelSize;
       } 
-      insertedModels++;
-      //UPDATE MODEL BEFORE US 
-      //If we found another key besides the 0 key from lowerbound. 
-      if(nextPair->first != 0.0){
-         prevPair->second.modelSizeAfter = newModel.modelSize;
-         if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
-         addBreakpoint(newModel, prevPair->second);
-      }
-      //UPDATE MODELS AFTER US
-      if(nextPair != penaltyModelMap.end()){
-         newPair.second.modelSizeAfter = nextPair->second.modelSize;
-         addBreakpoint(newModel, nextPair->second); 
-      }
-      //If there is nothing different after us, set the after value to the current value. 
-      else{
-         newPair.second.modelSizeAfter = newModel.modelSize;
-      }
+       insertedModels++;
+       //UPDATE MODEL BEFORE US 
+       //If we found another key besides the 0 key from lowerbound. 
+       if(nextPair->first != 0.0){
+          prevPair->second.modelSizeAfter = newModel.modelSize;
+          if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
+          addBreakpoint(newModel, prevPair->second);
+       }
+       //UPDATE MODELS AFTER US
+       if(nextPair != penaltyModelMap.end()){
+          newPair.second.modelSizeAfter = nextPair->second.modelSize;
+          addBreakpoint(newModel, nextPair->second); 
+       }
+       //If there is nothing different after us, set the after value to the current value. 
+       else{
+          newPair.second.modelSizeAfter = newModel.modelSize;
+       }
       //Update the last inserted pair iterator
       lastInsertedPair = penaltyModelMap.find(newPair.first);
       //If the penalty was already suggested in the getNextPenalty list, remove it. TODO: REFACTOR OR TALK ABOUT O(N) complexity here!
      /* if(cachedPenalty != newPenalties.end()){
          std::cout<< "TRYING TO REMOVE PENALTY: " << newPenalty << "\n";
          newPenalties.erase(cachedPenalty);
-      }*/
-         
+      }*/   
    }
    catch(std::logic_error errorMessage) {
       //update the placeholder on value instead of returning an error message if penalty is 0.
@@ -147,8 +146,13 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 }
 
 void ModelSelectionMap::addBreakpoint(Model firstModel, Model secondModel){
+   int modelSizeDiff = abs(firstModel.modelSize - secondModel.modelSize); 
    if(firstModel.modelSize != secondModel.modelSize)
-      newPenalties.push_back(findBreakpoint(firstModel, secondModel)); //Make this a function.
+      newPenalties.push_back(findBreakpoint(firstModel, secondModel));
+   
+   if(modelSizeDiff == 1){
+      std::cout << "Difference between model: " << firstModel.modelSize << "and model: " << secondModel.modelSize << " is one!\n";
+   }
 }
 
 std::vector<double> ModelSelectionMap::getNewPenaltyList(){
@@ -186,23 +190,30 @@ bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
 std::map<double, Model>::iterator ModelSelectionMap::validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
     double candidatePenalty = insertResult.first->first;
+    auto nextPair = penaltyModelMap.lower_bound(insertResult.first->first);
+    auto prevPair = prev(nextPair);
+    int attemptedInsertSize = insertResult.first->second.modelSize;
+    if(!insertResult.second){
+       //Get existing pair for error code
+       auto existingKey = penaltyModelMap.find(insertResult.first->first);
+       int existingModelSize = existingKey->second.modelSize;
+       throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
+        + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
+           + std::to_string(candidatePenalty) + "\n");
+    }  
+
     //If the candidate penalty for insertion is less than the min value of 0, throw an error.
     if(candidatePenalty < 0){
-       throw std::out_of_range("[ ERROR ] Cannot insert with penalty = " + std::to_string(candidatePenalty) +
+       throw std::logic_error("[ ERROR ] Cannot insert with penalty = " + std::to_string(candidatePenalty) +
          " because it is less than 0!");
     }
 
-
-    if(!insertResult.second){
-     //Get existing pair for error code
-     auto existingKey = penaltyModelMap.find(insertResult.first->first);
-     int existingModelSize = existingKey->second.modelSize;
-     int attemptedInsertSize = insertResult.first->first;
-     double insertPenalty = insertResult.first->first;
-     throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
-      + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
-         + std::to_string(insertPenalty) + "\n");
-    }  
+    //Check if the new penalty is redundant, as it is within an already established range. 
+    if(prevPair->second.modelSize == attemptedInsertSize && nextPair->second.modelSize == attemptedInsertSize){
+       throw std::logic_error("[ ERROR ] Cannot insert at penalty = " + std::to_string(candidatePenalty) 
+         + " because it lies within the solved range of [" + std::to_string(prevPair->first) 
+              + "," + std::to_string(nextPair->first) + "].\n");
+    }
     auto validIterator = insertResult.first;
     return validIterator;
 }
