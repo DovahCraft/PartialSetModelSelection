@@ -7,6 +7,8 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
+
+
 //Local includes
 #include "PartialModelSelection.hpp"
 
@@ -158,35 +160,7 @@ std::vector<double> ModelSelectionMap::getNewPenaltyList(){
   //Return the list of potential penalties to query next.   
    return newPenalties;
 }
-
-double findBreakpoint(Model firstModel, Model secondModel){
-   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
-}
-
-double findCost( double penalty, int modelSize, double loss){
-   return penalty*modelSize + loss;
-}
-
-//Method to display the currently stored pairs in the map. 
-void ModelSelectionMap::displayMap() {
-  std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
-  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
-  for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it) 
-      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
-
-   std::cout << " \n";
- }
-void ModelSelectionMap::displayPenList(){
-    std::cout << "Candidate penalties in newPenList: " << "\n";
-    for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
-      std::cout << *it << "   ";
-   std::cout << " \n";
- }
-  
-bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
-
-//General Utilities used in ModelSelectionMap
-//Takes in an insertion result and returns the iterator to the insertion if it is valid. 
+ 
 std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModelPair newPair, std::map<double, Model>::iterator nextPair){
     double candidatePenalty = newPair.first;
     auto prevPair = prev(nextPair);
@@ -209,18 +183,41 @@ std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModel
     }
 
     //Check if the new penalty is redundant, as it is within an already established range. 
-    if(prevPair->second.modelSize == attemptedInsertSize && nextPair->second.modelSize == attemptedInsertSize){
+    if(!prevPair->second.isPlaceHolder && prevPair->second.modelSize == attemptedInsertSize 
+               && nextPair->second.modelSize == attemptedInsertSize){
        throw std::logic_error("[ ERROR ] Cannot insert at penalty = " + std::to_string(candidatePenalty) 
          + " because it lies within the solved range of [" + std::to_string(prevPair->first) 
               + "," + std::to_string(nextPair->first) + "].\n");
     }
-
     //TODO: Add condition to widen the range on an insertion. 
-    
     return nextPair;
 }
 
+//General Utilities used in ModelSelectionMap
+double findBreakpoint(Model firstModel, Model secondModel){
+   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+}
 
+double findCost( double penalty, int modelSize, double loss){return penalty*modelSize + loss;}
+
+bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
+
+//DISPLAY METHODS
+void ModelSelectionMap::displayMap() {
+  std::cout <<  "\nCurrent Map Display\n" << "#######################\n";
+  std::cout << "Penalty          ModelSize          ModelSizeAfter\n"; 
+  for (std::map<double,Model>::iterator it=penaltyModelMap.begin(); it!=penaltyModelMap.end(); ++it) 
+      std::cout << it->first << "      =>           " << it->second.modelSize << "      =>           "  << it->second.modelSizeAfter << '\n';
+
+   std::cout << " \n";
+ }
+void ModelSelectionMap::displayPenList(){
+    std::cout << "Candidate penalties in newPenList: " << "\n";
+    for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
+      std::cout << *it << "   ";
+   std::cout << " \n";
+ }
+  
 //MinimizeResult Method Implementations
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
