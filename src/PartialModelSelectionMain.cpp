@@ -13,8 +13,6 @@
 #define GTEST_MINCOUT std::cout << "[ MINIMIZE ] [INFO] "
 #define GTEST_GETPENCOUT std::cout << "[ GETPEN ] [INFO] "
 
-
-
 //Testing method to test minimize method (minimizeResults).   
 void testMinimize(ModelSelectionMap testMap, double lowModelSize, bool expectedCertainty, double penaltyQuery){
    //Log the test being run.
@@ -173,7 +171,6 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     std::cout << "Breakpoint between 2 and 6: " << breakpoint << "\n";
     testMap.insert(2, 5.0);
     testMap.insert(6, 0.0);
-    
     testMinimize(testMap, 2, false, 5.0);
     testMinimize(testMap, 2, false, 4.0);
     testMinimize(testMap, 2, false, 3.0);
@@ -376,7 +373,7 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 without penalties.
-TEST(InsertTests, insertSameModelSize){
+TEST(InsertTests, insertSameModelSizeInOrder){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);
@@ -389,6 +386,27 @@ TEST(InsertTests, insertSameModelSize){
     testMap.displayMap(); 
     testMinimize(testMap, 5, true, 2.0);
     testMap.insert(3.0, 5, 1.0);
+    testMap.displayPenList();
+    testMinimize(testMap, 5, true, 3.0);
+    testMinimize(testMap, 5, false, 0.0);
+    //This test passes under the current insert implementation, but the memory result is not constant. TODO: Add expanded duplicate key logic to insert!
+    testMap.displayMap(); 
+   }
+
+
+   //Test PenaltyModelPair insertion based on panel 2 without penalties.
+TEST(InsertTests, insertSameModelSizeUnordered){
+    ModelSelectionMap testMap = ModelSelectionMap(6);
+    Model model5Seg = Model(5, 1.0);
+    testMap.insert(1.0, 5, 1.0);
+    testMap.displayPenList();
+    testMap.displayMap(); 
+    testMinimize(testMap, 5, true, 1.0);
+    testMap.displayPenList();
+    testMap.insert(3.0, 5, 1.0);
+    testMap.displayPenList();
+    testMap.displayMap(); 
+    testMap.insert(2.0, 5, 1.0);
     testMap.displayPenList();
     testMinimize(testMap, 5, true, 3.0);
     testMinimize(testMap, 5, false, 0.0);

@@ -23,7 +23,6 @@ ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels)
    lastInsertedPair = penaltyModelMap.end(); //Set the previous pair to the end of the map as placeholder does not count. 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
    newPenalties.push_back(0.0);
-
 }
 
 void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
@@ -36,8 +35,8 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    //By default, we have the same model size after us, unless it is updated below.
    newPair.second.modelSizeAfter = modelSize;
    try{
-       auto insertResult = penaltyModelMap.insert(newPair);
-       validateInsert(insertResult); //Will throw a logic_error exception if duplicate keys are found, handled below.
+       validateInsert(newPair, nextPair); //Will throw a logic_error exception if duplicate keys are found, handled below.
+       penaltyModelMap.insert(newPair);
        //Update initial placeholder pair       
        if(insertedModels == 0){
           auto placeHolder = penaltyModelMap.begin();
@@ -188,14 +187,15 @@ bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 
 //General Utilities used in ModelSelectionMap
 //Takes in an insertion result and returns the iterator to the insertion if it is valid. 
-std::map<double, Model>::iterator ModelSelectionMap::validateInsert(std::pair<std::map<double, Model>::iterator, bool> insertResult){
-    double candidatePenalty = insertResult.first->first;
-    auto nextPair = penaltyModelMap.lower_bound(insertResult.first->first);
+std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModelPair newPair, std::map<double, Model>::iterator nextPair){
+    double candidatePenalty = newPair.first;
     auto prevPair = prev(nextPair);
-    int attemptedInsertSize = insertResult.first->second.modelSize;
-    if(!insertResult.second){
+    int attemptedInsertSize = nextPair->second.modelSize;
+    
+    //If we already have a model inserted at the desired penalty
+    if(newPair.first == nextPair->first){
        //Get existing pair for error code
-       auto existingKey = penaltyModelMap.find(insertResult.first->first);
+       auto existingKey = penaltyModelMap.find(nextPair->first);
        int existingModelSize = existingKey->second.modelSize;
        throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
         + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
@@ -214,8 +214,10 @@ std::map<double, Model>::iterator ModelSelectionMap::validateInsert(std::pair<st
          + " because it lies within the solved range of [" + std::to_string(prevPair->first) 
               + "," + std::to_string(nextPair->first) + "].\n");
     }
-    auto validIterator = insertResult.first;
-    return validIterator;
+
+    //TODO: Add condition to widen the range on an insertion. 
+    
+    return nextPair;
 }
 
 

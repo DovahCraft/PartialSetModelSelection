@@ -136,7 +136,7 @@ public:
     The result from std::map insert() is: std::pair<iterator,bool> where the bool represents the success/failure of insertion.
     The function uses this bool value to ensure there is not a duplicate penalty already in the map
     Another case to check for is an invalid penalty value. If the penalty is negative, it is not a valid penalty to insert with a model.*/ 
-    std::map<double, Model>::iterator validateInsert(std::pair<std::map<double,Model>::iterator, bool> insertResult);
+    std::map<double, Model>::iterator validateInsert(PenaltyModelPair newPair, std::map<double,Model>::iterator nextPair);
 
     //Custom isEmpty method as we will add a initial model, nullifing built-in method with std::map.
     bool hasModelsInserted();  
