@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #include <stdexcept>
-#include <vector>
+#include <list>
 #include <math.h>
 #include <string>
 #include <iterator>
@@ -32,7 +32,6 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    std::map<double,Model>::iterator nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
-   std::vector<double>::iterator cachedPenalty = std::find(newPenaltyList.begin(), newPenaltyList.end(), newPenalty);
    //By default, we have the same model size after us, unless it is updated below.
    newPair.second.modelSizeAfter = modelSize;
    try{
@@ -184,7 +183,11 @@ std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModel
 }
 
 //General Utilities used in testing and in the ModelSelectionMap class. 
-std::vector<double> ModelSelectionMap::getNewPenaltyList(){return newPenaltyList;}
+double ModelSelectionMap::getNewPenalty(){
+   double newPenalty = newPenaltyList.front();
+   newPenaltyList.pop_front();
+   return newPenalty;
+}
 
 bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 
@@ -199,7 +202,7 @@ void ModelSelectionMap::displayMap() {
  }
 void ModelSelectionMap::displayPenList(){
     std::cout << "Candidate penalties in newPenList: " << "\n";
-    for (std::vector<double>::iterator it=newPenaltyList.begin(); it!=newPenaltyList.end(); ++it)
+    for (std::list<double>::iterator it=newPenaltyList.begin(); it!=newPenaltyList.end(); ++it)
       std::cout << *it << "   ";
    std::cout << " \n";
  }

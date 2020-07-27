@@ -27,11 +27,9 @@ void testMinimize(ModelSelectionMap testMap, double lowModelSize, bool expectedC
 }
 
 //Testing method to test getNextPen
-void testGetPen(ModelSelectionMap testMap, std::vector<double> expectedPenList){
-    GTEST_GETPENCOUT << "Running test for getNextPenalty\n";
-    std::vector<double> currentPenList = testMap.getNewPenaltyList();
-    testMap.displayPenList();
-    EXPECT_EQ(currentPenList, expectedPenList) << "Penalty returned by getNewPenalty differs from expected.\n"; 
+void testGetPen(double newPenalty, double expectedPen){
+    GTEST_GETPENCOUT << "Running test for getNewPenalty\n";
+    EXPECT_EQ(newPenalty, expectedPen) << "Penalty returned by getNewPenalty differs from expected.\n"; 
 }
 
 TEST(DISABLED_breakpointTests, testBreakFormation){
@@ -47,17 +45,20 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
     ASSERT_EQ(breakpoint, 3.0);
 }
 
-TEST(DISABLED_breakpointTests, testGetNewPenList){
+TEST(breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
-    std::vector<double> expectedPenalties{0, 3.0};
+    double expectedPen = 0;
     testMap.insert(2,4.0);
     testMap.insert(1, 7.0);
     double breakpoint = findBreakpoint(model1segs, model2segs);
     testMap.displayPenList();
-
-    testGetPen(testMap, expectedPenalties);
+    testGetPen(testMap.getNewPenalty(), expectedPen);
+    testMap.displayPenList();
+    expectedPen = breakpoint;
+    testGetPen(testMap.getNewPenalty(), expectedPen);
+    testMap.displayPenList();
    }
 
    TEST(DISABLED_breakpointTests, testInvalidBounds){
@@ -180,7 +181,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
   }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(PanelInserts, testInsertLeftPanel){
+ TEST(DISABLED_PanelInserts, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -256,7 +257,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(PanelTests, testInsertRightPanelPen){
+TEST(DISABLED_PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
@@ -292,6 +293,7 @@ TEST(PanelTests, testInsertRightPanelPen){
 TEST(DISABLED_PanelTests, testInsertRightPanel){
     ModelSelectionMap testMap = ModelSelectionMap();
     std::vector<double> expectedPenalties{0, 3.0};
+    double expectedPen = 0;
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 2.0);
@@ -332,12 +334,14 @@ TEST(DISABLED_PanelTests, testInsertRightPanel){
     testMinimize(testMap, 3, true, 1.0); //With a cap this an easy solution. To be true. 
     testMinimize(testMap, 4, true, 0.0); //This will likely never be true in this case with an infinite cap. Does it need to be?
     testMap.displayMap();
-    testGetPen(testMap, expectedPenalties);
+    testGetPen(testMap.getNewPenalty(), expectedPen);
+    expectedPen = 3.0;
+    testGetPen(testMap.getNewPenalty(), expectedPen);
    }
 //Test for right panel insertion without minimize checks to fix issues with the two param inserts.
 TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     ModelSelectionMap testMap = ModelSelectionMap();
-    std::vector<double> expectedPenalties{0, 3.0};
+    double expectedPen = 0;
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
     Model model3Seg = Model(3, 2.0);
@@ -355,11 +359,12 @@ TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     std::cout << "BREAKPOINT BETWEEN 3 and 4: " << findBreakpoint(model3Seg, model4Seg) << "\n\n"; //1
     testMap.insert(0, 4, 0.0);
     testMap.displayMap();
-    testGetPen(testMap, expectedPenalties);
+    testGetPen(testMap.getNewPenalty(), expectedPen);
+    expectedPen = 3.0;
+    testGetPen(testMap.getNewPenalty(), expectedPen);
    }
 
-//Test PenaltyModelPair insertion based on panel 2 without penalties.
-TEST(InsertTests, insertSameModelSizeInOrder){
+TEST(DISABLED_InsertTests, insertSameModelSizeInOrder){
     ModelSelectionMap testMap = ModelSelectionMap(6);
     Model model5Seg = Model(5, 1.0);
     testMap.insert(1.0, 5, 1.0);

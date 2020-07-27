@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <list>
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
@@ -48,7 +49,7 @@ public:
     std::map<double, Model> penaltyModelMap; 
     
     //List to hold new candidate penalties and breakpoints to give new information from minimize.
-    std::vector<double> newPenaltyList;
+    std::list<double> newPenaltyList;
     
     //Method headers
     //Default value of INFINITY for no passed cap
@@ -98,7 +99,7 @@ public:
 
 
     /*
-    Function name: getNewPenaltyList
+    Function name: getNewPenalty
     Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 
     Precondition: for correct operation, the passed penaltyQuery is a valid
     float value.
@@ -108,7 +109,7 @@ public:
     Exceptions: none?
     Note: none
     */
-    std::vector<double> getNewPenaltyList();
+    double getNewPenalty();
     
     /*
     Function name: Minimize
