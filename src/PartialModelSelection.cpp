@@ -8,7 +8,6 @@
 #include <iterator>
 #include <algorithm>
 
-
 //Local includes
 #include "PartialModelSelection.hpp"
 
@@ -24,7 +23,7 @@ ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels)
    penaltyModelMap.insert(startingPair);
    lastInsertedPair = penaltyModelMap.end(); //Set the previous pair to the end of the map as placeholder does not count. 
    insertedModels = 0; //This starts at 0 as we exclude the beginning placeholder. 
-   newPenalties.push_back(0.0);
+   newPenaltyList.push_back(0.0);
 }
 
 void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
@@ -33,7 +32,7 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    PenaltyModelPair newPair = PenaltyModelPair(newPenalty, newModel);
    std::map<double,Model>::iterator nextPair = penaltyModelMap.lower_bound(newPenalty);
    std::map<double, Model>::iterator prevPair = prev(nextPair);
-   std::vector<double>::iterator cachedPenalty = std::find(newPenalties.begin(), newPenalties.end(), newPenalty);
+   std::vector<double>::iterator cachedPenalty = std::find(newPenaltyList.begin(), newPenaltyList.end(), newPenalty);
    //By default, we have the same model size after us, unless it is updated below.
    newPair.second.modelSizeAfter = modelSize;
    try{
@@ -64,9 +63,9 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       //Update the last inserted pair iterator
       lastInsertedPair = penaltyModelMap.find(newPair.first);
       //If the penalty was already suggested in the getNextPenalty list, remove it. TODO: REFACTOR OR TALK ABOUT O(N) complexity here!
-     /* if(cachedPenalty != newPenalties.end()){
+     /* if(cachedPenalty != newPenaltyList.end()){
          std::cout<< "TRYING TO REMOVE PENALTY: " << newPenalty << "\n";
-         newPenalties.erase(cachedPenalty);
+         newPenaltyList.erase(cachedPenalty);
       }*/   
    }
    catch(std::logic_error errorMessage) {
@@ -136,12 +135,8 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     else{
        //If we are below the final model size alloted, then the result is certain. 
        if(prevModel.modelSize == modelSizeCap) isCertain = true;
-
-       if(indexPair == penaltyModelMap.end())
-          queryResult = MinimizeResult(prevModel.modelSize, isCertain); 
-       else{
-          queryResult = MinimizeResult(indexModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb
-       }  
+       
+       queryResult = MinimizeResult(prevModel.modelSize, isCertain); //GDB reveals this is called with prevModel.modelSize when it shouldn't be.nb
     } 
     return queryResult;
 }
@@ -149,28 +144,23 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 void ModelSelectionMap::addBreakpoint(Model firstModel, Model secondModel){
    int modelSizeDiff = abs(firstModel.modelSize - secondModel.modelSize); 
    if(firstModel.modelSize != secondModel.modelSize)
-      newPenalties.push_back(findBreakpoint(firstModel, secondModel));
+      newPenaltyList.push_back(findBreakpoint(firstModel, secondModel));
    
    if(modelSizeDiff == 1){
       std::cout << "Difference between model: " << firstModel.modelSize << "and model: " << secondModel.modelSize << " is one!\n";
+      //TODO: Leverage this to establish breakpoint surity. Perhaps remodel the path based on breakpoints gathered from insertions? 
    }
-}
-
-std::vector<double> ModelSelectionMap::getNewPenaltyList(){
-  //Return the list of potential penalties to query next.   
-   return newPenalties;
 }
  
 std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModelPair newPair, std::map<double, Model>::iterator nextPair){
     double candidatePenalty = newPair.first;
     auto prevPair = prev(nextPair);
     int attemptedInsertSize = nextPair->second.modelSize;
-    
+    int existingModelSize = nextPair->second.modelSize;
+
     //If we already have a model inserted at the desired penalty
     if(newPair.first == nextPair->first){
        //Get existing pair for error code
-       auto existingKey = penaltyModelMap.find(nextPair->first);
-       int existingModelSize = existingKey->second.modelSize;
        throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
         + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
            + std::to_string(candidatePenalty) + "\n");
@@ -193,12 +183,8 @@ std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModel
     return nextPair;
 }
 
-//General Utilities used in ModelSelectionMap
-double findBreakpoint(Model firstModel, Model secondModel){
-   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
-}
-
-double findCost( double penalty, int modelSize, double loss){return penalty*modelSize + loss;}
+//General Utilities used in testing and in the ModelSelectionMap class. 
+std::vector<double> ModelSelectionMap::getNewPenaltyList(){return newPenaltyList;}
 
 bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 
@@ -213,7 +199,7 @@ void ModelSelectionMap::displayMap() {
  }
 void ModelSelectionMap::displayPenList(){
     std::cout << "Candidate penalties in newPenList: " << "\n";
-    for (std::vector<double>::iterator it=newPenalties.begin(); it!=newPenalties.end(); ++it)
+    for (std::vector<double>::iterator it=newPenaltyList.begin(); it!=newPenaltyList.end(); ++it)
       std::cout << *it << "   ";
    std::cout << " \n";
  }
@@ -221,6 +207,13 @@ void ModelSelectionMap::displayPenList(){
 //MinimizeResult Method Implementations
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
+
+//Breakpoint computation methods
+double findBreakpoint(Model firstModel, Model secondModel){
+   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+}
+
+double findCost( double penalty, int modelSize, double loss){return penalty*modelSize + loss;}
 
 
 

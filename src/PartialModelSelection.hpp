@@ -3,11 +3,6 @@
 #include <map>
 #include <vector>
 
-struct Breakpoint {
-    double penalty;
-    std::pair<int, int> optimalModelSizes;
-};
-
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
     MinimizeResult(int modelSize = 1, bool certain = false);
@@ -41,20 +36,28 @@ using PenaltyModelPair = std::pair<double, Model>;
 
 class ModelSelectionMap {
 public:
-    int insertedModels; //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
+    //This is used to determine if the map is 'empty' as the initial model inserted scews isEmpty() counts.
+    int insertedModels; 
+
+    //Max model size permitted to be inserted into the map. Defaults to INFINITY (no limit).
     const double modelSizeCap;
 
-    std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion. 
+    std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion.
+
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
-    //Vector to hold new candidate penalties and breakpoints to give new information from minimize.
-    std::vector<double> newPenalties;
+    
+    //List to hold new candidate penalties and breakpoints to give new information from minimize.
+    std::vector<double> newPenaltyList;
+    
     //Method headers
     //Default value of INFINITY for no passed cap
     ModelSelectionMap(double maxModels = INFINITY);
     /*
      Function name(s): insert
-     Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP
+     Algorithm: Inserts a new model into our partial set (map) data structure with a penalty modeling FPOP.
+     The penalty is inserted using the provided parameter, indicating that the model created from the modelSize 
+     and loss parameters is optimal at that penalty key, for sure. 
      Precondition: The model is formatted correctly and the
         penalty is a valid double.
      Postcondition: Inserts the model into the data structure.
@@ -68,7 +71,8 @@ public:
     /*
     Function name: insert (overloaded)
     Algorithm: Inserts a new model into our partial set (map) without a penalty, modeling
-    binary segmentation and other constrained style solvers. 
+    binary segmentation and other constrained style solvers. Forms a model struct 
+    using the passed in modelSize and loss parameters. The penalty is computed using a breakpoint.
     Precondition: The model is formatted correctly and the
     penalty is a valid double.
     Postcondition: Inserts the model into the data structure.
@@ -94,7 +98,7 @@ public:
 
 
     /*
-    Function name: getNewpenaltyQuery
+    Function name: getNewPenaltyList
     Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 
     Precondition: for correct operation, the passed penaltyQuery is a valid
     float value.
@@ -122,12 +126,15 @@ public:
     MinimizeResult minimize(double penaltyQuery);
 
 
-    /*UTILITY METHODS*/
+    /*UTILITY METHODS WITHIN MODELSELECTIONMAP*/
+    
+    //Simply displays the current map structure
     void displayMap();
 
+    //Adds a new breakpoint to the newPenalties list for later consideration. 
     void addBreakpoint(Model firstModel, Model secondModel);
 
-
+    //Displays the list of penalties currently stored to recommend for a new query in getNewPenalty.
     void displayPenList();
 
     private:
@@ -141,6 +148,8 @@ public:
     //Custom isEmpty method as we will add a initial model, nullifing built-in method with std::map.
     bool hasModelsInserted();  
 };
+
+/*GENERAL COMPUTATIONS USED IN TESTS AND MAP*/
 
 //Utility to compute a breakpoint between two models for use in other functions.
 double findBreakpoint(Model firstModel, Model secondModel);
