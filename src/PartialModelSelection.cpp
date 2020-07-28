@@ -15,7 +15,6 @@
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
    Model startingModel = Model(1,1);
-   startingModel.minimizeResult = MinimizeResult(1,false);
    startingModel.optimalPenalties = std::make_pair(0,0);
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;

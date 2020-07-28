@@ -257,7 +257,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(DISABLED_PanelTests, testInsertRightPanelPen){
+TEST(PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 
