@@ -12,6 +12,7 @@ struct MinimizeResult {
 };
 
 struct Model {
+    //Create a model if it has valid modelSize and loss values given. 
     Model(int inputSize, double inputLoss) : modelSize(inputSize), loss(loss), isPlaceHolder(false) {
         if(inputSize >= 0 && inputLoss >= 0){
             modelSize = inputSize;
@@ -26,10 +27,12 @@ struct Model {
     int modelSize = 0;
     //Loss associated with the given model 
     double loss = 0.0;
-    int modelSizeAfter; //Used for next Model (the after flag in psuedocode)
-    MinimizeResult minimizeResult;
-    bool isPlaceHolder; //Used to determine if the key at 0 is the initial key we insert.
-    std::pair<double,double> optimalPenalties; //Used to filter out unnecessary penalties within optimal range. 
+    //Used to store the next model size, changes from this.modelSize if there are two models at a breakpoint
+    int modelSizeAfter; 
+    //Used to determine if the key at 0 is the initial key we insert.
+    bool isPlaceHolder; 
+    //Used to filter out unnecessary penalties within optimal range. (NOT YET USED)
+    std::pair<double,double> optimalPenalties;  
 };
 
 //struct penaltyModelPair may be better here for more readability
@@ -90,7 +93,6 @@ public:
     Precondition: The model is formatted correctly and the
     penalty is a valid double.
     Postcondition: Removes the model from the data structure.
-    Returns the removed pair.
     Exceptions: correctly and appropriately (without program failure)
         responds to and reports failure to insert the model.
     Note: none
@@ -101,11 +103,8 @@ public:
     /*
     Function name: getNewPenalty
     Algorithm: O(1) or O(log N) query of a penalty value that will result in new information. 
-    Precondition: for correct operation, the passed penaltyQuery is a valid
-    float value.
-    Postcondition: in correct operation, computes what model is optimal
-    for the passed penaltyQuery, and gives a boolean signifying its accuracy.
-    Both these values are passed back as a struct.
+    Precondition: None
+    Postcondition: Returns a double value 
     Exceptions: none?
     Note: none
     */
@@ -132,7 +131,7 @@ public:
     //Simply displays the current map structure
     void displayMap();
 
-    //Adds a new breakpoint to the newPenalties list for later consideration. 
+    //Adds a new breakpoint penalty to the back of the newPenalties list for later consideration. 
     void addBreakpoint(Model firstModel, Model secondModel);
 
     //Displays the list of penalties currently stored to recommend for a new query in getNewPenalty.

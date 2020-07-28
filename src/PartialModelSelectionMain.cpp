@@ -45,7 +45,7 @@ TEST(DISABLED_breakpointTests, testBreakFormation){
     ASSERT_EQ(breakpoint, 3.0);
 }
 
-TEST(breakpointTests, testGetNewPenList){
+TEST(DISABLED_breakpointTests, testGetNewPenList){
     Model model1segs = Model(1, 7);
     Model model2segs = Model(2, 4);
     ModelSelectionMap testMap = ModelSelectionMap();
