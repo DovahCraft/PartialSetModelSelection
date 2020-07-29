@@ -14,15 +14,15 @@
 #define GTEST_GETPENCOUT std::cout << "[ GETPEN ] [INFO] "
 
 //Testing method to test minimize method (minimizeResults).   
-void testMinimize(ModelSelectionMap testMap, double lowModelSize, bool expectedCertainty, double penaltyQuery){
+void testMinimize(ModelSelectionMap testMap, double expectedModelSize, bool expectedCertainty, double penaltyQuery){
    //Log the test being run.
    MinimizeResult testResult = testMap.minimize(penaltyQuery);
    std::string certaintyString = "";
    expectedCertainty ? certaintyString = "true" : certaintyString = "false";
-   GTEST_MINCOUT << "Running test minimize with parameters: " << "low: " << lowModelSize << 
+   GTEST_MINCOUT << "Running test minimize with parameters: " << "ModelSize: " << expectedModelSize << 
                      "; expectedCertainty: " << certaintyString << "; penalty: " << penaltyQuery << "\n\n";
    //Check if the expected range of values is correct.
-   EXPECT_EQ(lowModelSize, testResult.modelSize) << "\nMinimize first parameter is different from expected.\n";
+   EXPECT_EQ(expectedModelSize, testResult.modelSize) << "\nMinimize first parameter is different from expected.\n";
    EXPECT_EQ(expectedCertainty, testResult.certain) << "\nMinimize certainty flag is different from expected.\n";      
 }
 
@@ -181,7 +181,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
   }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_PanelInserts, testInsertLeftPanel){
+ TEST(PanelInserts, testInsertLeftPanel){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -190,7 +190,8 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
 
     //Insert the one segment model for an incomplete path, given the model cap is 3.  
-    testMap.insert(4.0, 1, 7.0); 
+    testMap.insert(4.0, 1, 7.0);
+    testMap.displayMap(); 
     //Test getNextPenalty
     testMinimize(testMap, 1, true, 5.0); //This should be certain as nothing will become optimal after it has been solved for a penalty value. 
     //Mimize Query here
@@ -202,9 +203,11 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
 
     //Insert two segment model and test again, should be complete path.  
     testMap.insert(0.0, 2, 4.0);
+    testMap.displayPenList();
     testMap.displayMap();
     testMinimize(testMap, 1, true, 5.0);
     testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 1, true, 3.5);
     testMinimize(testMap, 2, true, 3.0); //Breakpoint is at 3.0, so 2.0 and 1.0 should yield model with two segments as it was inserted with penatly 0.0 
     testMinimize(testMap, 2, true, 2.0); //These two queries return 2 for sure after we insert it at 0.0, and with the breakpoint at 3.0 computed from the loss and slope.  
     testMinimize(testMap, 2, true, 1.0);
@@ -257,7 +260,7 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(PanelTests, testInsertRightPanelPen){
+TEST(DISABLED_PanelTests, testInsertRightPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0); 

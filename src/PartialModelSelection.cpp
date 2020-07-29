@@ -67,14 +67,18 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
       }*/   
    }
    catch(std::logic_error errorMessage) {
-      //update the placeholder on value instead of returning an error message if penalty is 0.
+      //update the placeholder instead of returning an error message if penalty is 0. Still error if we have solved for 0. 
       auto firstKey = penaltyModelMap.begin();
       if(newPenalty == 0 && firstKey->second.isPlaceHolder){
          firstKey->second.modelSize = newModel.modelSize;
          firstKey->second.modelSizeAfter = newModel.modelSize;
+         firstKey->second.loss = newModel.loss;
          std::cout << "Insert of penalty 0 found, updating placeholder value!\n";
          firstKey->second.isPlaceHolder = false;
-         //As we official solved a model for 0, increment the inserted models as it is no longer a placeholder. 
+         //Since we found 0 with lower bound, get the next highest pairing to find breakpoint with. 
+         nextPair = penaltyModelMap.upper_bound(newPenalty);
+         addBreakpoint(prevPair->second, nextPair->second);
+         //As we officially solved a model for 0, increment the inserted models as it is no longer a placeholder. 
          insertedModels++;
          //Update the last inserted pair iterator
          lastInsertedPair = penaltyModelMap.find(newPair.first);
@@ -210,7 +214,7 @@ void ModelSelectionMap::displayPenList(){
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
 
-//Breakpoint computation methods
+//Breakpoint computation methods, TODO expception here if -0. 
 double findBreakpoint(Model firstModel, Model secondModel){
    return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
 }
