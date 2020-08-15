@@ -4,3 +4,4 @@ settings.json
 partialSelect
 suppressions.txt
 .vscode/
+.Rproj.user
