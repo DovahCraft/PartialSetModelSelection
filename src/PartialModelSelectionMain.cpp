@@ -141,8 +141,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
 
     testMap.insert(2.0, 2, 7.0); //SHould not be allowed by insert function. 
     ASSERT_EQ(expectedCount, testMap.penaltyModelMap.count(2.0));
-   
-   }
+}
 
 
   TEST(DISABLED_InsertTests, testOneParamOnePenInsertion){
@@ -180,8 +179,41 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMinimize(testMap, 6, true, 0.0);
   }
 
- //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
+   //Test non-penalty insertion based on panel 1 (left with two models.)
  TEST(PanelInserts, testInsertLeftPanel){
+    ModelSelectionMap testMap = ModelSelectionMap();
+    Model model1Seg = Model(1, 7.0);
+    Model model2Seg = Model(2, 4.0);
+    testMinimize(testMap, 1, false, 5.0);
+    //Iterator, getNewPenalty iterator? Should give us 0 to inf, so 0 to query.
+
+    //Insert the one segment model for an incomplete path, given the model cap is 3.  
+    testMap.insert(1, 7.0);
+    testMap.displayMap(); 
+    //Test getNextPenalty
+    testMinimize(testMap, 1, false, 5.0); //This should be certain as nothing will become optimal after it has been solved for a penalty value. 
+    //Mimize Query here
+    testMinimize(testMap, 1, false, 4.0); //We solved this on through the insert.
+    testMinimize(testMap, 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 1, false, 2.0);
+    testMinimize(testMap, 1, false, 1.0);
+    testMinimize(testMap, 1, false, 0.0);
+
+    //Insert two segment model and test again, should be complete path.  
+    testMap.insert(2, 4.0);
+    testMap.displayPenList();
+    testMap.displayMap();
+    testMinimize(testMap, 1, false, 5.0);
+    testMinimize(testMap, 1, false, 4.0);
+    testMinimize(testMap, 1, false, 3.5);
+    testMinimize(testMap, 2, false, 3.0);  
+    testMinimize(testMap, 2, false, 2.0);   
+    testMinimize(testMap, 2, false, 1.0);
+    testMinimize(testMap, 2, false, 0.0);
+   }
+
+ //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
+ TEST(DISABLED_PanelInserts, testInsertLeftPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -214,9 +246,52 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMinimize(testMap, 2, true, 0.0);
    }
 
-
-//Test PenaltyModelPair insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
+//Test PenaltyModelPair NO PENALTY insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
 TEST(DISABLED_PanelTests, testInsertMiddlePanel){
+    ModelSelectionMap testMap = ModelSelectionMap(3);
+    Model model1Seg = Model(1, 7.0);
+    Model model2Seg = Model(2, 4.0);
+    double bkpt2to1 = findBreakpoint(model2Seg, model1Seg);
+    std::cout << "BREAKPOINT BETWEEN MODELS 2 AND 1 " << bkpt2to1 << "\n"; //3.0
+    Model model3Seg = Model(3, 0.0);
+    testMap.insert(4.0, 7.0);
+    testMinimize(testMap, 1, false, 5.0);
+    testMinimize(testMap, 1, false, 4.0);
+    testMinimize(testMap, 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 1, false, 2.0);
+    testMinimize(testMap, 1, false, 1.0);
+    testMinimize(testMap, 1, false, 0.0);
+    
+    //Add model with 2 segments that is found to be less optimal later on as the model cap is still 3. 
+    testMap.insert(2, 4.0); //Need to compute breakpoint first?
+    testMinimize(testMap, 1, true, 0.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 2, true, 3.0); //Here the breakpoint between 1 and 2 segs is, at 3.0
+    std::cout << "MIDDLE BREAK\n";
+    testMap.displayMap();
+    testMinimize(testMap, 2, false, 2.0); //Breaks down here because placeholder model size is not updated? 7/9/2020
+    testMinimize(testMap, 2, false, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
+    testMinimize(testMap, 2, false, 0.0);
+    std::cout << "Testing minimize model size at zero: " << testMap.minimize(0.0).modelSize << "\n";
+    testMap.displayMap();
+
+    //Add model with 3 segments that is found to be more optimal
+    testMap.insert(3, 0.0);
+    double bkpt3to2 = findBreakpoint(model3Seg, model2Seg);
+    testMap.displayMap(); 
+    std::cout << "BREAKPOINT BETWEEN MODELS 3 AND 2 " << bkpt3to2 << "\n"; //4.0 Removed
+    double bkpt3to1 = findBreakpoint(model3Seg, model1Seg); 
+    std::cout << "BREAKPOINT BETWEEN MODELS 3 AND 1 " << bkpt3to1 << "\n"; //3.5
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 1, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 3, true, 2.0);
+    testMinimize(testMap, 3, true, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
+    testMinimize(testMap, 3, true, 0.0); 
+   }
+
+//Test PenaltyModelPair PENALTY insertion based on panel 2 (Middle with three models. Low start loss for #3, 2 not considered.)
+TEST(DISABLED_PanelTests, testInsertMiddlePanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(3);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
@@ -257,39 +332,6 @@ TEST(DISABLED_PanelTests, testInsertMiddlePanel){
     testMinimize(testMap, 3, true, 2.0);
     testMinimize(testMap, 3, true, 1.0); //Should give us 1 or 2 for now, but the model cap is 3 so there is a chance that 2 can be overridden/not optimal.
     testMinimize(testMap, 3, true, 0.0); 
-   }
-
-//Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
-TEST(DISABLED_PanelTests, testInsertRightPanelPen){
-    ModelSelectionMap testMap = ModelSelectionMap(3);
-    Model model1Seg = Model(1, 7.0);
-    Model model2Seg = Model(2, 4.0); 
-    Model model3Seg = Model(3, 2.0);
-    testMap.insert(4.0, 1, 7.0);
-    testMinimize(testMap, 1, true, 5.0);
-    testMinimize(testMap, 1, true, 4.0);
-    testMinimize(testMap, 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
-    testMinimize(testMap, 1, false, 2.0);
-    testMinimize(testMap, 1, false, 1.0);
-    testMinimize(testMap, 1, false, 0.0);
-    testMap.insert(2.5, 2, 4.0);
-    testMinimize(testMap, 1, true, 5.0);
-    testMinimize(testMap, 1, true, 4.0);
-    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
-    testMinimize(testMap, 2, true, 2.5);
-    testMinimize(testMap, 2, false, 2.0);
-    testMinimize(testMap, 2, false, 1.0);
-    testMinimize(testMap, 2, false, 0.0);
-    testMap.insert(1.0, 3, 2.0);
-    testMinimize(testMap, 1, true, 5.0);
-    testMinimize(testMap, 1, true, 4.0);
-    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
-    testMinimize(testMap, 2, true, 2.5);
-    testMinimize(testMap, 3, true, 2.0); //Breakpoint between 3 and 2
-    testMinimize(testMap, 3, true, 1.0);
-    std::cout << "MADE IT TO FINAL MINIMIZE\n";
-    testMap.displayPenList();
-    testMinimize(testMap, 3, true, 0.0);
    }
 
 //Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
@@ -341,6 +383,41 @@ TEST(DISABLED_PanelTests, testInsertRightPanel){
     expectedPen = 3.0;
     testGetPen(testMap.getNewPenalty(), expectedPen);
    }
+
+//Test PenaltyModelPair insertion based on panel 2 (Right with three models. Higher start loss for #3, all models considered on path.)
+TEST(DISABLED_PanelTests, testInsertRightPanelPen){
+    ModelSelectionMap testMap = ModelSelectionMap(3);
+    Model model1Seg = Model(1, 7.0);
+    Model model2Seg = Model(2, 4.0); 
+    Model model3Seg = Model(3, 2.0);
+    testMap.insert(4.0, 1, 7.0);
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 1, false, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 1, false, 2.0);
+    testMinimize(testMap, 1, false, 1.0);
+    testMinimize(testMap, 1, false, 0.0);
+    testMap.insert(2.5, 2, 4.0);
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 2, true, 2.5);
+    testMinimize(testMap, 2, false, 2.0);
+    testMinimize(testMap, 2, false, 1.0);
+    testMinimize(testMap, 2, false, 0.0);
+    testMap.insert(1.0, 3, 2.0);
+    testMinimize(testMap, 1, true, 5.0);
+    testMinimize(testMap, 1, true, 4.0);
+    testMinimize(testMap, 2, true, 3.0); //We only have 1 currently, but more inserts are possible with our cap of three models (which is std).
+    testMinimize(testMap, 2, true, 2.5);
+    testMinimize(testMap, 3, true, 2.0); //Breakpoint between 3 and 2
+    testMinimize(testMap, 3, true, 1.0);
+    std::cout << "MADE IT TO FINAL MINIMIZE\n";
+    testMap.displayPenList();
+    testMinimize(testMap, 3, true, 0.0);
+   }
+
+
 //Test for right panel insertion without minimize checks to fix issues with the two param inserts.
 TEST(DISABLED_InsertTests, testTwoParamBreakpoints){
     ModelSelectionMap testMap = ModelSelectionMap();

@@ -30,7 +30,9 @@ struct Model {
     //Used to store the next model size, changes from this.modelSize if there are two models at a breakpoint
     int modelSizeAfter; 
     //Used to determine if the key at 0 is the initial key we insert.
-    bool isPlaceHolder; 
+    bool isPlaceHolder;
+    //Used to determine if the current penalty/model pairing should be considered certain. 
+    bool isCertainPairing; 
     //Used to filter out unnecessary penalties within optimal range. (NOT YET USED)
     std::pair<double,double> optimalPenalties;  
 };

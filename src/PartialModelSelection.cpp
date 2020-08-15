@@ -18,6 +18,7 @@ ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels)
    startingModel.optimalPenalties = std::make_pair(0,0);
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
+   startingModel.isCertainPairing = false;
    PenaltyModelPair startingPair = PenaltyModelPair(0.0, startingModel);
    penaltyModelMap.insert(startingPair);
    lastInsertedPair = penaltyModelMap.end(); //Set the previous pair to the end of the map as placeholder does not count. 
@@ -35,6 +36,8 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
    newPair.second.modelSizeAfter = modelSize;
    try{
        validateInsert(newPair, nextPair); //Will throw a logic_error exception if duplicate keys are found, handled below.
+       //Since we passed validation and are using the 3 parameter method, set our pairing to certain.
+       newPair.second.isCertainPairing = true;
        penaltyModelMap.insert(newPair);
        //Update initial placeholder pair       
        if(insertedModels == 0){
@@ -47,11 +50,13 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
        if(nextPair->first != 0.0){
           prevPair->second.modelSizeAfter = newModel.modelSize;
           if(prevPair->second.isPlaceHolder) prevPair->second.modelSize = modelSize;
+          //Add a breakpoint to the candidatePenaltiesList.
           addBreakpoint(newModel, prevPair->second);
        }
        //UPDATE MODELS AFTER US
        if(nextPair != penaltyModelMap.end()){
           newPair.second.modelSizeAfter = nextPair->second.modelSize;
+          //Add a breakpoint with the next model to the candidatePenaltiesList
           addBreakpoint(newModel, nextPair->second); 
        }
        //If there is nothing different after us, set the after value to the current value. 
@@ -59,22 +64,18 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
           newPair.second.modelSizeAfter = newModel.modelSize;
        }
       //Update the last inserted pair iterator
-      lastInsertedPair = penaltyModelMap.find(newPair.first);
-      //If the penalty was already suggested in the getNextPenalty list, remove it. TODO: REFACTOR OR TALK ABOUT O(N) complexity here!
-     /* if(cachedPenalty != newPenaltyList.end()){
-         std::cout<< "TRYING TO REMOVE PENALTY: " << newPenalty << "\n";
-         newPenaltyList.erase(cachedPenalty);
-      }*/   
+      lastInsertedPair = penaltyModelMap.find(newPair.first);  
    }
    catch(std::logic_error errorMessage) {
-      //update the placeholder instead of returning an error message if penalty is 0. Still error if we have solved for 0. 
-      auto firstKey = penaltyModelMap.begin();
-      if(newPenalty == 0 && firstKey->second.isPlaceHolder){
-         firstKey->second.modelSize = newModel.modelSize;
-         firstKey->second.modelSizeAfter = newModel.modelSize;
-         firstKey->second.loss = newModel.loss;
+      //Update if the first pairing is a placeholder, error if it's not. 
+      auto firstPair = penaltyModelMap.begin();
+      if(newPenalty == 0 && firstPair->second.isPlaceHolder){
+         firstPair->second.modelSize = newModel.modelSize;
+         firstPair->second.modelSizeAfter = newModel.modelSize;
+         firstPair->second.loss = newModel.loss;
+         firstPair->second.isCertainPairing = true;
          std::cout << "Insert of penalty 0 found, updating placeholder value!\n";
-         firstKey->second.isPlaceHolder = false;
+         firstPair->second.isPlaceHolder = false;
          //Since we found 0 with lower bound, get the next highest pairing to find breakpoint with. 
          nextPair = penaltyModelMap.upper_bound(newPenalty);
          addBreakpoint(prevPair->second, nextPair->second);
@@ -82,7 +83,8 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
          insertedModels++;
          //Update the last inserted pair iterator
          lastInsertedPair = penaltyModelMap.find(newPair.first);
-      }  
+      }
+      //We already inserted a model here for sure, error out.   
       else{
          std::cerr << errorMessage.what() << "\n";
       }  
@@ -91,11 +93,12 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
 
 void ModelSelectionMap::insert(int modelSize, double loss){
    Model newModel = Model(modelSize, loss);
+   //This breakpoint will be computed and compared to the previous breakpoint stored, if any.
    double candidateBkpt = -1;
 
    if(lastInsertedPair != penaltyModelMap.end()){
-      candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
       int lastModelSize = lastInsertedPair->second.modelSize;
+      candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
       insert(candidateBkpt, modelSize, loss); //This will update the last inserted pair, so we need to use the variable above
       lastInsertedPair->second.modelSizeAfter = lastModelSize;
    }
@@ -124,7 +127,7 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
     //If we found an inserted pair that lies on the queried penalty itself
     if(indexPenalty == penaltyQuery) {
       //Make a query result to return using the second element of a testedPair, Model. Get its modelSize.
-      if(!indexModel.isPlaceHolder)
+      if(indexModel.isCertainPairing)
          isCertain = true; 
       queryResult = MinimizeResult(indexModel.modelSize, isCertain);
     }
