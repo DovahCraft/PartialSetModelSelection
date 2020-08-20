@@ -147,10 +147,18 @@ MinimizeResult ModelSelectionMap::minimize(double penaltyQuery){
 }
 
 void ModelSelectionMap::addBreakpoint(Model firstModel, Model secondModel){
-   int modelSizeDiff = abs(firstModel.modelSize - secondModel.modelSize); 
-   if(firstModel.modelSize != secondModel.modelSize)
-      newPenaltyList.push_back(findBreakpoint(firstModel, secondModel));
-   
+   int modelSizeDiff = abs(firstModel.modelSize - secondModel.modelSize);
+   double newBreakpoint;
+   //We need to check for an improperly formed breakpoint within findBreakpoint (it would be less than 0).
+   try{
+      newBreakpoint = findBreakpoint(firstModel,secondModel);
+      if(firstModel.modelSize != secondModel.modelSize)
+         newPenaltyList.push_back(newBreakpoint);
+   } 
+   //If we have an invalid breakpoint, don't add it and display an error instead.
+   catch(std::logic_error error){
+      error.what();
+   }
    if(modelSizeDiff == 1){
       std::cout << "Difference between model: " << firstModel.modelSize << "and model: " << secondModel.modelSize << " is one!\n";
       //TODO: Leverage this to establish breakpoint surity. Perhaps remodel the path based on breakpoints gathered from insertions? 
@@ -165,24 +173,24 @@ std::map<double, Model>::iterator ModelSelectionMap::validateInsert(PenaltyModel
 
     //If we already have a model inserted at the desired penalty
     if(newPair.first == nextPair->first){
-       //Get existing pair for error code
-       throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
+      //Get existing pair for error code
+      throw std::logic_error("[ ERROR ] Cannot insert model_size = " + std::to_string(attemptedInsertSize) 
         + " because model_size = " + std::to_string(existingModelSize) + " already exists at penalty = " 
            + std::to_string(candidatePenalty) + "\n");
     }  
 
     //If the candidate penalty for insertion is less than the min value of 0, throw an error.
     if(candidatePenalty < 0){
-       throw std::logic_error("[ ERROR ] Cannot insert with penalty = " + std::to_string(candidatePenalty) +
+      throw std::logic_error("[ ERROR ] Cannot insert with penalty = " + std::to_string(candidatePenalty) +
          " because it is less than 0!");
     }
 
     //Check if the new penalty is redundant, as it is within an already established range. 
     if(!prevPair->second.isPlaceHolder && prevPair->second.modelSize == attemptedInsertSize 
                && nextPair->second.modelSize == attemptedInsertSize){
-       throw std::logic_error("[ ERROR ] Cannot insert at penalty = " + std::to_string(candidatePenalty) 
-         + " because it lies within the solved range of [" + std::to_string(prevPair->first) 
-              + "," + std::to_string(nextPair->first) + "].\n");
+      throw std::logic_error("[ ERROR ] Cannot insert at penalty = " + std::to_string(candidatePenalty) 
+           + " because it lies within the solved range of [" + std::to_string(prevPair->first) 
+                + "," + std::to_string(nextPair->first) + "].\n");
     }
     //TODO: Add condition to widen the range on an insertion. 
     return nextPair;
@@ -217,9 +225,14 @@ void ModelSelectionMap::displayPenList(){
 //Initialization constructor for a minimizeResult based on passed args from the minimize method. 
 MinimizeResult::MinimizeResult(int inputModelSize, bool inputCertainty) : modelSize(inputModelSize), certain(inputCertainty){}
 
-//Breakpoint computation methods, TODO expception here if -0. 
+//Breakpoint computation method 
 double findBreakpoint(Model firstModel, Model secondModel){
-   return (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+   double newBreakpoint = (secondModel.loss - firstModel.loss) / (firstModel.modelSize - secondModel.modelSize);
+   if(newBreakpoint < 0){
+      throw std::logic_error("[ ERROR ] Breakpoint computed between Modelsize: " + std::to_string(firstModel.modelSize) + "and Modelsize: "+ std::to_string(secondModel.modelSize) 
+                        + "is less than zero, and is therefore invalid.");
+   }
+   return newBreakpoint;
 }
 
 double findCost( double penalty, int modelSize, double loss){return penalty*modelSize + loss;}

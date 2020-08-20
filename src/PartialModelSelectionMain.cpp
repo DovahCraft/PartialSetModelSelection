@@ -61,6 +61,20 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
     testMap.displayPenList();
    }
 
+TEST(breakpointTests, testNegativeBreakpointComp){
+  Model model2Seg = Model(2,2);
+  //This model does not make sense, so we should tell the user that with the breakpoint validation. 
+  Model model3Seg = Model(3,50);
+  try{
+    findBreakpoint(model2Seg, model3Seg);
+  }
+
+  catch(std::logic_error error){
+    std::cout << error.what();
+  }
+
+}
+
    TEST(DISABLED_breakpointTests, testInvalidBounds){
      ModelSelectionMap testMap = ModelSelectionMap();     
      try{
@@ -213,7 +227,7 @@ TEST(DISABLED_breakpointTests, testGetNewPenList){
    }
 
  //Test PenaltyModelPair insertion based on panel 1 (left with two models.)
- TEST(DISABLED_PanelInserts, testInsertLeftPanelPen){
+ TEST(PanelInserts, testInsertLeftPanelPen){
     ModelSelectionMap testMap = ModelSelectionMap(2);
     Model model1Seg = Model(1, 7.0);
     Model model2Seg = Model(2, 4.0);
