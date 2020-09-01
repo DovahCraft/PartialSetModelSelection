@@ -92,20 +92,39 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
 }
 
 void ModelSelectionMap::insert(int modelSize, double loss){
-   Model newModel = Model(modelSize, loss);
+//Wrap the inputted models into a Model struct.
+   Model newModel = Model(modelSize, loss); 
    //This breakpoint will be computed and compared to the previous breakpoint stored, if any.
-   double candidateBkpt = -1;
+   double prevBkpt = -1;
+   double nextBkpt = -1;
 
-   if(lastInsertedPair != penaltyModelMap.end()){
-      int lastModelSize = lastInsertedPair->second.modelSize;
-      candidateBkpt = findBreakpoint(newModel, lastInsertedPair->second);
-      insert(candidateBkpt, modelSize, loss); //This will update the last inserted pair, so we need to use the variable above
-      lastInsertedPair->second.modelSizeAfter = lastModelSize;
+   //If nothing else is in there, insert the first model at zero. Do nothing else.
+   if(penaltyModelMap.empty()){
+      penaltyModelMap.begin()->second = newModel;
+      largestSelected = penaltyModelMap.begin();
+      std::cout << "Largest selected modelsize: " << largestSelected->second.modelSize;
+      return;
    }
-   //If there is nothing in there, add at penalty INFINITY as we don't know anything about other models to chain to. 
-   else{
-      //Call the insert function and update the 0.0 placeholder to reflect insertion
-      insert(INFINITY, modelSize, loss);
+   //Otherwise, binary search to find position using model sizes of previous entries. 
+
+
+   try{   
+      if(lastInsertedPair != penaltyModelMap.end()){
+         int lastModelSize = lastInsertedPair->second.modelSize;
+         nextBkpt = findBreakpoint(newModel, lastInsertedPair->second);
+         lastInsertedPair->second.modelSizeAfter = lastModelSize;
+      }
+
+       //If there is nothing in there, add at penalty INFINITY as we don't know anything about other models to chain to.
+       else{
+         //Call the insert function and update the 0.0 placeholder to reflect insertion
+         insert(INFINITY, modelSize, loss);
+      }
+   }
+   
+   //We have a wildly incorrect values of loss relative to a previous model, stop the insert.  
+   catch(std::logic_error error){
+      std::cout << error.what();
    }
 }
 

@@ -50,6 +50,8 @@ public:
 
     std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion.
 
+    std::map<double,Model>::iterator largestSelected;
+
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 
     

@@ -509,6 +509,24 @@ TEST(DISABLED_InsertTests, insertLargeModelFirst){
   testMinimize(testMap, 1, false, 3.0);
 }
 
+
+TEST(InsertTests, insertMidOutOfOrder){
+  ModelSelectionMap testMap = ModelSelectionMap();
+  testMap.insert(3, 2.0);
+  testMinimize(testMap, 3, false, 5.0); //Break here, test not passing.
+    testMinimize(testMap, 3, false, 4.0);
+    testMinimize(testMap, 3, false, 3.5);
+    testMinimize(testMap, 3, false, 3.0);  
+    testMinimize(testMap, 3, false, 2.0);   
+    testMinimize(testMap, 3, false, 1.0);
+    testMinimize(testMap, 3, false, 0.0);
+  testMap.displayMap();
+  testMap.insert(1,7.0);
+  testMap.insert(2,4.0);
+  
+  ModelSelectionMap testMap2 = ModelSelectionMap();
+}
+
 //Driver function for google test
 int main (int argc, char* argv[]){
     //Init unit tests here
