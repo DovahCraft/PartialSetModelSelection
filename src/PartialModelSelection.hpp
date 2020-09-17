@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <list>
+#include <set>
 
 //Struct to embody Model,Boolean pairs for model selection path records.
 struct MinimizeResult {
@@ -12,6 +13,19 @@ struct MinimizeResult {
 };
 
 struct Model {
+    //Number of segments (k-value)
+    int modelSize = 0;
+    //Loss associated with the given model 
+    double loss = 0.0;
+    //Penalty associated with this model
+    double penalty;
+    //Used to store the next model size, changes from this.modelSize if there are two models at a breakpoint
+    int modelSizeAfter; 
+    //Used to determine if the key at 0 is the initial key we insert.
+    bool isPlaceHolder;
+    //Used to determine if the current penalty/model pairing should be considered certain. 
+    bool isCertainPairing; 
+
     //Create a model if it has valid modelSize and loss values given. 
     Model(int inputSize, double inputLoss) : modelSize(inputSize), loss(loss), isPlaceHolder(false) {
         if(inputSize >= 0 && inputLoss >= 0){
@@ -23,19 +37,15 @@ struct Model {
             + std::to_string(inputSize) + ", loss = " + std::to_string(inputLoss) + "\n");
         }
     }
-    //Number of segments (k-value)
-    int modelSize = 0;
-    //Loss associated with the given model 
-    double loss = 0.0;
-    //Used to store the next model size, changes from this.modelSize if there are two models at a breakpoint
-    int modelSizeAfter; 
-    //Used to determine if the key at 0 is the initial key we insert.
-    bool isPlaceHolder;
-    //Used to determine if the current penalty/model pairing should be considered certain. 
-    bool isCertainPairing; 
-    //Used to filter out unnecessary penalties within optimal range. (NOT YET USED)
-    std::pair<double,double> optimalPenalties;  
+
+    //Custom operators overloaded to work with insertion and minimize queries and lower_bound. 
+    
 };
+//Weirdness but the operators are actually meant to be specified outside of the 
+inline bool operator==(const Model& lhs, const Model& rhs){return lhs.modelSize == rhs.modelSize || lhs.penalty == rhs.penalty;}
+inline bool operator<(const Model& lhs, const Model& rhs){return lhs.modelSize < rhs.modelSize || lhs.penalty > rhs.penalty;}
+inline bool operator>(const Model& lhs, const Model& rhs){return lhs.modelSize > rhs.modelSize || lhs.penalty < rhs.penalty;}
+
 
 //struct penaltyModelPair may be better here for more readability
 using PenaltyModelPair = std::pair<double, Model>;
@@ -48,9 +58,15 @@ public:
     //Max model size permitted to be inserted into the map. Defaults to INFINITY (no limit).
     const double modelSizeCap;
 
+    //Set of keys that comprise models. EXPERIMENTAL
+    std::set<Model> modelSet; 
+
     std::map<double,Model>::iterator lastInsertedPair; //Holds the previously computed breakpoint, if it exists, for use in constant time insertion.
 
     std::map<double,Model>::iterator largestSelected;
+
+    //Map struct to hold modelsize and model pairings
+    std::map<int,Model> modelSizeMap;
 
     //Map struct to hold penalty and model pairings from inserts.
     std::map<double, Model> penaltyModelMap; 

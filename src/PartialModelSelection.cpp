@@ -15,7 +15,6 @@
 ModelSelectionMap::ModelSelectionMap(double maxModels) : modelSizeCap(maxModels) {   
    //Set a starting point to be stored at penalty 0 using a placeholder pair to return default results. 
    Model startingModel = Model(1,1);
-   startingModel.optimalPenalties = std::make_pair(0,0);
    startingModel.modelSizeAfter = 1;
    startingModel.isPlaceHolder = true;
    startingModel.isCertainPairing = false;
@@ -92,40 +91,40 @@ void ModelSelectionMap::insert(double newPenalty, int modelSize, double loss){
 }
 
 void ModelSelectionMap::insert(int modelSize, double loss){
-//Wrap the inputted models into a Model struct.
+   //Wrap the inputted models into a Model struct.
    Model newModel = Model(modelSize, loss); 
    //This breakpoint will be computed and compared to the previous breakpoint stored, if any.
    double prevBkpt = -1;
    double nextBkpt = -1;
 
    //If nothing else is in there, insert the first model at zero. Do nothing else.
-   if(penaltyModelMap.empty()){
+   if(insertedModels == 0){
       penaltyModelMap.begin()->second = newModel;
+      modelSet.insert(newModel);
+      newModel.penalty = 0;
+      newModel.isCertainPairing = false;
       largestSelected = penaltyModelMap.begin();
       std::cout << "Largest selected modelsize: " << largestSelected->second.modelSize;
+      insertedModels++;
       return;
    }
    //Otherwise, binary search to find position using model sizes of previous entries. 
-
-
-   try{   
-      if(lastInsertedPair != penaltyModelMap.end()){
-         int lastModelSize = lastInsertedPair->second.modelSize;
-         nextBkpt = findBreakpoint(newModel, lastInsertedPair->second);
-         lastInsertedPair->second.modelSizeAfter = lastModelSize;
-      }
-
-       //If there is nothing in there, add at penalty INFINITY as we don't know anything about other models to chain to.
-       else{
-         //Call the insert function and update the 0.0 placeholder to reflect insertion
-         insert(INFINITY, modelSize, loss);
-      }
+   try{
+      nextBkpt = findBreakpoint(newModel, largestSelected->second);
    }
-   
-   //We have a wildly incorrect values of loss relative to a previous model, stop the insert.  
+
+   //We have a negative breakpoint computed, stop the insert. Something is wrong with the input.   
    catch(std::logic_error error){
       std::cout << error.what();
+      return;
    }
+     
+   //Our breakpoint is valid, insert with it.
+   penaltyModelMap.insert(std::pair<double, Model>(nextBkpt, newModel));
+   if(newModel.modelSize > largestSelected->second.modelSize)
+      largestSelected = penaltyModelMap.find(nextBkpt);
+   
+   
 }
 
 void ModelSelectionMap::remove(std::map<double, Model>::iterator toRemove){
@@ -222,7 +221,6 @@ double ModelSelectionMap::getNewPenalty(){
    return newPenalty;
 }
 
-bool ModelSelectionMap::hasModelsInserted(){return insertedModels > 0;}
 
 //DISPLAY METHODS
 void ModelSelectionMap::displayMap() {
