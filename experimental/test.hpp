@@ -5,10 +5,11 @@
 #include <list>
 #include <set>
 #include <string>
-
+#include <math.h>
 //Global Constants
 const int MODELSIZE_CONSTANT = -9998;
-const int PENALTY_CONSTANT = -9999;
+const double PENALTY_CONSTANT = -9999;
+
 
 struct Model {
     //Number of segments (k-value)
@@ -17,15 +18,9 @@ struct Model {
     double loss = 0.0;
     //Penalty associated with this model
     double penalty;
-    //Used to store the next model size, changes from this.modelSize if there are two models at a breakpoint
-    int modelSizeAfter; 
-    //Used to determine if the key at 0 is the initial key we insert.
-    bool isPlaceHolder;
-    //Used to determine if the current penalty/model pairing should be considered certain. 
-    bool isCertainPairing; 
 
     //Create a model if it has valid modelSize and loss values given. 
-    Model(int inputSize, double inputLoss) : modelSize(inputSize), loss(loss), isPlaceHolder(false) {
+    Model(int inputSize, double inputLoss) {
         if(inputSize >= 0 && inputLoss >= 0){
             modelSize = inputSize;
             loss = inputLoss;
@@ -42,12 +37,14 @@ struct Model {
 
     //Custom operators overloaded to work with insertion and minimize queries and lower_bound.     
 };
+
 //Operators are actually meant to be specified outside of the 
 //nline bool operator==(const Model& lhs, const Model& rhs){return lhs.modelSize == rhs.modelSize || lhs.penalty == rhs.penalty;}
 bool operator<(const Model& lhs, const Model& rhs){
-    if(lhs.penalty == PENALTY_CONSTANT || rhs.penalty == PENALTY_CONSTANT){
-        std::cout << "MODELSIZE COMPARISON  \n";
-        std::cout << "LHS MODELSIZE: " << lhs.modelSize << "  RHS MODELSIZE: " << rhs.modelSize <<"\n";
+    if(rhs.penalty == PENALTY_CONSTANT){
+        //Additional testing messages if needed.
+        //std::cout << "MODELSIZE COMPARISON  \n";
+        //std::cout << "LHS MODELSIZE: " << lhs.modelSize << "  RHS MODELSIZE: " << rhs.modelSize <<"\n";
         return rhs.modelSize < lhs.modelSize;
     }    
     else{
@@ -75,6 +72,9 @@ public:
 void runLowerBoundsDemo();
 void runDualKeyDemo();
 void runTwoMapDemo();
+
+//Breakpoint computation
+double findBreakpoint(Model firstModel, Model secondModel);
 
 //Display method
 void displayDualMap(std::map<std::pair<double, int>, Model> modelMap);
